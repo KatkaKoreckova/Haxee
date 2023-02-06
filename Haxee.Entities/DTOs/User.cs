@@ -1,6 +1,6 @@
 ﻿namespace Haxee.Entities.DTOs
 {
-    public class User
+    public class User : IdentityUser
     {
     }
 }

@@ -1,5 +1,4 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using Microsoft.EntityFrameworkCore;
 
 namespace Haxee.Web
 {
@@ -12,6 +11,10 @@ namespace Haxee.Web
             // Add services to the container.
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
+            builder.Services.AddDbContext<DataContext>(options => 
+            {
+                options.UseInMemoryDatabase("MainDB");
+            });
 
             var app = builder.Build();
 
