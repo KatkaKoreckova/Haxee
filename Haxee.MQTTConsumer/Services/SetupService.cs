@@ -6,6 +6,12 @@ namespace Haxee.MQTTConsumer.Services
     {
         public static void SetupCurrentYear()
         {
+            if (CurrentYear.SettedUp())
+            {
+                MenuService.HifiSettedUp();
+                return;
+            }
+
             bool validSetup = false;
             string year = String.Empty;
             string ip = String.Empty;
@@ -75,7 +81,7 @@ namespace Haxee.MQTTConsumer.Services
             }
 
             if (option == 2)
-                currentYear.Clear();
+                CurrentYear.Clear();
 
         }
 

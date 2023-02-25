@@ -28,7 +28,7 @@
             return true;
         }
 
-        public void Clear()
+        public static void Clear()
         {
             _instance = null;
         }

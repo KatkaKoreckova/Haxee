@@ -70,12 +70,16 @@
             Console.WriteLine("\nPress any key to return");
             Console.ReadLine();
         }
-        public static void HifiStartMissingInfoScreen()
+        public static void HifiSettedUp()
         {
             Console.Clear();
-            DrawService.DrawErrorMessage("You need to provide Hi-Fi Ralley setup and Broker setup first");
-            Console.WriteLine("\nPress any key to return");
-            Console.ReadLine();
+            DrawService.DrawErrorMessage("Hi-Fi Ralley already setted up");
+            Console.WriteLine("\n[D] delete configuration");
+            Console.WriteLine("Press any other key to return");
+            string input = Console.ReadLine() ?? String.Empty;
+
+            if (input.Equals("D"))
+                CurrentYear.Clear();
         }
     }
 }
