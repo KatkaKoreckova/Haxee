@@ -2,6 +2,7 @@
 {
     public class DrawService
     {
+        private static Dictionary<string, ConsoleColor> _topicColor = new Dictionary<string, ConsoleColor>();
         public static void DrawLogo()
         {
             Console.ForegroundColor = ConsoleColor.DarkYellow;
@@ -63,12 +64,12 @@
 
         public static void DrawMainMenu()
         {
+            DrawLogo();
             Console.WriteLine("MENU");
             Console.WriteLine($"[1] Setup Hi-Fi {DateTime.Today.Year}");
             Console.WriteLine($"[2] Show current setup Hi-Fi {DateTime.Today.Year}");
-            Console.WriteLine($"[3] Connect to broker");
-            Console.WriteLine($"[4] Start Hi-Fi {DateTime.Today.Year}");
-            Console.WriteLine($"[5] Quit");
+            Console.WriteLine($"[3] Connect to broker & start consumer");
+            Console.WriteLine($"[4] Quit\n");
         }
         public static void DrawBonk()
         {
@@ -93,6 +94,40 @@
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(text);
             Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static void DrawSuccessMessage(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(text);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static void DrawInfoMessage(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine(text);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        private static void AddTopicColor(string topic)
+        {
+            ConsoleColor[] colors = (ConsoleColor[])ConsoleColor.GetValues(typeof(ConsoleColor));
+            ConsoleColor consoleColor = (_topicColor.Count() > 15) ? ConsoleColor.White : colors[_topicColor.Count() + 1];
+            _topicColor.Add(topic, consoleColor);
+        }
+
+        public static void DrawReceivedMessage(string topic, string message)
+        {
+            ConsoleColor consoleColor;
+
+            while(!_topicColor.TryGetValue(topic, out consoleColor))
+                AddTopicColor(topic);
+
+            Console.ForegroundColor = consoleColor;
+            Console.Write($"[{topic}]  ");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(message);
         }
 
     }

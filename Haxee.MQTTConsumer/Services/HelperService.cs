@@ -52,7 +52,7 @@ namespace Haxee.MQTTConsumer.Services
 
         public static bool ValidateTopic(string topic)
         {
-            if (topic == String.Empty)
+            if (topic == String.Empty || topic.Length < 3)
                 return false;
 
             if (topic.First().Equals('/') || topic.First().Equals('$'))

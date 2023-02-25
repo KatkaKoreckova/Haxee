@@ -79,6 +79,9 @@ namespace Haxee.Test
             Assert.IsFalse(HelperService.ValidateTopic("topic*/#"));
             Assert.IsFalse(HelperService.ValidateTopic("topic//#"));
             Assert.IsFalse(HelperService.ValidateTopic("topic\\/#"));
+            Assert.IsFalse(HelperService.ValidateTopic("/#"));
+            Assert.IsFalse(HelperService.ValidateTopic("#"));
+            Assert.IsFalse(HelperService.ValidateTopic(""));
         }
 
         [Test]

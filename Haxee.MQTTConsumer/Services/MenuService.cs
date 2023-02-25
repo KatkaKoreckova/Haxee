@@ -6,12 +6,10 @@
         {
             Console.Clear();
 
-            DrawService.DrawLogo();
-
             DrawService.DrawMainMenu();
 
             int option = 0;
-            List<int> validOptions = new List<int> { 1, 2, 3, 4, 5 };
+            List<int> validOptions = new List<int> { 1, 2, 3, 4 };
 
             while (!HelperService.ValidMenuOption(validOptions, option))
             {
@@ -57,6 +55,21 @@
 
                 Console.WriteLine("\n[0] Back");
             }
+        }
+
+        public static void MQTTMissingInfoScreen()
+        {
+            Console.Clear();
+            DrawService.DrawErrorMessage("You need to provide Hi-Fi Ralley setup first");
+            Console.WriteLine("\nPress any key to return");
+            Console.ReadLine();
+        }
+        public static void HifiStartMissingInfoScreen()
+        {
+            Console.Clear();
+            DrawService.DrawErrorMessage("You need to provide Hi-Fi Ralley setup and Broker setup first");
+            Console.WriteLine("\nPress any key to return");
+            Console.ReadLine();
         }
     }
 }
