@@ -40,17 +40,15 @@ namespace Haxee.MQTTConsumer.Services
                     validSetup = true;
             }
 
-            Program.CurrentYear = new CurrentYear() {
-                BrokerIP = ip,
-                ClientName = name,
-                GlobalTopic = topic,
-                BrokerPort = Convert.ToInt32(port),
-                Year = Convert.ToInt32(year),
-                SetupDone = true,
-            };
+            CurrentYear currentYear = CurrentYear.GetInstance();
+            currentYear.BrokerIP = ip;
+            currentYear.ClientName = name;
+            currentYear.GlobalTopic = topic;
+            currentYear.BrokerPort = Convert.ToInt32(port);
+            currentYear.Year = Convert.ToInt32(year);
 
             Console.Clear();
-            DrawService.ShowCurrentSettings(Program.CurrentYear);
+            DrawService.ShowCurrentSettings();
 
             Console.WriteLine("\n[1] Save & quit");
             Console.WriteLine("\n[2] Discard & quit");
@@ -70,24 +68,27 @@ namespace Haxee.MQTTConsumer.Services
                     DrawService.DrawErrorOption(validOptions);
                 }
 
-                DrawService.ShowCurrentSettings(Program.CurrentYear);
+                DrawService.ShowCurrentSettings();
 
                 Console.WriteLine("\n[1] Save & quit");
                 Console.WriteLine("\n[2] Discard & quit");
             }
 
             if (option == 2)
-                Program.CurrentYear.Clear();
+                currentYear.Clear();
 
         }
 
         public static void SetupAndRunMQTT()
         {
-            if (!Program.CurrentYear.SetupDone)
+
+            if (!CurrentYear.SettedUp())
             {
                 MenuService.MQTTMissingInfoScreen();
                 return;
             }
+            
+            CurrentYear currentYear = CurrentYear.GetInstance();
 
             Console.Clear();
 
@@ -95,8 +96,8 @@ namespace Haxee.MQTTConsumer.Services
 
             // Creates a new client
             MqttClientOptionsBuilder builder = new MqttClientOptionsBuilder()
-                                        .WithClientId(Program.CurrentYear.ClientName)
-                                        .WithTcpServer(Program.CurrentYear.BrokerIP, Program.CurrentYear.BrokerPort);
+                                        .WithClientId(currentYear.ClientName)
+                                        .WithTcpServer(currentYear.BrokerIP, currentYear.BrokerPort);
 
             // Create client options objects
             ManagedMqttClientOptions options = new ManagedMqttClientOptionsBuilder()
@@ -121,7 +122,7 @@ namespace Haxee.MQTTConsumer.Services
             mqttClient.StartAsync(options).GetAwaiter().GetResult();
 
             mqttClient.SubscribeAsync(new MqttTopicFilterBuilder()
-                .WithTopic(Program.CurrentYear.GlobalTopic)
+                .WithTopic(currentYear.GlobalTopic)
                 .Build()).GetAwaiter().GetResult();
 
             mqttClient.UseApplicationMessageReceivedHandler(e =>

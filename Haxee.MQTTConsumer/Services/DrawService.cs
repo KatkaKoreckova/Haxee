@@ -29,8 +29,19 @@
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        public static void ShowCurrentSettings(CurrentYear currentYear)
+        public static void ShowCurrentSettings()
         {
+
+            if (!CurrentYear.SettedUp())
+            {
+                DrawErrorMessage("Missin current year setup");
+                Console.WriteLine("\nPress any key to return ...");
+                Console.ReadLine();
+                return;
+            }
+
+            CurrentYear currentYear = CurrentYear.GetInstance();
+
             Console.Write("Year ");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine(currentYear.Year);
@@ -58,7 +69,7 @@
 
             Console.Write("Setup done ");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine(currentYear.SetupDone);
+            Console.WriteLine("true");
             Console.ForegroundColor = ConsoleColor.White;
         }
 

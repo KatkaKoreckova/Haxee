@@ -1,28 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Haxee.Entities.DTOs
+﻿namespace Haxee.Entities.DTOs
 {
     public class CurrentYear
     {
-        public required string BrokerIP { get; set; }
+        public string BrokerIP { get; set; } = String.Empty;
         public int BrokerPort { get; set; }
-        public required string ClientName { get; set; }
-        public required string GlobalTopic { get; set; }
+        public string ClientName { get; set; } = String.Empty;
+        public string GlobalTopic { get; set; } = String.Empty;
         public int Year { get; set; }
-        public bool SetupDone { get; set; }
+
+        private static CurrentYear? _instance = null;
+
+        private CurrentYear() { }
+
+        public static CurrentYear GetInstance()
+        {
+            if (_instance == null)
+            {
+                _instance = new CurrentYear();
+            }
+            return _instance;
+        }
+
+        public static bool SettedUp()
+        {
+            if (_instance == null)
+                return false;
+            return true;
+        }
 
         public void Clear()
         {
-            BrokerIP = String.Empty;
-            BrokerPort = 0;
-            ClientName = String.Empty;
-            GlobalTopic = String.Empty;
-            Year = 0;
-            SetupDone = false;
+            _instance = null;
         }
     }
 }

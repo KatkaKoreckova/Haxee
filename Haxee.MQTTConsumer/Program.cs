@@ -1,14 +1,5 @@
 ﻿class Program
 {
-    public static CurrentYear CurrentYear = new CurrentYear()
-    {
-        BrokerIP = "",
-        ClientName = "",
-        GlobalTopic = "",
-        BrokerPort = 0,
-        Year = 0,
-        SetupDone = false
-    };
 
     static void Main(string[] args)
     {
@@ -24,7 +15,7 @@
                     SetupService.SetupCurrentYear();
                     break;
                 case 2:
-                    MenuService.CurrentSetup(CurrentYear);
+                    MenuService.CurrentSetup();
                     break;
                 case 3:
                     SetupService.SetupAndRunMQTT();

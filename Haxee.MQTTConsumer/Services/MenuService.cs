@@ -29,10 +29,16 @@
             return option;
         }
 
-        public static void CurrentSetup(CurrentYear currentYear)
+        public static void CurrentSetup()
         {
             Console.Clear();
-            DrawService.ShowCurrentSettings(currentYear);
+            DrawService.ShowCurrentSettings();
+
+
+            if (!CurrentYear.SettedUp())
+                return;
+
+            CurrentYear currentYear = CurrentYear.GetInstance();
 
             Console.WriteLine("\n[0] Back");
 
@@ -51,7 +57,7 @@
                     DrawService.DrawErrorOption(validOptions);
                 }
 
-                DrawService.ShowCurrentSettings(currentYear);
+                DrawService.ShowCurrentSettings();
 
                 Console.WriteLine("\n[0] Back");
             }
