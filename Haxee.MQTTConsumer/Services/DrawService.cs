@@ -30,29 +30,34 @@
 
         public static void ShowCurrentSettings(CurrentYear currentYear)
         {
-            Console.Write("Year");
+            Console.Write("Year ");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine(currentYear.Year);
             Console.ForegroundColor = ConsoleColor.White;
 
-            Console.Write("Client name");
+            Console.Write("Client name ");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine(currentYear.ClientName);
             Console.ForegroundColor = ConsoleColor.White;
 
-            Console.Write("Broker IP");
+            Console.Write("Broker IP ");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine(currentYear.BrokerIP);
             Console.ForegroundColor = ConsoleColor.White;
 
-            Console.Write("Broker port");
+            Console.Write("Broker port ");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine(currentYear.BrokerPort);
             Console.ForegroundColor = ConsoleColor.White;
 
-            Console.Write("Global topic");
+            Console.Write("Global topic ");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine(currentYear.GlobalTopic);
+            Console.ForegroundColor = ConsoleColor.White;
+
+            Console.Write("Setup done ");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine(currentYear.SetupDone);
             Console.ForegroundColor = ConsoleColor.White;
         }
 
@@ -81,6 +86,13 @@
             Console.WriteLine("  \\                ----//   \\              \\");
             Console.WriteLine("    \\__    ______      /     \\             |");
             Console.WriteLine("        \\_/      \\___/        |            |");
+        }
+
+        public static void DrawErrorMessage(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(text);
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
     }

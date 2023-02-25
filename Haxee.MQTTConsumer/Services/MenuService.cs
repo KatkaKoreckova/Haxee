@@ -58,29 +58,5 @@
                 Console.WriteLine("\n[0] Back");
             }
         }
-
-        public static void SetupHiFi()
-        {
-            bool validSetup = false;
-            while(!validSetup)
-            {
-                Console.Clear();
-                Console.WriteLine($"Hi-Fi Ralley SETUP");
-                Console.Write("Year:\n   ");
-                string y = Console.ReadLine() ?? String.Empty;
-
-                Console.Write("Broker IPv4 :\n   ");
-                string ip = Console.ReadLine() ?? String.Empty;
-
-                Console.Write("Broker port:\n   ");
-                string port = Console.ReadLine() ?? String.Empty;
-
-                Console.Write("Client name:\n   ");
-                string name = Console.ReadLine() ?? String.Empty;
-
-                Console.Write("Topic (topicname/#):\n   ");
-                string topic = Console.ReadLine() ?? String.Empty;
-            }
-        }
     }
 }

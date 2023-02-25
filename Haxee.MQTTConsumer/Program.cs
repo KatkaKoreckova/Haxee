@@ -1,12 +1,13 @@
 ﻿class Program
 {
-    private static CurrentYear _currentYear = new CurrentYear()
+    public static CurrentYear CurrentYear = new CurrentYear()
     {
-        BrokerIP = "192.168.0.244",
-        ClientName = "HaxeeConsumer",
-        GlobalTopic = "2023/#",
-        BrokerPort = 1883,
-        Year = 2023
+        BrokerIP = "",
+        ClientName = "",
+        GlobalTopic = "",
+        BrokerPort = 0,
+        Year = 0,
+        SetupDone = false
     };
 
     static void Main(string[] args)
@@ -20,9 +21,10 @@
             switch (option)
             {
                 case 1:
+                    SetupService.SetupCurrentYear();
                     break;
                 case 2:
-                    MenuService.CurrentSetup(_currentYear);
+                    MenuService.CurrentSetup(CurrentYear);
                     break;
                 case 3:
                     break;
@@ -45,8 +47,8 @@
 
         // Creates a new client
         MqttClientOptionsBuilder builder = new MqttClientOptionsBuilder()
-                                    .WithClientId(_currentYear.ClientName)
-                                    .WithTcpServer(_currentYear.BrokerIP, _currentYear.BrokerPort);
+                                    .WithClientId(CurrentYear.ClientName)
+                                    .WithTcpServer(CurrentYear.BrokerIP, CurrentYear.BrokerPort);
 
         // Create client options objects
         ManagedMqttClientOptions options = new ManagedMqttClientOptionsBuilder()
@@ -74,7 +76,7 @@
 
 
         _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder()
-            .WithTopic(_currentYear.GlobalTopic)
+            .WithTopic(CurrentYear.GlobalTopic)
             .Build()).GetAwaiter().GetResult();
 
         _mqttClient.UseApplicationMessageReceivedHandler(e =>
