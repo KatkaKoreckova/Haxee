@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Haxee.Web", "Haxee.Web\Haxee.Web.csproj", "{CCF0AB42-9E33-49E0-BD0F-4A9B6555A1ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Haxee.Web", "Haxee.Web\Haxee.Web.csproj", "{CCF0AB42-9E33-49E0-BD0F-4A9B6555A1ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Haxee.Entities", "Haxee.Entities\Haxee.Entities.csproj", "{4578DC21-ED15-4EB7-8884-21952BC1D44B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Haxee.Entities", "Haxee.Entities\Haxee.Entities.csproj", "{4578DC21-ED15-4EB7-8884-21952BC1D44B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Haxee.Internal", "Haxee.Internal\Haxee.Internal.csproj", "{F7D6E4AE-E79D-47E2-A2E3-819998CA9B98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Haxee.Internal", "Haxee.Internal\Haxee.Internal.csproj", "{F7D6E4AE-E79D-47E2-A2E3-819998CA9B98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,13 @@
+{
+  "name": "haxee.web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "tailwind.config.js",
+  "scripts": {
+    "tw-start": "npx tailwindcss -i ./Styles/app.css -o ./wwwroot/css/app.css --watch",
+    "tw-build": "npx tailwindcss -i ./Styles/app.css -o ./wwwroot/css/app.css --minify",
+    "net-start": "dotnet watch"
+  },
+  "author": "",
+  "license": "ISC"
+}
