@@ -2,7 +2,7 @@
 {
     public class User : IdentityUser
     {
-        public required string Name { get; set; } 
+        public required string Name { get; set; }
         public DateTime? DateOfBirth { get; set; }
 
         public required UserType UserType { get; set; }
@@ -14,5 +14,7 @@
         public virtual Stand? CurrentStand { get; set; }
 
         public virtual Stand? SupervisorOfStand { get; set; }
+
+        public required string CardId { get; set; }
     }
 }

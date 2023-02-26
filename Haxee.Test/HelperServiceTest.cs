@@ -1,3 +1,4 @@
+using Haxee.Entities.DTOs;
 using Haxee.MQTTConsumer.Services;
 
 namespace Haxee.Test
@@ -94,6 +95,26 @@ namespace Haxee.Test
         public void ValidateCurrentYearSetupInvalid()
         {
             Assert.IsFalse(HelperService.ValidateCurrentYearSetup("2023", "mytopic", "1883", "127.0.0.1"));
+        }
+
+        [Test]
+        public void ValidateMessageValid()
+        {
+            AttendeeInformation? attendeeInformation = HelperService.ParseMessage("1 12.1.2023 10:50 1");
+            if (attendeeInformation is not null)
+                Assert.Pass();
+            else
+                Assert.Fail();
+        }
+
+        [Test]
+        public void ValidateMessageInvalid()
+        {
+            AttendeeInformation? attendeeInformation = HelperService.ParseMessage("1 12.1 10:50 1");
+            if (attendeeInformation is null)
+                Assert.Pass();
+            else
+                Assert.Fail();
         }
     }
 }

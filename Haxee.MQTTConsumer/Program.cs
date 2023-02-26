@@ -18,7 +18,7 @@
                     MenuService.CurrentSetup();
                     break;
                 case 3:
-                    SetupService.SetupAndRunMQTT();
+                    MqttService.SetupAndRunMQTT();
                     break;
                 case 4:
                     quit = true;

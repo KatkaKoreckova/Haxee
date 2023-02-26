@@ -111,5 +111,30 @@ namespace Haxee.MQTTConsumer.Services
             }
             return valid;
         }
+
+        public static AttendeeInformation? ParseMessage(string message)
+        {
+            List<string> m = message.Split(' ').ToList();
+
+            if (m.Count != 4)
+                return null;
+
+            DateTime dateTime;
+            if (!DateTime.TryParse(m[1] + " " + m[2], out dateTime))
+                return null;
+
+            int s;
+            if (!int.TryParse(m[3], out s))
+                return null;
+
+            AttendeeInformation attendeeInformation = new AttendeeInformation
+            {
+                CardId = m[0],
+                DateTime = dateTime,
+                Status = (Entities.Enums.Status)s
+            };
+
+            return attendeeInformation;
+        }
     }
 }
