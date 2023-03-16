@@ -1,4 +1,23 @@
 ﻿@page
 @model Haxee.Web.Pages.Auth.LoginModel
-@{
-}
+
+<div class="auth-wrapper">
+    <label class="auth-title">Prihlásenie</label>
+    @using (Html.BeginForm(FormMethod.Post, true, new { @class = "auth-card" }))
+    {
+        @Html.ValidationSummary()
+        <div class="auth-input-label">
+            @Html.LabelFor(model => model.Input.Email)
+            @Html.EditorFor(model => model.Input.Email, new { htmlAttributes = new { @class = "auth-input" } })
+            @Html.ValidationMessageFor(model => model.Input.Email)
+        </div>
+        <div class="auth-input-label">
+            @Html.LabelFor(model => model.Input.Password)
+            @Html.EditorFor(model => model.Input.Password, new { htmlAttributes = new { @class = "auth-input" } })
+            @Html.ValidationMessageFor(model => model.Input.Password)
+        </div>
+        <button type="submit">Prihlásiť</button>
+        <hr />
+        <label class="auth-footer">Pre vytvorenie účtu nás kontaktujte na church@nitex-services.eu.</label>
+    }
+</div>

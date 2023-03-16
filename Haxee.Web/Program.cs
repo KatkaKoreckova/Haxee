@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using System.Security.Principal;
 
 namespace Haxee.Web
 {
@@ -20,9 +22,34 @@ namespace Haxee.Web
 
             builder.Services.AddIdentity<User, IdentityRole>(options =>
             {
+                options.Password.RequiredLength = 6;
+                options.Password.RequireDigit = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.SignIn.RequireConfirmedEmail = false;
             })
                 .AddEntityFrameworkStores<DataContext>()
                 .AddDefaultTokenProviders();
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Constants.Policies.RequireAdmin,
+                    policy => policy.RequireClaim(ClaimTypes.Role, Constants.Roles.Admin).Build());
+                options.AddPolicy(Constants.Policies.RequireUser,
+                    policy => policy.RequireClaim(ClaimTypes.Role, Constants.Roles.User).Build());
+            });
+
+            builder.Services.AddHttpsRedirection(options =>
+            {
+                options.HttpsPort = 7044;
+            });
+
+            builder.Services.ConfigureApplicationCookie(config =>
+            {
+                config.Cookie.Name = "Identity";
+                config.LoginPath = "/auth/login";
+                config.AccessDeniedPath = "/auth/login";
+            });
 
             var app = builder.Build();
 
@@ -44,6 +71,9 @@ namespace Haxee.Web
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapBlazorHub();
             app.MapFallbackToPage("/_Host");

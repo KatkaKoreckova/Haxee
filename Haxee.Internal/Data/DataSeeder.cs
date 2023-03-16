@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Haxee.Entities.DTOs;
+using Microsoft.Extensions.DependencyInjection;
+using System.Security.Claims;
 
 namespace Haxee.Internal.Data
 {
@@ -7,29 +9,49 @@ namespace Haxee.Internal.Data
         public static async Task Seed(IServiceProvider serviceProvider)
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
-            await userManager.CreateAsync(new User
+
+            if (await userManager.FindByEmailAsync(Constants.Emails.SUPER_ADMIN) is not null)
+                return;
+
+            var adminUser = new User
             {
                 Name = "Jozef Veduci",
                 UserType = Entities.Enums.UserType.Instructor,
                 SuperInstructor = true,
-                Email = "superjozef@lstme.sk",
-                EmailConfirmed = true
-            }, "jozef123");
+                Email = Constants.Emails.SUPER_ADMIN,
+                EmailConfirmed = true,
+                CardId = "1",
+                UserName = Constants.Emails.SUPER_ADMIN
+            };
+
+            var creationResult = await userManager.CreateAsync(adminUser, "jozef123");
+
+            if (creationResult.Succeeded)
+            {
+                await userManager.AddClaimsAsync(adminUser, new List<Claim> {
+                    new Claim(ClaimTypes.Role, Constants.Roles.Admin),
+                    new Claim(ClaimTypes.Role, Constants.Roles.User)
+                });
+            }
 
             await userManager.CreateAsync(new User
             {
                 Name = "Jozef Instruktor",
                 UserType = Entities.Enums.UserType.Instructor,
-                Email = "jozef@lstme.sk",
-                EmailConfirmed = true
+                Email = Constants.Emails.INSTRUCTOR,
+                EmailConfirmed = true,
+                CardId = "2",
+                UserName = Constants.Emails.INSTRUCTOR
             }, "jozef123");
 
             await userManager.CreateAsync(new User
             {
                 Name = "Jozef Ucastnik",
                 UserType = Entities.Enums.UserType.Kid,
-                Email = "ucastnik@lstme.sk",
-                EmailConfirmed = true
+                Email = Constants.Emails.KID,
+                EmailConfirmed = true,
+                CardId = "3",
+                UserName = Constants.Emails.KID
             }, "jozef123");
         }
     }
