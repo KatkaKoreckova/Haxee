@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using Haxee.Entities.Enums;
+using System.Linq;
 
 namespace Haxee.MQTTConsumer.Services
 {
@@ -58,8 +59,8 @@ namespace Haxee.MQTTConsumer.Services
             if (topic.First().Equals('/') || topic.First().Equals('$'))
                 return false;
 
-            if (!(topic.Substring(topic.Length - 2, 2)).Equals("/#"))
-                return false;
+           // if (!(topic.Substring(topic.Length - 2, 2)).Equals("/#"))
+           //     return false;
 
             List<string> forbiddenChars = new List<string>(){ "#", "+", ">", "*", "$", "//", "\\" };
 
@@ -112,24 +113,43 @@ namespace Haxee.MQTTConsumer.Services
             return valid;
         }
 
+        public static Status GetStatusFromString(string s)
+        {
+            switch(s) {
+                case "Start":
+                    return Status.Start;
+                case "End":
+                    return Status.End;
+                case "Waiting":
+                    return Status.Waiting;
+                case "Working":
+                    return Status.Working;
+                case "Done":
+                    return Status.Done;
+                default:
+                    return Status.None;
+            }
+        }
+
         public static AttendeeInformation? ParseMessage(string message)
         {
-            List<string> m = message.Split(' ').ToList();
+            List<string> m = message.Split('|').ToList();
 
-            if (m.Count != 4)
+            if (m.Count != 3)
                 return null;
 
             DateTime dateTime;
-            if (!DateTime.TryParse(m[1] + " " + m[2], out dateTime))
+            if (!DateTime.TryParse(m[1], out dateTime))
                 return null;
 
-            int s;
-            if (!int.TryParse(m[3], out s))
+            Status s = GetStatusFromString(m[2]);
+
+            if (s is Status.None)
                 return null;
 
             AttendeeInformation attendeeInformation = new AttendeeInformation
             {
-                CardId = m[0],
+                CardId = m[0].Replace(" ", "").ToUpper(),
                 DateTime = dateTime,
                 Status = (Entities.Enums.Status)s
             };

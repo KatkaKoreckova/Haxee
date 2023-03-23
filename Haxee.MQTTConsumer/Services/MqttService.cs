@@ -59,7 +59,16 @@
 
                     if (attendeeInformation is not null)
                     {
-                        Console.WriteLine(JsonSerializer.Serialize(attendeeInformation));
+                        Console.Write(JsonSerializer.Serialize(attendeeInformation));
+                        if (attendeeInformation.CardId.Equals("D3E0611A"))
+                        {
+                            Console.WriteLine("ok");
+                            mqttClient.PublishAsync("start/checkResult", "1");
+                        } else
+                        {
+                            Console.WriteLine("fail");
+                            mqttClient.PublishAsync("start/checkResult", "0");
+                        }
                     }
                 }
                 catch (Exception ex)

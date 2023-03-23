@@ -4,6 +4,9 @@
     {
         Waiting,
         Working,
-        Done
+        Done,
+        Start,
+        End,
+        None
     }
 }
