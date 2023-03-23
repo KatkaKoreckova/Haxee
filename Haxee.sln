@@ -9,9 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Haxee.Entities", "Haxee.Ent
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Haxee.Internal", "Haxee.Internal\Haxee.Internal.csproj", "{F7D6E4AE-E79D-47E2-A2E3-819998CA9B98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Haxee.MQTTConsumer", "Haxee.MQTTConsumer\Haxee.MQTTConsumer.csproj", "{9370220C-8E73-4A13-96C9-6F4D74D87A62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Haxee.MQTTConsumer", "Haxee.MQTTConsumer\Haxee.MQTTConsumer.csproj", "{9370220C-8E73-4A13-96C9-6F4D74D87A62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Haxee.Test", "Haxee.Test\Haxee.Test.csproj", "{55BA5736-3C4C-49CA-9DA9-462D4634DB46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Haxee.Test", "Haxee.Test\Haxee.Test.csproj", "{55BA5736-3C4C-49CA-9DA9-462D4634DB46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

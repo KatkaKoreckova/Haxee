@@ -15,6 +15,6 @@
 
         public virtual Stand? SupervisorOfStand { get; set; }
 
-        public required string CardId { get; set; }
+        public string CardId { get; set; } = string.Empty;
     }
 }

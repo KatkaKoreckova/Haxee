@@ -1,0 +1,18 @@
+﻿@page
+@model Haxee.Web.Pages.Admin.AccountsModel
+@{
+}
+
+<h1>Accounts</h1>
+@if(@Model.Users.Count == 0)
+{
+    <h2>No accounts</h2>
+} else
+{
+    foreach (var user in Model.Users)
+    {
+        <div style="width:100%">
+            @user.Name @user.Email @user.CardId
+        </div>
+    }
+}

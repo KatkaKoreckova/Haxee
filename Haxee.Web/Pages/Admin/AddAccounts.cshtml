@@ -1,0 +1,17 @@
+﻿@page
+@model Haxee.Web.Pages.Admin.AddAccountsModel
+@{
+}
+
+
+<label class="auth-title">Pridanie uctov</label>
+@using (Html.BeginForm(FormMethod.Post, true))
+{
+    @Html.ValidationSummary()
+    <div class="">
+        @Html.LabelFor(model => model.Input.Json)
+        @Html.EditorFor(model => model.Input.Json)
+        @Html.ValidationMessageFor(model => model.Input.Json)
+    </div>
+    <button type="submit">Pridat</button>
+}
