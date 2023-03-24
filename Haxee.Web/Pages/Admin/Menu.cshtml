@@ -1,5 +1,19 @@
 ﻿@page
 @model Haxee.Web.Pages.Admin.MenuModel
 
-<h1>Menu</h1>
+<h1 class="text-orange font-bold">Menu</h1>
 
+<div class="mt-2 grid gap-4 lg:gap-6 md:grid-cols-3 max-w-[95%] mx-auto">
+    <a href="/admin/addaccounts" class="button-card">
+        <h1 class="text-mainPurple text-center"><i class="fa-solid fa-user-plus"></i></h1>
+        <h2 class=" text-darkBlue text-center">Pridať účty</h2>
+    </a>
+    <a href="/admin/accounts" class="button-card">
+        <h1 class="text-mainPurple text-center"><i class="fa-solid fa-user-gear"></i></h1>
+        <h2 class=" text-darkBlue text-center">Správa účtov</h2>
+    </a>
+    <a href="/" class="button-card">
+        <h1 class="text-mainPurple text-center"><i class="fa-solid fa-arrow-right-from-bracket"></i></h1>
+        <h2 class=" text-darkBlue text-center">Opustiť admin panel</h2>
+    </a>
+</div>
