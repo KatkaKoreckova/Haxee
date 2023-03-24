@@ -15,6 +15,7 @@ namespace Haxee.Web.Pages.Admin
         [BindProperty]
         public InputModel Input { get; set; } = new();
 
+
         public AddAccountsModel(UserManager<User> userManager)
         {
             _userManager = userManager;

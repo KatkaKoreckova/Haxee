@@ -1,0 +1,49 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    @if (ViewData["Title"] is not null)
+    {
+        <title>
+            @ViewData["Title"] | Haxee
+        </title>
+    }
+    <link rel="stylesheet" href="~/css/bootstrap/bootstrap.min.css" />
+    <link href="~/css/site.css" rel="stylesheet" />
+    <link href="~/css/app.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/471d17c5c6.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0" />
+</head>
+<body>
+    <div class="bg-mainBlue text-white py-2">
+        <div class="max-w-[95%] mx-auto flex flex-row justify-between items-stretch">
+            <div class="self-center">
+                <a href="/admin/menu">
+                    <h4><i class="fa-solid fa-arrow-left"></i></h4>
+                </a>
+            </div>
+            <div class="self-center">
+                <h2 class="font-bold">Admin panel</h2>
+            </div>
+            <div class="self-center flex flex-row space-x-2">
+                <h4>@User.Identity!.Name</h4>
+                <div>
+                    <a href="/auth/logout" class="no-underline hover:text-orange">
+                        <h4><i class="fa-solid fa-arrow-right-from-bracket"></i></h4>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        @RenderBody()
+    </div>
+    
+</body>
+</html>
