@@ -1,3 +1,174 @@
 ﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --mainPurple: hsl(288, 43%, 34%);
+    --mainGreen: hsl(154, 57%, 49%);
+    --mainBlue: hsl(188, 100%, 36%);
+    --darkBlue: hsl(189, 100%, 15%);
+    --darkBlueHover: hsl(189, 100%, 10%);
+    --goldBg: hsl(45, 100%, 65%);
+    --goldMain: hsl(45, 100%, 50%);
+    --bronzeMain: hsl(30, 50%, 50%);
+    --bronzeBg: hsl(30, 50%, 60%);
+    --silverMain: hsl(0, 0%, 50%);
+    --silverBg: hsl(0, 0%, 60%);
+}
+
+html,
+body {
+    font-family: 'Nunito', sans-serif;
+}
+
+.gradient {
+    background-image: linear-gradient(to right top, #6d317c, #485DA6, #009fb8, #00BF98, #36c486);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.landing {
+    width: 100%;
+    height: 100vh;
+}
+
+.btn-nav-active {
+    color: #002c33;
+    font-weight: 900;
+    background-color: rgb(217, 183, 225, 0.5);
+}
+
+.btn-nav-active:hover {
+    color: white !important;
+}
+
+.card {
+    border: 0;
+    border-radius: 5px;
+    padding: 0.5rem;
+    background-color: var(--darkBlue);
+    color: white;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.card:hover {
+    background-color: var(--darkBlueHover);
+}
+
+.card-body {
+    margin: 0.8rem;
+}
+
+.leaderboard {
+    border: 0;
+    border-radius: 15px;
+    padding: 0.7rem;
+}
+
+.shadow {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.title {
+    font-size: 6em;
+}
+
+.landing-icons {
+    font-size: 8em;
+}
+
+@media all and (max-width: 716px) {
+    .title {
+        font-size: 5.5em;
+    }
+    .landing-icons {
+        font-size: 7.5em;
+    }
+}
+
+@media all and (max-width: 681px) {
+    .title {
+        font-size: 5em;
+    }
+    .landing-icons {
+        font-size: 7em;
+    }
+}
+
+@media all and (max-width: 330px) {
+    .title {
+        font-size: 4em;
+    }
+    .landing-icons {
+        font-size: 6em;
+    }
+}
+
+@media all and (max-width: 271px) {
+    .title {
+        font-size: 3em;
+    }
+    .landing-icons {
+        font-size: 5em;
+    }
+}
+
+@media all and (max-width: 271px) {
+    .title {
+        font-size: 2em;
+    }
+    .landing-icons {
+        font-size: 2em;
+    }
+}
+
+h1 {
+    font-size: 2em;
+}
+
+h2 {
+    font-size: 1.5em;
+}
+
+h3 {
+    font-size: 1.17em;
+}
+
+h5 {
+    font-size: .83em;
+}
+
+h6 {
+    font-size: .75em;
+}
+
+.alert {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    overflow: hidden !important;
+}
+
+.alert.show {
+    animation: show_slide 1s ease forwards;
+}
+
+@keyframes show_slide {
+    0% {
+        transform: translateX(100%);
+    }
+    40% {
+        transform: translateX(-10%);
+    }
+    80% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-10px);
+    }
+}
+
+.input-field {
+    @apply w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white border border-solid border-gray-300 rounded mb-3 focus:text-gray-700 focus:bg-white focus:border-blue focus:outline-none;
+}

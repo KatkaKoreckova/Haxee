@@ -52,9 +52,11 @@ namespace Haxee.Web.Pages.Auth
         public class InputModel
         {
             [Required]
+            [Display(Prompt = "jozef@lstme.sk")]
             public string Email { get; set; } = string.Empty;
 
             [Required]
+            [Display(Prompt = "Password")]
             [DataType(DataType.Password)]
             public string Password { get; set; } = string.Empty;
         }
