@@ -68,6 +68,7 @@ namespace Haxee.Web.Pages.Admin
     public class InputModel
     {
         [Required]
+        [Display(Prompt = "[\n\t{\n\t\t\"Name\":\"Xx\",\n\t\t\"Email\":\"x@x.com\",\n\t\t\"DateOfBirth\":\"12.1.2002\"\n\t}\n]")]
         [DataType(DataType.MultilineText)]
         public string Json { get; set; } = string.Empty;
 

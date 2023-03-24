@@ -10,7 +10,7 @@
         <div>
             @Html.LabelFor(model => model.Input.Json)<span class="red-star">*</span>
         </div>
-        @Html.EditorFor(model => model.Input.Json, new { htmlAttributes = new { @class = "input-field" } })
+        @Html.EditorFor(model => model.Input.Json, new { htmlAttributes = new { @class = "input-field", @rows = 7 } })
         @Html.ValidationMessageFor(model => model.Input.Json)
     </div>
     <button type="submit" class="button-submit">
