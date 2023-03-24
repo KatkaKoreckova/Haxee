@@ -15,12 +15,13 @@
                         @Html.EditorFor(model => model.Input.Email, new { htmlAttributes = new { @class = "input-field" } })
                         @Html.ValidationMessageFor(model => model.Input.Email)
                     </div>
-                    <div class="w-full flex flex-col">
+                    <div class="w-full flex flex-col mt-3">
                         @Html.LabelFor(model => model.Input.Password)
                         @Html.EditorFor(model => model.Input.Password, new { htmlAttributes = new { @class = "input-field" } })
                         @Html.ValidationMessageFor(model => model.Input.Password)
                     </div>
-                    <button type="submit" class="mt-2 transition duration-200 bg-blue hover:bg-orange text-white w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block">
+                    
+                    <button type="submit" class="mt-3 transition duration-200 bg-blue hover:bg-orange text-white w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block">
                         Prihlásiť
                     </button>
                     <div class="flex justify-center w-full">

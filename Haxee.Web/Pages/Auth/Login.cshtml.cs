@@ -43,7 +43,7 @@ namespace Haxee.Web.Pages.Auth
                 if (result.Succeeded)
                     return LocalRedirect(ReturnUrl);
 
-                ModelState.AddModelError("", "Zadaný účet neexistuje.");
+                ModelState.AddModelError(nameof(Input)+"."+nameof(Input.Password), "Zadaný účet neexistuje.");
             }
 
             return Page();
