@@ -1,10 +1,23 @@
 ﻿@page "/leaderboard"
 @layout EmptyLayout
 
-<a href="/">
-    Back
-</a>
-<h3>Leaderboard</h3>
+<div class="bg-black min-h-[100vh]">
+    <div class="bg-mainBlue text-white py-2">
+        <div class="max-w-[95%] mx-auto flex flex-row justify-between items-stretch">
+            <div class="self-center">
+                <a href="/" class="no-underline hover:text-darkBlue">
+                    <h4><i class="fa-solid fa-arrow-left"></i></h4>
+                </a>
+            </div>
+            <div class="self-center">
+                <h2 class="font-bold">Aktuálne poradie</h2>
+            </div>
+            <div class="self-center flex flex-row space-x-2">
+                <h4>@DateTime.Now</h4>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
 
