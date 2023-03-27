@@ -1,11 +1,48 @@
 ﻿@inherits LayoutComponentBase
+@inject IServiceScopeFactory _serviceScopeFactory
+@inject NavigationManager _navigationManager
 
 <PageTitle>Haxee.Web</PageTitle>
 
-<div class="page">
-    <NavMenu />
+<CascadingValue Name="@Constants.CascadingParameters.CurrentAccount" Value="@_user">
+    <div class="page">
+        <NavMenu />
 
-    <main>
-        @Body
-    </main>
-</div>
+        <main>
+            @Body
+        </main>
+    </div>
+</CascadingValue>
+
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+    private User? _user { get; set; }
+
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (AuthenticationStateTask != null)
+        {
+            var authState = await AuthenticationStateTask;
+
+            if (authState.User?.Identity?.IsAuthenticated == true)
+            {
+                using var scope = _serviceScopeFactory.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<DataContext>()!;
+                _user = await db.Users
+                    .SingleOrDefaultAsync(x => x.Email.Equals(authState.User.Identity.Name));
+
+                if (_user is not null)
+                    return;
+
+                _navigationManager.NavigateTo(Constants.Paths.LOG_OUT, true);
+            }
+        }
+
+        _navigationManager.NavigateTo(Constants.Paths.LOG_IN, true);
+    }
+}

@@ -20,5 +20,16 @@
             public const string INSTRUCTOR = "jozef@lstme.sk";
             public const string KID = "ucastnik@lstme.sk";
         }
+
+        public static class Paths
+        {
+            public const string LOG_IN = "/auth/login";
+            public const string LOG_OUT = "/auth/logout";
+        }
+
+        public static class CascadingParameters
+        {
+            public const string CurrentAccount = "CurrentAccount";
+        }
     }
 }

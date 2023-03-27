@@ -4,7 +4,7 @@
             <img src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp" class="rounded-full w-28" alt="Avatar">
         </div>
     </div>
-    <h3 class="w-full text-center font-bold mt-2 px-2">John Doe</h3>
+    <h3 class="w-full text-center font-bold mt-2 px-2">@User.Name</h3>
 
     <div class="nav-scrollable" @onclick="ToggleNavMenu">
         <nav class="flex-column">
@@ -53,6 +53,9 @@
 </div>
 
 @code {
+    [CascadingParameter(Name = Constants.CascadingParameters.CurrentAccount)]
+    private User User { get; set; } = default!;
+
     private bool collapseNavMenu = false;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
