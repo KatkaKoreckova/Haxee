@@ -25,7 +25,7 @@ namespace Haxee.Web.Pages.Auth
 
         public IActionResult OnGet()
         {
-            ReturnUrl = Url.Content("~/");
+            ReturnUrl = Url.Content("~/home");
 
             if (_signInManager.IsSignedIn(User))
                 return LocalRedirect(ReturnUrl);
@@ -35,7 +35,7 @@ namespace Haxee.Web.Pages.Auth
 
         public async Task<IActionResult> OnPostAsync()
         {
-            ReturnUrl = Url.Content("~/");
+            ReturnUrl = Url.Content("~/home");
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, true, lockoutOnFailure: false);
