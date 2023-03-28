@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Haxee.Internal.Data
+﻿namespace Haxee.Internal.Data
 {
     public class DataContext : IdentityDbContext<User>
     {
         public DbSet<Stand> Stands { get; set; }
         public DataContext(DbContextOptions dbContextOptions) : base (dbContextOptions) {}
+
+        public DbSet<HifiArchive> HifiArchives { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

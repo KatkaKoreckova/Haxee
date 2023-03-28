@@ -16,5 +16,12 @@
         public virtual Stand? SupervisorOfStand { get; set; }
 
         public string CardId { get; set; } = string.Empty;
+        public bool CurrentYear { get; set; } = false;
+        public int SkipedStands { get; set; }
+        public int NotFinishedStands { get; set; }
+        public int FinishedStands { get; set; }
+        public DateTime HifiStart { get; set; }
+        public DateTime HifiEnd { get; set; }
+        public TimeSpan Penalty { get; set; }
     }
 }

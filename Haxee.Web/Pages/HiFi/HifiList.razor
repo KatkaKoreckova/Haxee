@@ -1,0 +1,25 @@
+﻿@page "/hifilist"
+@inject DataContext _dataContext
+
+<PageTitle>Haxee - HiFi Ralley</PageTitle>
+
+<h1 class="title">HiFi Ralley</h1>
+@foreach(var hifi in _hifis)
+{
+    <div>
+        @hifi.Year @hifi.Stands.Count()
+    </div>
+}
+
+@code {
+    private List<HifiArchive> _hifis = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        _hifis = await _dataContext.HifiArchives.Include(x => x.Stands).ToListAsync();
+        StateHasChanged();
+    }
+}
