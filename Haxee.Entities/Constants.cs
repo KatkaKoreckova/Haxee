@@ -19,6 +19,7 @@
             public const string SUPER_ADMIN = "superjozef@lstme.sk";
             public const string INSTRUCTOR = "jozef@lstme.sk";
             public const string KID = "ucastnik@lstme.sk";
+            public const string KID2 = "ucastnik2@lstme.sk";
         }
 
         public static class Paths

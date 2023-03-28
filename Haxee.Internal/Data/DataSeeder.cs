@@ -53,6 +53,16 @@ namespace Haxee.Internal.Data
                 CardId = "3",
                 UserName = Constants.Emails.KID
             }, "jozef123");
+
+            await userManager.CreateAsync(new User
+            {
+                Name = "Jozef Ucastnik 2",
+                UserType = Entities.Enums.UserType.Kid,
+                Email = Constants.Emails.KID2,
+                EmailConfirmed = true,
+                CardId = "4",
+                UserName = Constants.Emails.KID2
+            }, "jozef123");
         }
     }
 }

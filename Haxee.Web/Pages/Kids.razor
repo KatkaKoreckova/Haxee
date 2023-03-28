@@ -1,0 +1,26 @@
+﻿@page "/kids"
+@inject DataContext _dataContext
+
+<PageTitle>Haxee - Kids</PageTitle>
+
+<h1 class="title">Účastníci</h1>
+
+@foreach(var user in _users)
+{
+    <div>
+        @user.Name @user.Email @user.DateOfBirth
+    </div>
+}
+
+@code {
+    private List<User> _users = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        _users = await _dataContext.Users.Where(x => x.UserType == Entities.Enums.UserType.Kid).ToListAsync();
+        StateHasChanged();
+    }
+}
