@@ -6,6 +6,7 @@
         public virtual User? Supervisor { get; set; }
         public required string Name { get; set; }
         public required string Location { get; set; }
+        public required int Number { get; set; }
         public required TimeSpan Penalty { get; set; }
         public virtual List<StandVisit> StandVisits { get; set; } = new();
     }
