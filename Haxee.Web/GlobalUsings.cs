@@ -1,6 +1,7 @@
 ﻿global using Haxee.Entities;
 global using Haxee.Entities.DTOs;
 global using Haxee.Entities.Entities;
+global using Haxee.Entities.Enums;
 global using Haxee.Entities.Models;
 global using Haxee.Internal.Data;
 
