@@ -1,4 +1,4 @@
-﻿@page "/leaderboardMonitor"
+﻿@page "/leaderboardMonitor/{Year:int}"
 @layout EmptyLayout
 
 <div class="bg-black min-h-[100vh]">
@@ -17,9 +17,10 @@
             </div>
         </div>
     </div>
-    <Leaderboard Year="DateTime.Now.Year"></Leaderboard>
+    <Leaderboard Year="Year"></Leaderboard>
 </div>
 
 @code {
-
+    [Parameter]
+    public int Year { get; set; } = DateTime.Now.Year;
 }

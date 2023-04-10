@@ -1,0 +1,10 @@
+﻿@page "/hifiyear/{Year:int}"
+
+<h3>HifiYear</h3>
+
+<a href="/leaderboardMonitor/@Year">Leaderboard</a> <br/>
+
+@code {
+    [Parameter]
+    public int Year { get; set; }
+}
