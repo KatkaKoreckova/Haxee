@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
-@inject IServiceScopeFactory _serviceScopeFactory
 @inject NavigationManager _navigationManager
+@inject IDbContextFactory<DataContext> _dbContextFactory
 
 <PageTitle>Haxee.Web</PageTitle>
 
@@ -8,7 +8,7 @@
     <div class="page">
         <NavMenu />
 
-        <main>
+        <main class="pt-4 pl-4">
             @Body
         </main>
     </div>
@@ -31,10 +31,9 @@
 
             if (authState.User?.Identity?.IsAuthenticated == true)
             {
-                using var scope = _serviceScopeFactory.CreateScope();
-                var db = scope.ServiceProvider.GetRequiredService<DataContext>()!;
+                using var db = _dbContextFactory.CreateDbContext();
                 _user = await db.Users
-                    .SingleOrDefaultAsync(x => x.Email.Equals(authState.User.Identity.Name));
+                    .SingleOrDefaultAsync(x => x.Email != null && x.Email.Equals(authState.User.Identity.Name));
 
                 if (_user is not null)
                     return;

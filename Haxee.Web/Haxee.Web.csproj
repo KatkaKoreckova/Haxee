@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Devity.Blazor" Version="2023.1.29.1442" />
-    <PackageReference Include="Devity.Extensions" Version="2023.1.29.1442" />
+    <PackageReference Include="Devity.Blazor" Version="2023.2.10.2127" />
+    <PackageReference Include="Devity.Extensions" Version="2023.2.10.2127" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.2" />
   </ItemGroup>

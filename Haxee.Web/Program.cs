@@ -18,6 +18,12 @@ namespace Haxee.Web
             builder.Services.AddDbContext<DataContext>(options => 
             {
                 options.UseInMemoryDatabase("MainDB");
+            }, ServiceLifetime.Singleton);
+
+
+            builder.Services.AddDbContextFactory<DataContext>(options =>
+            {
+                options.UseInMemoryDatabase("MainDB");
             });
 
             builder.Services.AddIdentity<User, IdentityRole>(options =>

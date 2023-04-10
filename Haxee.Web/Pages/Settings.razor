@@ -1,0 +1,63 @@
+﻿@page "/settings"
+@inject IDbContextFactory<DataContext> _dbContextFactory
+
+<PageTitle>Haxee - Nastavenia</PageTitle>
+
+<h1 class="title">Settings</h1>
+<EditForm Model="_changeSettingsModel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    
+    <Name For="() => _changeSettingsModel.FirstName" />
+    <InputText class="input-field" @bind-Value="_changeSettingsModel.FirstName" />
+    <ValidationMessage For="() => _changeSettingsModel.FirstName" />
+
+    <Name For="() => _changeSettingsModel.LastName" />
+    <InputText class="input-field" @bind-Value="_changeSettingsModel.LastName" />
+    <ValidationMessage For="() => _changeSettingsModel.LastName" />
+
+    <Name For="() => _changeSettingsModel.Email" />
+    <InputText class="input-field" @bind-Value="_changeSettingsModel.Email" />
+    <ValidationMessage For="() => _changeSettingsModel.Email" />
+
+    <button type="submit" class="button-submit">Submit</button>
+
+</EditForm>
+
+@code {
+    [CascadingParameter(Name = Constants.CascadingParameters.CurrentAccount)]
+    private User User { get; set; } = default!;
+
+    private ChangeSettingsModel _changeSettingsModel = new();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        string name = User.Name;
+        string firstname = name.Split(" ").ToList().First();
+        _changeSettingsModel = new ChangeSettingsModel
+        {
+            FirstName = firstname,
+            LastName = name.Replace(firstname, "").Replace(" ", ""),
+            Email = User.Email
+        };
+
+        StateHasChanged();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+        var user = await db.Users.FirstOrDefaultAsync(x => x.Id.Equals(User.Id));
+
+        if (user is null)
+            return;
+
+        user.Name = _changeSettingsModel.FirstName + " " + _changeSettingsModel.LastName;
+        user.Email = _changeSettingsModel.Email;
+        user.NormalizedEmail = _changeSettingsModel.Email.ToUpper();
+        user.UserName = _changeSettingsModel.Email;
+        await db.SaveChangesAsync();
+    }
+}
