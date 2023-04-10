@@ -10,6 +10,9 @@
 
         public string? CardId { get; set; }
 
+        public required int YearId { get; set; }
+        public virtual Year Year { get; set; } = null!;
+
         public virtual User User { get; set; } = null!;
 
         public virtual List<StandVisit> StandVisits { get; set; } = new();
