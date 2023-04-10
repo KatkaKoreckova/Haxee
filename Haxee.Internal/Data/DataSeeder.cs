@@ -29,6 +29,24 @@
                 });
             }
 
+            var participant1 = new User
+            {
+                Name = "Jozef Ucastnik",
+                UserType = Entities.Enums.UserType.Kid,
+                Email = Constants.Emails.KID,
+                EmailConfirmed = true,
+                UserName = Constants.Emails.KID
+            };
+
+            var participant2 = new User
+            {
+                Name = "Jozef Ucastnik 2",
+                UserType = Entities.Enums.UserType.Kid,
+                Email = Constants.Emails.KID2,
+                EmailConfirmed = true,
+                UserName = Constants.Emails.KID2
+            };
+
             await userManager.CreateAsync(new User
             {
                 Name = "Jozef Instruktor",
@@ -38,23 +56,26 @@
                 UserName = Constants.Emails.INSTRUCTOR
             }, "jozef123");
 
-            await userManager.CreateAsync(new User
-            {
-                Name = "Jozef Ucastnik",
-                UserType = Entities.Enums.UserType.Kid,
-                Email = Constants.Emails.KID,
-                EmailConfirmed = true,
-                UserName = Constants.Emails.KID
-            }, "jozef123");
+            await userManager.CreateAsync(participant1, "jozef123");
 
-            await userManager.CreateAsync(new User
-            {
-                Name = "Jozef Ucastnik 2",
-                UserType = Entities.Enums.UserType.Kid,
-                Email = Constants.Emails.KID2,
-                EmailConfirmed = true,
-                UserName = Constants.Emails.KID2
-            }, "jozef123");
+            await userManager.CreateAsync(participant2, "jozef123");
+
+            var db = serviceProvider.GetRequiredService<DataContext>()!;
+
+            var year = new Year
+            { 
+                YearValue = DateTime.Now.Year
+            };
+
+            db.Years.Add(year);
+
+            db.Attendees.Add(new Attendee 
+            { 
+                UserId = participant1.Id,
+                YearId = year.Id
+            });
+
+            await db.SaveChangesAsync();
         }
     }
 }

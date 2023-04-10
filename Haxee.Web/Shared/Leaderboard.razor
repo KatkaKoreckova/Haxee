@@ -2,7 +2,7 @@
 
 @if(_currentYearStats is not null) 
 {
-    int i = 0;
+    int i = 1;
     foreach(var person in _currentYearStats.OrderByDescending(x => x.VisitedStands).ThenByDescending(x => x.Time))
     {
         <label>@i. @person.FullName</label>

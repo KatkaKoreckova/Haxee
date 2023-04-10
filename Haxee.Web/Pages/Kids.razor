@@ -8,7 +8,7 @@
 @foreach(var attendee in _attendees)
 {
     <div>
-        @attendee.User.Name @attendee.User.Email @attendee.User.DateOfBirth @attendee.StandVisits.Count/@attendee.Year.Stands
+        @attendee.User.Name @attendee.User.Email @attendee.User.DateOfBirth @attendee.StandVisits.Count/@attendee.Year.Stands.Count
         @if(attendee.EndedAt is not null)
         {
             <label>ukoncene</label>
