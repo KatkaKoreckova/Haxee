@@ -1,0 +1,43 @@
+﻿@page "/stands/{Year:int}"
+@inject IDbContextFactory<DataContext> _dbContextFactory
+
+<PageTitle>Haxee - Kids</PageTitle>
+
+<h1 class="title">Stanoviska</h1>
+
+@foreach(var stand in _stands.OrderBy(x => x.Number))
+{
+    <div>
+        @stand.Name @stand.Location @(stand.Supervisor?.Name ?? "nepriradený inštruktor")
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Year { get; set; }
+
+    private List<Stand> _stands = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        await LoadStands();
+    }
+
+    private async Task LoadStands()
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var currentYear = await db.Years
+            .Include(x => x.Stands)
+                .ThenInclude(x => x.Supervisor)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.YearValue.Equals(Year));
+
+        _stands = currentYear.Stands;
+
+        StateHasChanged();
+    }
+}
