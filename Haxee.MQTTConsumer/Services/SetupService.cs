@@ -1,4 +1,4 @@
-﻿using Haxee.Entities.DTOs;
+﻿using Haxee.Entities.Entities.Mqtt;
 
 namespace Haxee.MQTTConsumer.Services
 {

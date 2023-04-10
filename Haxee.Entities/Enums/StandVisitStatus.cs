@@ -1,12 +1,9 @@
 ﻿namespace Haxee.Entities.Enums
 {
-    public enum Status
+    public enum StandVisitStatus
     {
         Waiting,
         Working,
-        Done,
-        Start,
-        End,
-        None
+        Done
     }
 }

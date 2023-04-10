@@ -1,4 +1,6 @@
-﻿namespace Haxee.MQTTConsumer.Services
+﻿using Haxee.Entities.Entities.Mqtt;
+
+namespace Haxee.MQTTConsumer.Services
 {
     public class MqttService
     {
@@ -55,7 +57,7 @@
                     string topic = e.ApplicationMessage.Topic;
                     string message = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
                     DrawService.DrawReceivedMessage(topic, message);
-                    AttendeeInformation? attendeeInformation = HelperService.ParseMessage(message);
+                    AttendeeInformationDTO? attendeeInformation = HelperService.ParseMessage(message);
 
                     if (attendeeInformation is not null)
                     {
