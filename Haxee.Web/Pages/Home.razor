@@ -5,60 +5,6 @@
 
 <h1 class="title">Home</h1>
 
-<div>
-    @if(_attendeesStatsModel is not null)
-    {
-        <label>Účastníci</label
-        <label>Čakajúci @_attendeesStatsModel.Waiting</label>
-        <label>Na trati @_attendeesStatsModel.InProgress</label>
-        <label>V cieli @_attendeesStatsModel.Completed</label>
-    }
-</div>
+<AttendeesStats Year="DateTime.Now.Year"/>
 
-<div>
-    @if (_standStatsModel is not null)
-    {
-        <label>Stanoviská</label>
-        <label>Najdlhšie čakanie @(_standStatsModel.LongestWaitStand?.Number.ToString() ?? "-")</label>
-        <label>Najkratšie čakanie @(_standStatsModel.ShortestWaitStand?.Number.ToString() ?? "-")</label>
-    }
-</div>
-
-@code {
-    private AttendeesStatsModel? _attendeesStatsModel;
-    private StandStatsModel? _standStatsModel;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender)
-            return;
-
-        using var db = _dbContextFactory.CreateDbContext();
-        var currentYear = await db.Years
-            .Include(x => x.Attendees)
-            .Include(x => x.Stands)
-                .ThenInclude(x => x.StandVisits)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.YearValue.Equals(DateTime.Now.Year));
-
-        if (currentYear is null)
-            return;
-
-        _attendeesStatsModel = new()
-        {
-            Waiting = currentYear.Attendees.Where(x => x.StartedAt == null).Count(),
-            InProgress = currentYear.Attendees.Where(x => x.StartedAt != null && x.EndedAt == null).Count(),
-            Completed = currentYear.Attendees.Where(x => x.EndedAt != null).Count()
-        };
-
-        var orderedStandsByWaitTime = currentYear.Stands.OrderBy(x => x.StandVisits.Where(y => y.EndWaitTime != null).Sum(x => (x.EndWaitTime! - x.ArrivalTime).Value.TotalSeconds));
-
-        _standStatsModel = new()
-            {
-                LongestWaitStand = orderedStandsByWaitTime.FirstOrDefault(),
-                ShortestWaitStand = orderedStandsByWaitTime.LastOrDefault()
-            };
-
-        StateHasChanged();
-    }
-}
+<StandsStats Year="DateTime.Now.Year"/>

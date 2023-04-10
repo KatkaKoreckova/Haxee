@@ -1,0 +1,43 @@
+﻿@inject IDbContextFactory<DataContext> _dbContextFactory
+
+<div>
+    @if (_standStatsModel is not null)
+    {
+        <label>Stanoviská</label>
+        <label>Najdlhšie čakanie @(_standStatsModel.LongestWaitStand?.Number.ToString() ?? "-")</label>
+        <label>Najkratšie čakanie @(_standStatsModel.ShortestWaitStand?.Number.ToString() ?? "-")</label>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public required int Year { get; set; }
+
+    private StandStatsModel? _standStatsModel;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+        var year = await db.Years
+            .Include(x => x.Stands)
+                .ThenInclude(x => x.StandVisits)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.YearValue.Equals(Year));
+
+        if (year is null)
+            return;
+
+        var orderedStandsByWaitTime = year.Stands.OrderBy(x => x.StandVisits.Where(y => y.EndWaitTime != null).Sum(x => (x.EndWaitTime! - x.ArrivalTime).Value.TotalSeconds));
+
+        _standStatsModel = new()
+            {
+                LongestWaitStand = orderedStandsByWaitTime.FirstOrDefault(),
+                ShortestWaitStand = orderedStandsByWaitTime.LastOrDefault()
+            };
+
+        StateHasChanged();
+    }
+}

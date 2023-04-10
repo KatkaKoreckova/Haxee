@@ -4,6 +4,13 @@
 
 <a href="/leaderboardMonitor/@Year">Leaderboard</a> <br/>
 
+@if(Year.Equals(DateTime.Now.Year))
+{
+    <AttendeesStats Year="Year" />
+
+    <StandsStats Year="Year" />
+}
+
 @code {
     [Parameter]
     public int Year { get; set; }
