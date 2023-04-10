@@ -1,7 +1,53 @@
-﻿prvy <br />
-druhy <br />
-treti <br />
+﻿@inject IDbContextFactory<DataContext> _dbContextFactory
+
+@if(_currentYearStats is not null) 
+{
+    int i = 0;
+    foreach(var person in _currentYearStats.OrderByDescending(x => x.VisitedStands).ThenByDescending(x => x.Time))
+    {
+        <label>@i. @person.FullName</label>
+        <label>@(person.Time?.ToString() ?? "-")</label>
+        <label>@person.VisitedStands/@_numberOfStands</label>
+        <br/>
+        i++;
+    }
+}
+
 
 @code {
+    [Parameter]
+    public int Year { get; set; }
 
+    private List<AttendeeLeaderboardModel>? _currentYearStats;
+
+    private int _numberOfStands;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var currentYear = await db.Years
+            .Include(x => x.Stands)
+            .Include(x => x.Attendees)
+                .ThenInclude(x => x.StandVisits)
+            .Include(x => x.Attendees)
+                .ThenInclude(x => x.User)
+            .FirstOrDefaultAsync(x => x.YearValue.Equals(Year));
+
+        if (currentYear is null)
+            return;
+
+        _numberOfStands = currentYear.Stands.Count;
+        _currentYearStats = currentYear.Attendees.Select(x => new AttendeeLeaderboardModel
+            {
+                FullName = x.User.Name,
+                VisitedStands = x.StandVisits.Count,
+                Time = x.StartedAt is null ? null : (x.EndedAt is null ? DateTime.Now - x.StartedAt : x.EndedAt - x.StartedAt)
+            }).ToList();
+
+        StateHasChanged();
+    }
 }
