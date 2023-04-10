@@ -1,5 +1,5 @@
 ﻿@page "/kids"
-@inject DataContext _dataContext
+@inject IDbContextFactory<DataContext> _dbContextFactory
 
 <PageTitle>Haxee - Kids</PageTitle>
 
@@ -14,10 +14,10 @@
             <label>ukoncene</label>
         } else if(attendee.StartedAt is null)
         {
-            <label>START</label>
+            <label @onclick="() => StartAttendee(attendee)">START</label>
         } else
         {
-            <label>END</label>
+            <label @onclick="() => EndAttendee(attendee)">END</label>
         }
     </div>
 }
@@ -30,12 +30,50 @@
         if (!firstRender)
             return;
 
-        _attendees = await _dataContext.Attendees
+        await LoadAttendees();
+    }
+
+    private async Task StartAttendee(Attendee attendee)
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var targetAttendee = await db.Attendees.FindAsync(attendee.Id);
+
+        if (targetAttendee is null)
+            return;
+
+        targetAttendee.StartedAt = DateTime.Now;
+
+        await db.SaveChangesAsync();
+        await LoadAttendees();
+    }
+
+    private async Task EndAttendee(Attendee attendee)
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var targetAttendee = await db.Attendees.FindAsync(attendee.Id);
+
+        if (targetAttendee is null)
+            return;
+
+        targetAttendee.EndedAt = DateTime.Now;
+
+        await db.SaveChangesAsync();
+        await LoadAttendees();
+    }
+
+    private async Task LoadAttendees()
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+
+        _attendees = await db.Attendees
             .Include(x => x.User)
             .Include(x => x.Year)
                 .ThenInclude(x => x.Stands)
             .Where(x => x.Year.YearValue.Equals(DateTime.Now.Year))
             .Where(x => x.User.UserType == Entities.Enums.UserType.Kid)
+            .AsNoTracking()
             .ToListAsync();
 
         StateHasChanged();
