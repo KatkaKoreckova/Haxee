@@ -10,5 +10,7 @@
 
         [Required]
         public int PenaltyInSeconds { get; set; }
+
+        public User? Supervisor { get; set; }
     }
 }

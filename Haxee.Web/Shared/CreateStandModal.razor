@@ -23,6 +23,25 @@
             <ValidationMessage For="() => _createStandModel.PenaltyInSeconds" />
         </div>
 
+        <div class="form-group">
+            <Name For="() => _createStandModel.Supervisor" />
+            <BlazoredTypeahead MaximumSuggestions="999"
+                               MinimumLength="0"
+                               SearchMethod="SearchInstructors"
+                               @bind-Value="_createStandModel.Supervisor">
+                <SelectedTemplate Context="typeaheadContext">
+                    @typeaheadContext?.Name
+                </SelectedTemplate>
+                <ResultTemplate Context="typeaheadContext">
+                    @typeaheadContext?.Name
+                </ResultTemplate>
+                <NotFoundTemplate Context="typeaheadContext">
+                    Žiadne výsledky
+                </NotFoundTemplate>
+            </BlazoredTypeahead>
+            <ValidationMessage For="() => _createStandModel.Supervisor" />
+        </div>
+
         <button class="hidden" type="submit">Create</button>
     </EditForm>
 </Modal>
@@ -37,12 +56,17 @@
 
     private EditContext? _editContext;
 
-    public void Open(int yearId)
+    private List<User> _instructors = new();
+
+    public async void Open(int yearId)
     {
         _yearId = yearId;
 
         _createStandModel = new();
         _editContext = new EditContext(_createStandModel);
+
+        using var db = _dbContextFactory.CreateDbContext();
+        _instructors = await db.Users.Where(x => x.UserType == UserType.Instructor).ToListAsync();
 
         base.Open();
     }
@@ -69,7 +93,8 @@
             Location = _createStandModel.Location,
             Number = highestStand is null ? 1 : highestStand.Number + 1,
             Penalty = TimeSpan.FromSeconds(_createStandModel.PenaltyInSeconds),
-            YearId = _yearId
+            YearId = _yearId,
+            SupervisorId = _createStandModel.Supervisor?.Id
         };
 
         db.Stands.Add(newStand);
@@ -77,5 +102,10 @@
 
         await Modal.Close();
         await OnSubmit.InvokeAsync();
+    }
+
+    private async Task<IEnumerable<User>> SearchInstructors(string searchText)
+    {
+        return await Task.FromResult(_instructors!.Where(x => x.Name.Has(searchText)).ToList());
     }
 }
