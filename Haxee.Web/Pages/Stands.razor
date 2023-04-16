@@ -3,14 +3,15 @@
 
 <PageTitle>Haxee - Kids</PageTitle>
 
-<CreateStandModal @ref="_createStandModal" OnSubmit="LoadStands"/>
+<CreateStandModal @ref="_createStandModal" OnSubmit="LoadStands" />
+<DeleteStandModal @ref="_deleteStandModal" OnSubmit="LoadStands" />
 
 <h1 class="title">Stanoviska</h1>
 
 @foreach(var stand in _stands.OrderBy(x => x.Number))
 {
     <div>
-        @stand.Name @stand.Location @(stand.Supervisor?.Name ?? "nepriradený inštruktor")
+        @stand.Name @stand.Location @(stand.Supervisor?.Name ?? "nepriradený inštruktor") <label @onclick="() => _deleteStandModal?.Open(stand.Id, stand.Name)">delete</label>
     </div>
 }
 
@@ -28,6 +29,7 @@
     private Year? _currentYear;
 
     private CreateStandModal? _createStandModal;
+    private DeleteStandModal? _deleteStandModal;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
