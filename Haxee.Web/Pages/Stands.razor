@@ -3,6 +3,8 @@
 
 <PageTitle>Haxee - Kids</PageTitle>
 
+<CreateStandModal @ref="_createStandModal" OnSubmit="LoadStands"/>
+
 <h1 class="title">Stanoviska</h1>
 
 @foreach(var stand in _stands.OrderBy(x => x.Number))
@@ -12,11 +14,20 @@
     </div>
 }
 
+@if(Year.Equals(DateTime.Now.Year) && _currentYear is not null)
+{
+    <button @onclick="() => _createStandModal?.Open(_currentYear.Id)">Create stand</button>
+}
+
 @code {
     [Parameter]
     public int Year { get; set; }
 
     private List<Stand> _stands = new();
+
+    private Year? _currentYear;
+
+    private CreateStandModal? _createStandModal;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -30,13 +41,16 @@
     {
         using var db = _dbContextFactory.CreateDbContext();
 
-        var currentYear = await db.Years
+        _currentYear = await db.Years
             .Include(x => x.Stands)
                 .ThenInclude(x => x.Supervisor)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.YearValue.Equals(Year));
 
-        _stands = currentYear.Stands;
+        if (_currentYear is null)
+            return;
+
+        _stands = _currentYear.Stands;
 
         StateHasChanged();
     }

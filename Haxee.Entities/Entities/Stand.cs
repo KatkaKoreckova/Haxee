@@ -8,6 +8,8 @@
         public required string Location { get; set; }
         public required int Number { get; set; }
         public required TimeSpan Penalty { get; set; }
+        public required int YearId { get; set; }
+        public virtual Year Year { get; set; } = null!;
         public virtual List<StandVisit> StandVisits { get; set; } = new();
     }
 }

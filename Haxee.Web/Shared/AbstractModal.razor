@@ -1,0 +1,17 @@
+﻿@code {
+    protected Modal? Modal;
+
+    public virtual async void Open()
+    {
+        if (Modal is null)
+            return;
+
+        OnOpen();
+        await Modal.Show();
+    }
+
+    protected virtual void OnOpen()
+    {
+
+    }
+}

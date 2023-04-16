@@ -1,0 +1,81 @@
+﻿@inherits AbstractModal
+@inject IDbContextFactory<DataContext> _dbContextFactory
+
+<Modal @ref="Modal" Title="Create stand" OnSubmitAttempted="OnSubmitAttempted">
+    <EditForm class="form" EditContext="_editContext" OnSubmit="OnSubmitAttempted">
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <Name For="() => _createStandModel.Name" />
+            <InputText class="form-control" @bind-Value="_createStandModel.Name" />
+            <ValidationMessage For="() => _createStandModel.Name" />
+        </div>
+
+        <div class="form-group">
+            <Name For="() => _createStandModel.Location" />
+            <InputText class="form-control" @bind-Value="_createStandModel.Location" />
+            <ValidationMessage For="() => _createStandModel.Location" />
+        </div>
+
+        <div class="form-group">
+            <Name For="() => _createStandModel.PenaltyInSeconds" />
+            <InputNumber class="form-control" @bind-Value="_createStandModel.PenaltyInSeconds" />
+            <ValidationMessage For="() => _createStandModel.PenaltyInSeconds" />
+        </div>
+
+        <button class="hidden" type="submit">Create</button>
+    </EditForm>
+</Modal>
+
+@code {
+    [Parameter]
+    public EventCallback OnSubmit { get; set; }
+
+    private int _yearId { get; set; }
+
+    private CreateStandModel _createStandModel = new();
+
+    private EditContext? _editContext;
+
+    public void Open(int yearId)
+    {
+        _yearId = yearId;
+
+        _createStandModel = new();
+        _editContext = new EditContext(_createStandModel);
+
+        base.Open();
+    }
+
+    private async Task OnSubmitAttempted()
+    {
+        if (Modal is null || _editContext is null || _createStandModel is null)
+            return;
+
+        if (!_editContext.Validate())
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var highestStand = await db.Stands
+            .AsNoTracking()
+            .Where(x => x.YearId.Equals(_yearId))
+            .OrderByDescending(x => x.Number)
+            .FirstOrDefaultAsync();
+
+        var newStand = new Stand()
+        {
+            Name = _createStandModel.Name,
+            Location = _createStandModel.Location,
+            Number = highestStand is null ? 1 : highestStand.Number + 1,
+            Penalty = TimeSpan.FromSeconds(_createStandModel.PenaltyInSeconds),
+            YearId = _yearId
+        };
+
+        db.Stands.Add(newStand);
+        await db.SaveChangesAsync();
+
+        await Modal.Close();
+        await OnSubmit.InvokeAsync();
+    }
+}
