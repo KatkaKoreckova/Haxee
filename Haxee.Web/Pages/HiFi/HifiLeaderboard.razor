@@ -1,0 +1,86 @@
+﻿@page "/hifileaderboard/{Year:int}"
+@inject IDbContextFactory<DataContext> _dbContextFactory
+
+@if(_year is not null) 
+{
+    int i = 1;
+    foreach (var person in _year.Attendees.OrderByDescending(x => x.StandVisits.Count).ThenByDescending(x => x.GetTime()))
+    {
+        <label>@i. @person.User.Name</label>
+        <label>@(person.GetTime()?.ToString() ?? "-")</label>
+        <label>@person.StandVisits.Count/@_stands.Count</label>
+        <br/>
+        <div>collapsible: 
+            @foreach(var stand in _stands)
+            {
+                var targetVisit = person.StandVisits.FirstOrDefault(x => x.StandId == stand.Id);
+                <label>@stand.Number. stanovisko (@stand.Location): 
+                    @if(targetVisit is null) 
+                    {
+                        <label> Nenavštívené</label>
+                    } else {
+                        if(targetVisit.Skipped)
+                        {
+                            <label> Preskočené</label>
+                        } else if(targetVisit.Status == StandVisitStatus.Waiting)
+                        {
+                            <label> Aktuálne čaká</label>
+                        }
+                        else if (targetVisit.Status == StandVisitStatus.Working)
+                        {
+                            <label> Aktuálne tu</label>
+                        } else
+                        {
+                            <label> Hotové</label>
+                        }
+
+                        <label>
+                            , príchod @targetVisit.ArrivalTime
+                            @if(targetVisit.EndWaitTime is not null)
+                            {
+                                <label>, koniec čakania @targetVisit.EndWaitTime</label>
+                            }
+                            , odchod @targetVisit.LeaveTime, penalta @targetVisit.Penalty.ToString()
+                        </label>
+                    }
+                </label>
+                <br/>
+            }
+        </div>
+        i++;
+    }
+}
+
+
+@code {
+    [Parameter]
+    public int Year { get; set; }
+
+    private Year? _year;
+
+    private List<Stand> _stands = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        _year = await db.Years
+            .Include(x => x.Stands)
+            .Include(x => x.Attendees)
+                .ThenInclude(x => x.StandVisits)
+            .Include(x => x.Attendees)
+                .ThenInclude(x => x.User)
+            .FirstOrDefaultAsync(x => x.YearValue.Equals(Year));
+
+        if (_year is null)
+            return;
+
+        _stands = await db.Stands
+            .ToListAsync();
+
+        StateHasChanged();
+    }
+}

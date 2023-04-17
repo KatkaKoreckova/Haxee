@@ -18,6 +18,6 @@
 
         public DateTime? EndWaitTime { get; set; }
 
-        public required DateTime LeaveTime { get; set; }
+        public DateTime? LeaveTime { get; set; }
     }
 }

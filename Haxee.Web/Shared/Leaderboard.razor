@@ -45,7 +45,7 @@
             {
                 FullName = x.User.Name,
                 VisitedStands = x.StandVisits.Count,
-                Time = x.StartedAt is null ? null : (x.EndedAt is null ? DateTime.Now - x.StartedAt : x.EndedAt - x.StartedAt)
+                Time = x.GetTime()
             }).ToList();
 
         StateHasChanged();

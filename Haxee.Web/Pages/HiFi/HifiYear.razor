@@ -4,7 +4,13 @@
 
 <a href="/stands/@Year">Stanoviska</a>
 <br/>
-<a href="/leaderboardMonitor/@Year">Leaderboard</a>
+@if (Year.Equals(DateTime.Now.Year))
+{
+    <a href="/leaderboardMonitor/@Year">Leaderboard</a>
+} else
+{
+    <a href="/hifileaderboard/@Year">Leaderboard</a>
+}
 <br />
 <a href="/hifiyearstats/@Year">Statistiky</a>
 <br />

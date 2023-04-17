@@ -16,5 +16,8 @@
         public virtual User User { get; set; } = null!;
 
         public virtual List<StandVisit> StandVisits { get; set; } = new();
+
+        public TimeSpan? GetTime()
+            => StartedAt is null ? null : (EndedAt is null ? DateTime.Now - StartedAt : EndedAt - StartedAt);
     }
 }
