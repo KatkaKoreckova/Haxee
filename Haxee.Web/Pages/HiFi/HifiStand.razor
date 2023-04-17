@@ -2,6 +2,7 @@
 @inject IDbContextFactory<DataContext> _dbContextFactory
 
 <AddPenaltyModal @ref="_addPenaltyModal" OnSubmit="LoadStandAsync" />
+<ChangeStateModal @ref="_changeStateModal" OnSubmit="LoadStandAsync" />
 
 @if(_stand is not null)
 {
@@ -9,7 +10,7 @@
 
     @foreach(var ongoingVisit in _stand.StandVisits.Where(x => x.Status != StandVisitStatus.Done))
     {
-        <label>@ongoingVisit.Attendee.User.Name @ongoingVisit.Status.GetDisplayName() <button>Zmena statusu</button> <button @onclick="() => _addPenaltyModal?.Open(ongoingVisit.Id)">Penalta</button></label>
+        <label>@ongoingVisit.Attendee.User.Name @ongoingVisit.Status.GetDisplayName() <button @onclick="() => _changeStateModal?.Open(_stand.Id, ongoingVisit.Id)">Zmena statusu</button> <button @onclick="() => _addPenaltyModal?.Open(ongoingVisit.Id)">Penalta</button></label>
     }
 }
 
@@ -18,7 +19,8 @@
     public int StandNumber { get; set; }
 
     private Stand? _stand;
-    private AddPenaltyModal _addPenaltyModal;
+    private AddPenaltyModal? _addPenaltyModal;
+    private ChangeStateModal? _changeStateModal;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

@@ -1,7 +1,7 @@
 ﻿@inherits AbstractModal
 @inject IDbContextFactory<DataContext> _dbContextFactory
 
-<Modal @ref="Modal" Title="Create stand" OnSubmitAttempted="OnSubmitAttempted">
+<Modal @ref="Modal" Title="Pridat penaltu" OnSubmitAttempted="OnSubmitAttempted">
     <EditForm class="form" EditContext="_editContext" OnSubmit="OnSubmitAttempted">
         <DataAnnotationsValidator />
 
@@ -11,7 +11,7 @@
             <ValidationMessage For="() => _addPenaltyModel.PenaltyInMinutes" />
         </div>
 
-        <button class="hidden" type="submit">Add</button>
+        <button class="hidden" type="submit">Pridat</button>
     </EditForm>
 </Modal>
 
