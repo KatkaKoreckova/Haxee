@@ -1,5 +1,6 @@
 ﻿@page "/stands/{Year:int}"
 @inject IDbContextFactory<DataContext> _dbContextFactory
+@inject NavigationManager _navigationManager
 
 <PageTitle>Haxee - Kids</PageTitle>
 
@@ -11,7 +12,7 @@
 
 @foreach(var stand in _stands.OrderBy(x => x.Number))
 {
-    <div>
+    <div @onclick='() => _navigationManager.NavigateTo("/current/stand/" + stand.Number)'>
         @stand.Name @stand.Location @(stand.Supervisor?.Name ?? "nepriradený inštruktor") <label @onclick="() => _editStandModal?.Open(stand.Id)">edit</label> <label @onclick="() => _deleteStandModal?.Open(stand.Id, stand.Name)">delete</label>
     </div>
 }
@@ -25,7 +26,7 @@
     [Parameter]
     public int Year { get; set; }
 
-    private List<Stand> _stands = new();
+    private List<Haxee.Entities.DTOs.Stand> _stands = new();
 
     private Year? _currentYear;
 

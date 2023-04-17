@@ -1,0 +1,42 @@
+﻿@page "/current/stand/{StandNumber:int}"
+@inject IDbContextFactory<DataContext> _dbContextFactory
+
+@if(_stand is not null)
+{
+    <h1>Stanovisko @_stand.Number — @_stand.Name</h1>
+
+    @foreach(var ongoingVisit in _stand.StandVisits.Where(x => x.Status != StandVisitStatus.Done))
+    {
+        <label>@ongoingVisit.Attendee.User.Name @ongoingVisit.Status.GetDisplayName() <button>Zmena statusu</button> <button>Penalta</button></label>
+    }
+}
+
+@code {
+    [Parameter]
+    public int StandNumber { get; set; }
+
+    private Haxee.Entities.DTOs.Stand? _stand;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        await LoadStandAsync();
+    }
+
+    private async Task LoadStandAsync()
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+        _stand = await db.Stands
+            .Include(x => x.StandVisits)
+                .ThenInclude(x => x.Attendee)
+                    .ThenInclude(x => x.User)
+            .FirstOrDefaultAsync(x => x.Number.Equals(StandNumber));
+
+        if (_stand is null)
+            return;
+
+        StateHasChanged();
+    }
+}
