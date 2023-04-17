@@ -69,11 +69,34 @@
 
             db.Years.Add(year);
 
-            db.Attendees.Add(new Attendee 
-            { 
+            var attendee = new Attendee
+            {
                 UserId = participant1.Id,
                 YearId = year.Id
-            });
+            };
+
+            db.Attendees.Add(attendee);
+
+            var stand = new Stand 
+            { 
+                Location = "Test lokacia ", 
+                Name = "Test stanovisko",
+                Number = 1,
+                Penalty = TimeSpan.FromSeconds(60*5),
+                YearId = year.Id
+            };
+
+            db.Stands.Add(stand);
+
+            var standVisit = new StandVisit 
+            {
+                ArrivalTime = DateTime.Now,
+                AttendeeId = attendee.Id,
+                Status = Entities.Enums.StandVisitStatus.Working,
+                StandId = stand.Id
+            };
+
+            db.StandVisits.Add(standVisit);
 
             await db.SaveChangesAsync();
         }
