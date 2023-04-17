@@ -1,13 +1,15 @@
 ﻿@page "/current/stand/{StandNumber:int}"
 @inject IDbContextFactory<DataContext> _dbContextFactory
 
+<AddPenaltyModal @ref="_addPenaltyModal" OnSubmit="LoadStandAsync" />
+
 @if(_stand is not null)
 {
     <h1>Stanovisko @_stand.Number — @_stand.Name</h1>
 
     @foreach(var ongoingVisit in _stand.StandVisits.Where(x => x.Status != StandVisitStatus.Done))
     {
-        <label>@ongoingVisit.Attendee.User.Name @ongoingVisit.Status.GetDisplayName() <button>Zmena statusu</button> <button>Penalta</button></label>
+        <label>@ongoingVisit.Attendee.User.Name @ongoingVisit.Status.GetDisplayName() <button>Zmena statusu</button> <button @onclick="() => _addPenaltyModal?.Open(ongoingVisit.Id)">Penalta</button></label>
     }
 }
 
@@ -15,7 +17,8 @@
     [Parameter]
     public int StandNumber { get; set; }
 
-    private Haxee.Entities.DTOs.Stand? _stand;
+    private Stand? _stand;
+    private AddPenaltyModal _addPenaltyModal;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

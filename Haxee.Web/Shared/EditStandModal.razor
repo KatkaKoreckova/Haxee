@@ -18,9 +18,9 @@
         </div>
 
         <div class="form-group">
-            <Name For="() => _createStandModel.PenaltyInSeconds" />
-            <InputNumber class="form-control" @bind-Value="_createStandModel.PenaltyInSeconds" />
-            <ValidationMessage For="() => _createStandModel.PenaltyInSeconds" />
+            <Name For="() => _createStandModel.PenaltyInMinutes" />
+            <InputNumber class="form-control" @bind-Value="_createStandModel.PenaltyInMinutes" />
+            <ValidationMessage For="() => _createStandModel.PenaltyInMinutes" />
         </div>
 
         <div class="form-group">
@@ -73,7 +73,7 @@
         {
             Name = _stand.Name,
             Location = _stand.Location,
-            PenaltyInSeconds = (int) _stand.Penalty.TotalSeconds,
+            PenaltyInMinutes = (int) _stand.Penalty.TotalMinutes,
             Supervisor = _stand.Supervisor
         };
         _editContext = new EditContext(_createStandModel);
@@ -99,7 +99,7 @@
 
         targetStand.Name = _createStandModel.Name;
         targetStand.Location = _createStandModel.Location;
-        targetStand.Penalty = TimeSpan.FromSeconds(_createStandModel.PenaltyInSeconds);
+        targetStand.Penalty = TimeSpan.FromMinutes(_createStandModel.PenaltyInMinutes);
         targetStand.SupervisorId = _createStandModel.Supervisor?.Id;
 
         await db.SaveChangesAsync();

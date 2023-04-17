@@ -9,7 +9,7 @@
         public string Location { get; set; } = string.Empty;
 
         [Required]
-        public int PenaltyInSeconds { get; set; }
+        public int PenaltyInMinutes { get; set; }
 
         public User? Supervisor { get; set; }
     }
