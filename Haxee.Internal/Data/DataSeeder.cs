@@ -72,7 +72,8 @@
             var attendee = new Attendee
             {
                 UserId = participant1.Id,
-                YearId = year.Id
+                YearId = year.Id,
+                CardId = "testing_id"
             };
 
             db.Attendees.Add(attendee);

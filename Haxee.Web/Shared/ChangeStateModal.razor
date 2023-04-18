@@ -27,13 +27,45 @@
     private int? _standVisitId;
     private StandVisit? _standVisit;
 
-    public async void Open(int standId, int? standVisitId)
+    public async void Open(int standId, int? standVisitId = null, string? lastReceivedCardId = null)
     {
         _standId = standId;
         _standVisitId = standVisitId;
+        _lastReceivedCardId = lastReceivedCardId;
 
         using var db = _dbContextFactory.CreateDbContext();
-        _standVisit = await db.StandVisits.FirstOrDefaultAsync(x => x.Id.Equals(standVisitId));
+
+        if (lastReceivedCardId is null)
+            _standVisit = await db.StandVisits.FirstOrDefaultAsync(x => x.Id.Equals(standVisitId));
+        else {
+            _standVisit = await db.StandVisits
+                .Include(x => x.Attendee)
+                .Where(x => x.StandId.Equals(standId))
+                .FirstOrDefaultAsync(x => lastReceivedCardId.Equals(x.Attendee.CardId));
+
+            if(_standVisit is null)
+            {
+                db.StandVisits.Add(new StandVisit
+                {
+                    Status = StandVisitStatus.Waiting,
+                    AttendeeId = await db.Attendees
+                            .Where(x => lastReceivedCardId.Equals(x.CardId))
+                        .Select(x => x.Id)
+                        .FirstOrDefaultAsync(),
+                    StandId = standId,
+                    ArrivalTime = DateTime.Now
+                });
+
+                await db.SaveChangesAsync();
+
+                using var db2 = _dbContextFactory.CreateDbContext();
+
+                _standVisit = await db2.StandVisits
+                    .Include(x => x.Attendee)
+                    .Where(x => x.StandId.Equals(standId))
+                    .FirstOrDefaultAsync(x => lastReceivedCardId.Equals(x.Attendee.CardId));
+            }
+        }
 
         base.Open();
     }
@@ -104,7 +136,7 @@
 
     private async Task ArrivalStart(StandVisitStatus desiredStatus)
     {
-        if (desiredStatus == StandVisitStatus.Done || Modal is null || _standVisitId is null || _standId is null || _lastReceivedCardId is null)
+        if (desiredStatus == StandVisitStatus.Done || Modal is null || _standId is null || _lastReceivedCardId is null)
             return;
 
         using var db = _dbContextFactory.CreateDbContext();
@@ -130,7 +162,7 @@
 
     private async Task ArrivedAndSkip()
     {
-        if (Modal is null || _standVisitId is null || _standId is null || _lastReceivedCardId is null)
+        if (Modal is null || _standId is null || _lastReceivedCardId is null)
             return;
 
         using var db = _dbContextFactory.CreateDbContext();

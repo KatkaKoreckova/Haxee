@@ -1,5 +1,6 @@
 ﻿@page "/current/stand/{StandNumber:int}"
 @inject IDbContextFactory<DataContext> _dbContextFactory
+@inject IJSRuntime _js
 
 <AddPenaltyModal @ref="_addPenaltyModal" OnSubmit="LoadStandAsync" />
 <ChangeStateModal @ref="_changeStateModal" OnSubmit="LoadStandAsync" />
@@ -28,6 +29,18 @@
             return;
 
         await LoadStandAsync();
+
+        var reference = DotNetObjectReference.Create(this);
+        await _js.InvokeVoidAsync("initializeStandPage", reference);
+    }
+
+    [JSInvokable]
+    public void OnCardRead(string cardId)
+    {
+        if (_stand is null)
+            return;
+
+        _changeStateModal?.Open(_stand.Id, lastReceivedCardId: cardId);
     }
 
     private async Task LoadStandAsync()
