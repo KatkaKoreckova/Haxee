@@ -113,25 +113,25 @@ namespace Haxee.MQTTConsumer.Services
             return valid;
         }
 
-        public static Status GetStatusFromString(string s)
+        public static YearStatus GetStatusFromString(string s)
         {
             switch(s) {
                 case "Start":
-                    return Status.Start;
+                    return YearStatus.Start;
                 case "End":
-                    return Status.End;
+                    return YearStatus.End;
                 case "Waiting":
-                    return Status.Waiting;
+                    return YearStatus.Waiting;
                 case "Working":
-                    return Status.Working;
+                    return YearStatus.Working;
                 case "Done":
-                    return Status.Done;
+                    return YearStatus.Done;
                 default:
-                    return Status.None;
+                    return YearStatus.None;
             }
         }
 
-        public static AttendeeInformation? ParseMessage(string message)
+        public static AttendeeInformationDTO? ParseMessage(string message)
         {
             List<string> m = message.Split('|').ToList();
 
@@ -142,16 +142,16 @@ namespace Haxee.MQTTConsumer.Services
             if (!DateTime.TryParse(m[1], out dateTime))
                 return null;
 
-            Status s = GetStatusFromString(m[2]);
+            YearStatus s = GetStatusFromString(m[2]);
 
-            if (s is Status.None)
+            if (s is YearStatus.None)
                 return null;
 
-            AttendeeInformation attendeeInformation = new AttendeeInformation
+            AttendeeInformationDTO attendeeInformation = new AttendeeInformationDTO
             {
                 CardId = m[0].Replace(" ", "").ToUpper(),
                 DateTime = dateTime,
-                Status = (Entities.Enums.Status)s
+                Status = (Entities.Enums.YearStatus)s
             };
 
             return attendeeInformation;

@@ -1,25 +1,30 @@
 ﻿@page "/hifilist"
 @inject DataContext _dataContext
+@inject NavigationManager _navigationManager
 
 <PageTitle>Haxee - HiFi Ralley</PageTitle>
 
 <h1 class="title">HiFi Ralley</h1>
-@foreach(var hifi in _hifis)
+@foreach(var year in _years.OrderByDescending(x => x.YearValue))
 {
-    <div>
-        @hifi.Year @hifi.Stands.Count()
+    var attendees = year.Attendees.Where(x => x.StartedAt != null && x.EndedAt != null);
+    <div @onclick='() => _navigationManager.NavigateTo("/hifiyear/" + year.YearValue)'>
+        @year.YearValue @year.Stands.Count() @(attendees.Any() ? TimeSpan.FromSeconds(attendees.Average(x => (x.EndedAt! - x.StartedAt!).Value.TotalSeconds)).ToString() : "-")
     </div>
 }
 
 @code {
-    private List<HifiArchive> _hifis = new();
+    private List<Year> _years = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
             return;
 
-        _hifis = await _dataContext.HifiArchives.Include(x => x.Stands).ToListAsync();
+        _years = await _dataContext.Years
+            .Include(x => x.Stands)
+            .ToListAsync();
+
         StateHasChanged();
     }
 }

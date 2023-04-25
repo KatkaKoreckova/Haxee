@@ -1,0 +1,78 @@
+﻿@if (_triggeredShow)
+{
+    <div data-active="@_shown.ToString()" class="z-10 fixed top-0 left-0 w-screen h-screen bg-gray-600 bg-opacity-0
+		flex justify-center items-center ease-in-out transition-all
+		data-[active=True]:bg-opacity-40">
+        <div data-active="@_shown.ToString()" class="bg-white bg-opacity-0 flex flex-col divide-y
+			rounded-lg m-5 transition-all ease-in-out overflow-hidden
+			data-[active=False]:translate-y-[500%] data-[active=True]:bg-opacity-100" @onclick="() => {}">
+            <section class="flex flex-row items-center py-3 px-7 justify-between w-100 gap-10">
+                <h5 class="">@Title</h5>
+                <i class="fa fa-xmark cursor-pointer text-gray-400 hover:text-gray-800" @onclick="Cancel"></i>
+            </section>
+            <section class="py-5 px-7 overflow-y-auto max-h-[80vh]">@ChildContent</section>
+            <section class="py-5 px-7 flex flex-row justify-end gap-5">
+                <button class="px-5 py-2 bg-gray-500 hover:bg-gray-700" @onclick="Cancel">Cancel</button>
+                <button class='px-5 py-2 @(RedSubmit ? "bg-red-500 hover:bg-red-700" : "")' @onclick="Submit">Done</button>
+            </section>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public required string Title { get; set; }
+
+    [Parameter]
+    public required RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+
+    [Parameter]
+    public EventCallback OnSubmitAttempted { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    [Parameter]
+    public bool RedSubmit { get; set; }
+
+    private bool _triggeredShow;
+    private bool _shown;
+
+    public async Task Show()
+    {
+        if (!_triggeredShow)
+        {
+            _triggeredShow = true;
+            StateHasChanged();
+            await Task.Delay(5);
+        }
+        _shown = true;
+        StateHasChanged();
+    }
+
+    public async Task Close()
+    {
+        _shown = false;
+        StateHasChanged();
+        await Task.Delay(200);
+        _triggeredShow = false;
+        StateHasChanged();
+    }
+
+    private async Task Cancel()
+    {
+        await OnClose.InvokeAsync();
+
+        await OnCancel.InvokeAsync();
+
+        await Close();
+    }
+
+    private async Task Submit()
+    {
+        await OnSubmitAttempted.InvokeAsync();
+    }
+}

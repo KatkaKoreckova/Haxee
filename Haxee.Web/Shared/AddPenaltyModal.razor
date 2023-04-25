@@ -1,0 +1,61 @@
+﻿@inherits AbstractModal
+@inject IDbContextFactory<DataContext> _dbContextFactory
+
+<Modal @ref="Modal" Title="Pridat penaltu" OnSubmitAttempted="OnSubmitAttempted">
+    <EditForm class="form" EditContext="_editContext" OnSubmit="OnSubmitAttempted">
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <Name For="() => _addPenaltyModel.PenaltyInMinutes" />
+            <InputNumber class="form-control" @bind-Value="_addPenaltyModel.PenaltyInMinutes" />
+            <ValidationMessage For="() => _addPenaltyModel.PenaltyInMinutes" />
+        </div>
+
+        <button class="hidden" type="submit">Pridat</button>
+    </EditForm>
+</Modal>
+
+@code {
+    [Parameter]
+    public EventCallback OnSubmit { get; set; }
+
+    private AddPenaltyModel _addPenaltyModel = new();
+
+    private EditContext? _editContext;
+
+    private StandVisit? _standVisit;
+
+    public async void Open(int standVisitId)
+    {
+        _addPenaltyModel = new();
+        _editContext = new EditContext(_addPenaltyModel);
+
+        using var db = _dbContextFactory.CreateDbContext();
+        _standVisit = await db.StandVisits.FirstOrDefaultAsync(x => x.Id.Equals(standVisitId));
+
+        base.Open();
+    }
+
+    private async Task OnSubmitAttempted()
+    {
+        if (Modal is null || _editContext is null || _addPenaltyModel is null || _standVisit is null)
+            return;
+
+        if (!_editContext.Validate())
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var targetStand = await db.Stands
+            .FirstOrDefaultAsync(x => x.Id.Equals(_standVisit.Id));
+
+        if (targetStand is null)
+            return;
+
+        targetStand.Penalty.Add(TimeSpan.FromMinutes(_addPenaltyModel.PenaltyInMinutes));
+        await db.SaveChangesAsync();
+
+        await Modal.Close();
+        await OnSubmit.InvokeAsync();
+    }
+}

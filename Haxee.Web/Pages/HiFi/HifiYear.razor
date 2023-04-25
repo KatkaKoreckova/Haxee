@@ -1,0 +1,28 @@
+﻿@page "/hifiyear/{Year:int}"
+
+<h3>HifiYear</h3>
+
+<a href="/stands/@Year">Stanoviska</a>
+<br/>
+@if (Year.Equals(DateTime.Now.Year))
+{
+    <a href="/leaderboardMonitor/@Year">Leaderboard</a>
+} else
+{
+    <a href="/hifileaderboard/@Year">Leaderboard</a>
+}
+<br />
+<a href="/hifiyearstats/@Year">Statistiky</a>
+<br />
+
+@if(Year.Equals(DateTime.Now.Year))
+{
+    <AttendeesStats Year="Year" />
+
+    <StandsStats Year="Year" />
+}
+
+@code {
+    [Parameter]
+    public int Year { get; set; }
+}

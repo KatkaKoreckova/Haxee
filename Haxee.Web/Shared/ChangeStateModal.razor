@@ -1,0 +1,190 @@
+﻿@inherits AbstractModal
+@inject IDbContextFactory<DataContext> _dbContextFactory
+
+<Modal @ref="Modal" Title="Zmena stavu">
+    @if(_standVisitId is null)
+    {
+        <button @onclick="() => ArrivalStart(StandVisitStatus.Waiting)">Zacat cakanie</button>
+        <button @onclick="() => ArrivalStart(StandVisitStatus.Working)">Zacat pracu</button>
+        <button @onclick="ArrivedAndSkip">Preskocit</button>
+    } else
+    {
+        if(_standVisit is not null)
+        {
+            <button disabled="@(_standVisit.Status != StandVisitStatus.Waiting)" @onclick=EndWait>Ukoncit cakanie a zacat pracu</button>
+            <button disabled="@(_standVisit.Status != StandVisitStatus.Working)" @onclick=EndWork>Ukoncit pracu</button>
+            <button @onclick=SkipStand>Preskocit</button>
+        }
+    }
+</Modal>
+
+@code {
+    [Parameter]
+    public EventCallback OnSubmit { get; set; }
+
+    private string? _lastReceivedCardId;
+    private int? _standId;
+    private int? _standVisitId;
+    private StandVisit? _standVisit;
+
+    public async void Open(int standId, int? standVisitId = null, string? lastReceivedCardId = null)
+    {
+        _standId = standId;
+        _standVisitId = standVisitId;
+        _lastReceivedCardId = lastReceivedCardId;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        if (lastReceivedCardId is null)
+            _standVisit = await db.StandVisits.FirstOrDefaultAsync(x => x.Id.Equals(standVisitId));
+        else {
+            _standVisit = await db.StandVisits
+                .Include(x => x.Attendee)
+                .Where(x => x.StandId.Equals(standId))
+                .FirstOrDefaultAsync(x => lastReceivedCardId.Equals(x.Attendee.CardId));
+
+            if(_standVisit is null)
+            {
+                db.StandVisits.Add(new StandVisit
+                {
+                    Status = StandVisitStatus.Waiting,
+                    AttendeeId = await db.Attendees
+                            .Where(x => lastReceivedCardId.Equals(x.CardId))
+                        .Select(x => x.Id)
+                        .FirstOrDefaultAsync(),
+                    StandId = standId,
+                    ArrivalTime = DateTime.Now
+                });
+
+                await db.SaveChangesAsync();
+
+                using var db2 = _dbContextFactory.CreateDbContext();
+
+                _standVisit = await db2.StandVisits
+                    .Include(x => x.Attendee)
+                    .Where(x => x.StandId.Equals(standId))
+                    .FirstOrDefaultAsync(x => lastReceivedCardId.Equals(x.Attendee.CardId));
+            }
+        }
+
+        base.Open();
+    }
+
+    private async Task EndWait()
+    {
+        if (Modal is null || _standVisitId is null)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+        var targetVisit = await db.StandVisits.FirstOrDefaultAsync(x => x.Id.Equals(_standVisitId));
+
+        if (targetVisit is null)
+            return;
+
+        targetVisit.Status = StandVisitStatus.Working;
+        targetVisit.EndWaitTime = DateTime.Now;
+
+        await db.SaveChangesAsync();
+
+        await Modal.Close();
+        await OnSubmit.InvokeAsync();
+    }
+
+    private async Task EndWork()
+    {
+        if (Modal is null || _standVisitId is null)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+        var targetVisit = await db.StandVisits.FirstOrDefaultAsync(x => x.Id.Equals(_standVisitId));
+
+        if (targetVisit is null)
+            return;
+
+        targetVisit.Status = StandVisitStatus.Done;
+        targetVisit.LeaveTime = DateTime.Now;
+
+        await db.SaveChangesAsync();
+
+        await Modal.Close();
+        await OnSubmit.InvokeAsync();
+    }
+
+    private async Task SkipStand()
+    {
+        if (Modal is null || _standVisitId is null)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+        var targetVisit = await db.StandVisits
+            .Include(x => x.Stand)
+            .FirstOrDefaultAsync(x => x.Id.Equals(_standVisitId));
+
+        if (targetVisit is null)
+            return;
+
+        targetVisit.Status = StandVisitStatus.Done;
+        targetVisit.LeaveTime = DateTime.Now;
+        targetVisit.Skipped = true;
+        targetVisit.Penalty.Add(targetVisit.Stand.Penalty);
+
+        await db.SaveChangesAsync();
+
+        await Modal.Close();
+        await OnSubmit.InvokeAsync();
+    }
+
+    private async Task ArrivalStart(StandVisitStatus desiredStatus)
+    {
+        if (desiredStatus == StandVisitStatus.Done || Modal is null || _standId is null || _lastReceivedCardId is null)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var targetAttendee = await db.Attendees.FirstOrDefaultAsync(x => _lastReceivedCardId.Equals(x.CardId));
+
+        if (targetAttendee is null)
+            return;
+
+        db.StandVisits.Add(new StandVisit
+        {
+            StandId = (int) _standId,
+            ArrivalTime = DateTime.Now,
+            Status = desiredStatus,
+            AttendeeId = targetAttendee.Id
+        });
+
+        await db.SaveChangesAsync();
+
+        await Modal.Close();
+        await OnSubmit.InvokeAsync();
+    }
+
+    private async Task ArrivedAndSkip()
+    {
+        if (Modal is null || _standId is null || _lastReceivedCardId is null)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var targetAttendee = await db.Attendees.FirstOrDefaultAsync(x => _lastReceivedCardId.Equals(x.CardId));
+
+        if (targetAttendee is null)
+            return;
+
+        db.StandVisits.Add(new StandVisit
+            {
+                StandId = (int)_standId,
+                ArrivalTime = DateTime.Now,
+                LeaveTime = DateTime.Now,
+                Skipped = true,
+                Status = StandVisitStatus.Done,
+                AttendeeId = targetAttendee.Id
+            });
+
+        await db.SaveChangesAsync();
+
+        await Modal.Close();
+        await OnSubmit.InvokeAsync();
+    }
+}

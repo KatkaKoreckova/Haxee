@@ -1,0 +1,36 @@
+﻿@page "/hifiyearstats/{Year:int}"
+@inject IDbContextFactory<DataContext> _dbContextFactory
+
+@if(_year is not null)
+{
+    foreach(var stand in _year.Stands.OrderBy(x => x.Number))
+    {
+        <label>@stand.Number.</label>
+        <label>Zvladli to @stand.StandVisits.Where(x => x.Status == StandVisitStatus.Done && !x.Skipped).Count()</label>
+        <label>Nedokoncili @stand.StandVisits.Where(x => !x.Skipped && x.Penalty.TotalSeconds > 0).Count()</label>
+        <label>Preskocili @stand.StandVisits.Where(x => x.Skipped).Count()</label> <br/>
+    }
+}
+
+@code {
+    [Parameter]
+    public int Year { get; set; }
+
+    private Year? _year;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        _year = await db.Years
+            .Include(x => x.Stands)
+                .ThenInclude(x => x.StandVisits)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.YearValue.Equals(Year));
+
+        StateHasChanged();
+    }
+}

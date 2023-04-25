@@ -1,0 +1,46 @@
+﻿@inherits AbstractModal
+@inject IDbContextFactory<DataContext> _dbContextFactory
+
+<Modal @ref="Modal" Title="Zmazať stanovisko" OnSubmitAttempted="OnSubmitAttempted" RedSubmit="true">
+    Ste si istý, že chcete zmazať stanovisko <b>@_standName</b>?<br />
+    <b>Táto akcia sa nedá navrátiť.</b>
+</Modal>
+
+@code {
+    [CascadingParameter(Name = Constants.CascadingParameters.CurrentAccount)]
+    private User _user { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback OnSubmit { get; set; }
+
+    private int? _standId;
+    private string? _standName;
+
+    public void Open(int standId, string standName)
+    {
+        _standId = standId;
+        _standName = standName;
+
+        StateHasChanged();
+        base.Open();
+    }
+
+    private async Task OnSubmitAttempted()
+    {
+        if (Modal is null)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var targetStand = await db.Stands.FirstOrDefaultAsync(x => x.Id.Equals(_standId));
+
+        if (targetStand is null)
+            return;
+
+        db.Stands.Remove(targetStand);
+        await db.SaveChangesAsync();
+
+        await Modal.Close();
+        await OnSubmit.InvokeAsync();
+    }
+}

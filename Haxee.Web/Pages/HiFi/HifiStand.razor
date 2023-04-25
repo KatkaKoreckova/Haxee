@@ -1,0 +1,60 @@
+﻿@page "/current/stand/{StandNumber:int}"
+@inject IDbContextFactory<DataContext> _dbContextFactory
+@inject IJSRuntime _js
+
+<AddPenaltyModal @ref="_addPenaltyModal" OnSubmit="LoadStandAsync" />
+<ChangeStateModal @ref="_changeStateModal" OnSubmit="LoadStandAsync" />
+
+@if(_stand is not null)
+{
+    <h1>Stanovisko @_stand.Number — @_stand.Name</h1>
+
+    @foreach(var ongoingVisit in _stand.StandVisits.Where(x => x.Status != StandVisitStatus.Done))
+    {
+        <label>@ongoingVisit.Attendee.User.Name @ongoingVisit.Status.GetDisplayName() <button @onclick="() => _changeStateModal?.Open(_stand.Id, ongoingVisit.Id)">Zmena statusu</button> <button @onclick="() => _addPenaltyModal?.Open(ongoingVisit.Id)">Penalta</button></label>
+    }
+}
+
+@code {
+    [Parameter]
+    public int StandNumber { get; set; }
+
+    private Stand? _stand;
+    private AddPenaltyModal? _addPenaltyModal;
+    private ChangeStateModal? _changeStateModal;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        await LoadStandAsync();
+
+        var reference = DotNetObjectReference.Create(this);
+        await _js.InvokeVoidAsync("initializeStandPage", reference);
+    }
+
+    [JSInvokable]
+    public void OnCardRead(string cardId)
+    {
+        if (_stand is null)
+            return;
+
+        _changeStateModal?.Open(_stand.Id, lastReceivedCardId: cardId);
+    }
+
+    private async Task LoadStandAsync()
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+        _stand = await db.Stands
+            .Include(x => x.StandVisits)
+                .ThenInclude(x => x.Attendee)
+                    .ThenInclude(x => x.User)
+            .FirstOrDefaultAsync(x => x.Number.Equals(StandNumber));
+
+        if (_stand is null)
+            return;
+
+        StateHasChanged();
+    }
+}

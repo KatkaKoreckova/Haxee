@@ -1,5 +1,10 @@
 ﻿@page "/home"
+@inject IDbContextFactory<DataContext> _dbContextFactory
 
 <PageTitle>Haxee - Home</PageTitle>
 
 <h1 class="title">Home</h1>
+
+<AttendeesStats Year="DateTime.Now.Year"/>
+
+<StandsStats Year="DateTime.Now.Year"/>

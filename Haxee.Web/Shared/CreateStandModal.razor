@@ -1,0 +1,111 @@
+﻿@inherits AbstractModal
+@inject IDbContextFactory<DataContext> _dbContextFactory
+
+<Modal @ref="Modal" Title="Create stand" OnSubmitAttempted="OnSubmitAttempted">
+    <EditForm class="form" EditContext="_editContext" OnSubmit="OnSubmitAttempted">
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <Name For="() => _createStandModel.Name" />
+            <InputText class="form-control" @bind-Value="_createStandModel.Name" />
+            <ValidationMessage For="() => _createStandModel.Name" />
+        </div>
+
+        <div class="form-group">
+            <Name For="() => _createStandModel.Location" />
+            <InputText class="form-control" @bind-Value="_createStandModel.Location" />
+            <ValidationMessage For="() => _createStandModel.Location" />
+        </div>
+
+        <div class="form-group">
+            <Name For="() => _createStandModel.PenaltyInMinutes" />
+            <InputNumber class="form-control" @bind-Value="_createStandModel.PenaltyInMinutes" />
+            <ValidationMessage For="() => _createStandModel.PenaltyInMinutes" />
+        </div>
+
+        <div class="form-group">
+            <Name For="() => _createStandModel.Supervisor" />
+            <BlazoredTypeahead MaximumSuggestions="999"
+                               MinimumLength="0"
+                               SearchMethod="SearchInstructors"
+                               @bind-Value="_createStandModel.Supervisor">
+                <SelectedTemplate Context="typeaheadContext">
+                    @typeaheadContext?.Name
+                </SelectedTemplate>
+                <ResultTemplate Context="typeaheadContext">
+                    @typeaheadContext?.Name
+                </ResultTemplate>
+                <NotFoundTemplate Context="typeaheadContext">
+                    Žiadne výsledky
+                </NotFoundTemplate>
+            </BlazoredTypeahead>
+            <ValidationMessage For="() => _createStandModel.Supervisor" />
+        </div>
+
+        <button class="hidden" type="submit">Create</button>
+    </EditForm>
+</Modal>
+
+@code {
+    [Parameter]
+    public EventCallback OnSubmit { get; set; }
+
+    private int _yearId { get; set; }
+
+    private CreateStandModel _createStandModel = new();
+
+    private EditContext? _editContext;
+
+    private List<User> _instructors = new();
+
+    public async void Open(int yearId)
+    {
+        _yearId = yearId;
+
+        _createStandModel = new();
+        _editContext = new EditContext(_createStandModel);
+
+        using var db = _dbContextFactory.CreateDbContext();
+        _instructors = await db.Users.Where(x => x.UserType == UserType.Instructor).ToListAsync();
+
+        base.Open();
+    }
+
+    private async Task OnSubmitAttempted()
+    {
+        if (Modal is null || _editContext is null || _createStandModel is null)
+            return;
+
+        if (!_editContext.Validate())
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var highestStand = await db.Stands
+            .AsNoTracking()
+            .Where(x => x.YearId.Equals(_yearId))
+            .OrderByDescending(x => x.Number)
+            .FirstOrDefaultAsync();
+
+        var newStand = new Stand()
+        {
+            Name = _createStandModel.Name,
+            Location = _createStandModel.Location,
+            Number = highestStand is null ? 1 : highestStand.Number + 1,
+            Penalty = TimeSpan.FromMinutes(_createStandModel.PenaltyInMinutes),
+            YearId = _yearId,
+            SupervisorId = _createStandModel.Supervisor?.Id
+        };
+
+        db.Stands.Add(newStand);
+        await db.SaveChangesAsync();
+
+        await Modal.Close();
+        await OnSubmit.InvokeAsync();
+    }
+
+    private async Task<IEnumerable<User>> SearchInstructors(string searchText)
+    {
+        return await Task.FromResult(_instructors!.Where(x => x.Name.Has(searchText)).ToList());
+    }
+}

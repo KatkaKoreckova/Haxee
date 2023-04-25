@@ -1,4 +1,6 @@
-﻿namespace Haxee.MQTTConsumer.Services
+﻿using Haxee.Entities.Entities.Mqtt;
+
+namespace Haxee.MQTTConsumer.Services
 {
     public class DrawService
     {

@@ -1,26 +1,82 @@
 ﻿@page "/kids"
-@inject DataContext _dataContext
+@inject IDbContextFactory<DataContext> _dbContextFactory
 
 <PageTitle>Haxee - Kids</PageTitle>
 
 <h1 class="title">Účastníci</h1>
 
-@foreach(var user in _users)
+@foreach(var attendee in _attendees)
 {
     <div>
-        @user.Name @user.Email @user.DateOfBirth
+        @attendee.User.Name @attendee.User.Email @attendee.User.DateOfBirth @attendee.StandVisits.Count/@attendee.Year.Stands.Count
+        @if(attendee.EndedAt is not null)
+        {
+            <label>ukoncene</label>
+        } else if(attendee.StartedAt is null)
+        {
+            <label @onclick="() => StartAttendee(attendee)">START</label>
+        } else
+        {
+            <label @onclick="() => EndAttendee(attendee)">END</label>
+        }
     </div>
 }
 
 @code {
-    private List<User> _users = new();
+    private List<Attendee> _attendees = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
             return;
 
-        _users = await _dataContext.Users.Where(x => x.UserType == Entities.Enums.UserType.Kid).ToListAsync();
+        await LoadAttendees();
+    }
+
+    private async Task StartAttendee(Attendee attendee)
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var targetAttendee = await db.Attendees.FindAsync(attendee.Id);
+
+        if (targetAttendee is null)
+            return;
+
+        targetAttendee.StartedAt = DateTime.Now;
+
+        await db.SaveChangesAsync();
+        await LoadAttendees();
+    }
+
+    private async Task EndAttendee(Attendee attendee)
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var targetAttendee = await db.Attendees.FindAsync(attendee.Id);
+
+        if (targetAttendee is null)
+            return;
+
+        targetAttendee.EndedAt = DateTime.Now;
+
+        await db.SaveChangesAsync();
+        await LoadAttendees();
+    }
+
+    private async Task LoadAttendees()
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+
+        _attendees = await db.Attendees
+            .Include(x => x.User)
+            .Include(x => x.StandVisits)
+            .Include(x => x.Year)
+                .ThenInclude(x => x.Stands)
+            .Where(x => x.Year.YearValue.Equals(DateTime.Now.Year))
+            .Where(x => x.User.UserType == Entities.Enums.UserType.Kid)
+            .AsNoTracking()
+            .ToListAsync();
+
         StateHasChanged();
     }
 }

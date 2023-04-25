@@ -1,11 +1,11 @@
-﻿namespace Haxee.Entities.DTOs
+﻿namespace Haxee.Entities.Entities.Mqtt
 {
     public class CurrentYear
     {
-        public string BrokerIP { get; set; } = String.Empty;
+        public string BrokerIP { get; set; } = string.Empty;
         public int BrokerPort { get; set; }
-        public string ClientName { get; set; } = String.Empty;
-        public string GlobalTopic { get; set; } = String.Empty;
+        public string ClientName { get; set; } = string.Empty;
+        public string GlobalTopic { get; set; } = string.Empty;
         public int Year { get; set; }
 
         private static CurrentYear? _instance = null;
