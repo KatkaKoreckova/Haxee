@@ -13,7 +13,7 @@
 @foreach(var stand in _stands.OrderBy(x => x.Number))
 {
     <div @onclick='() => _navigationManager.NavigateTo("/current/stand/" + stand.Number)'>
-        @stand.Name @stand.Location @(stand.Supervisor?.Name ?? "nepriradený inštruktor") <label @onclick="() => _editStandModal?.Open(stand.Id)">edit</label> <label @onclick="() => _deleteStandModal?.Open(stand.Id, stand.Name)">delete</label>
+        @stand.Name @stand.Location @(stand.Supervisor?.Name ?? "nepriradený inštruktor") <label @onclick="() => _editStandModal?.Open(stand.Id)" @onclick:stopPropagation=true>edit</label> <label @onclick="() => _deleteStandModal?.Open(stand.Id, stand.Name)" @onclick:stopPropagation=true>delete</label>
     </div>
 }
 
