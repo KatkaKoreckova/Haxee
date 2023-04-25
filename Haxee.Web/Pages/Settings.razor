@@ -39,7 +39,7 @@
         _changeSettingsModel = new ChangeSettingsModel
         {
             FirstName = firstname,
-            LastName = name.Replace(firstname, "").Replace(" ", ""),
+            LastName = name.Replace(firstname, "").Trim(),
             Email = User.Email
         };
 
