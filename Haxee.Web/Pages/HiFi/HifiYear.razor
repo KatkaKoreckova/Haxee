@@ -1,25 +1,54 @@
 ﻿@page "/hifiyear/{Year:int}"
 
-<h3>HifiYear</h3>
+<h1 class="title">Hifi @Year</h1>
 
-<a href="/stands/@Year">Stanoviska</a>
-<br/>
-@if (Year.Equals(DateTime.Now.Year))
-{
-    <a href="/leaderboardMonitor/@Year">Leaderboard</a>
-} else
-{
-    <a href="/hifileaderboard/@Year">Leaderboard</a>
-}
-<br />
-<a href="/hifiyearstats/@Year">Statistiky</a>
-<br />
+<div class="mt-2 grid gap-4 lg:gap-6 md:grid-cols-3 lg:grid-cols-4">
+    <button onclick="location.href='/stands/@Year'" class="button-card">
+        <h1 class="text-mainPurple"><i class="fa-solid fa-map-location-dot"></i></h1>
+        <h2 class=" text-darkBlue">Stanoviska</h2>
+    </button>
+
+    @if (Year.Equals(DateTime.Now.Year))
+    {
+        <button onclick="location.href='/leaderboardMonitor/@Year'" class="button-card">
+            <h1 class="text-mainPurple"><i class="fa-solid fa-ranking-star"></i></h1>
+            <h2 class=" text-darkBlue">Leaderboard</h2>
+        </button>
+    } else
+    {
+        <button onclick="location.href='/hifileaderboard/@Year'" class="button-card">
+            <h1 class="text-mainPurple"><i class="fa-solid fa-ranking-star"></i></h1>
+            <h2 class=" text-darkBlue">Leaderboard</h2>
+        </button>
+    }
+
+    <button onclick="location.href='/hifiyearstats/@Year'" class="button-card">
+        <h1 class="text-mainPurple"><i class="fa-solid fa-chart-line"></i></h1>
+        <h2 class=" text-darkBlue">Štatistika</h2>
+    </button>
+
+    @if(Year.Equals(DateTime.Now.Year))
+    {
+        <button onclick="location.href='/kids'" class="button-card">
+            <h1 class="text-mainPurple"><i class="fa-solid fa-user-group"></i></h1>
+            <h2 class=" text-darkBlue">Účastníci</h2>
+        </button>
+    }
+</div>
+
 
 @if(Year.Equals(DateTime.Now.Year))
 {
-    <AttendeesStats Year="Year" />
+    <div class="mt-20">
+        <h2 class="text-orange font-bold">Aktuálne info</h2>
+        <div class="mt-2 grid gap-4 lg:gap-6 md:grid-cols-3 lg:grid-cols-4">
+            <div class="flex flex-col sm:items-stretch sm:flex-row mt-2 space-y-4 sm:space-y-0 sm:space-x-4">
+                <AttendeesStats Year="Year"/>
 
-    <StandsStats Year="Year" />
+                <StandsStats Year="Year"/>
+            </div>
+        </div>
+    </div>
 }
 
 @code {
