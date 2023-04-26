@@ -8,19 +8,56 @@
 <EditStandModal @ref="_editStandModal" OnSubmit="LoadStands" />
 <DeleteStandModal @ref="_deleteStandModal" OnSubmit="LoadStands" />
 
-<h1 class="title">Stanoviska</h1>
+<div class="flex flex-row justify-between">
+    <h1 class="title">Stanoviska 2023</h1>
+    
+    @if(Year.Equals(DateTime.Now.Year) && _currentYear is not null)
+    {
+        <button class="max-h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick="() => _createStandModal?.Open(_currentYear.Id)">
+            <span class="inline-block"><i class="fa-solid fa-plus"></i></span>
+            <span class="hidden md:inline-block">Vytvoriť</span> 
+        </button>
+    }
+</div>
 
-@foreach(var stand in _stands.OrderBy(x => x.Number))
-{
-    <div @onclick='() => _navigationManager.NavigateTo("/current/stand/" + stand.Number)'>
-        @stand.Name @stand.Location @(stand.Supervisor?.Name ?? "nepriradený inštruktor") <label @onclick="() => _editStandModal?.Open(stand.Id)" @onclick:stopPropagation=true>edit</label> <label @onclick="() => _deleteStandModal?.Open(stand.Id, stand.Name)" @onclick:stopPropagation=true>delete</label>
+@if(_stands.Count() > 0) {
+    <div class="mt-2 grid gap-4 lg:gap-6 md:grid-cols-3 lg:grid-cols-4">
+    @foreach(var stand in _stands.OrderBy(x => x.Number))
+    {
+        <div class="w-full bg-slate-100 rounded-md shadow-md shadow-slate-300 p-4">
+            <h1 class="text-mainPurple text-center font-bold">@stand.Id</h1>
+            <h1 class="text-mainPurple text-center font-bold break-before-auto">@stand.Name</h1>
+            <div class="flex flex-row space-x-2 items-center text-darkBlue mt-3">
+                <i class="fa-solid fa-map-location-dot"></i>
+                <h4>@stand.Location</h4>
+            </div>
+            <div class="flex flex-row space-x-2 items-center text-darkBlue mt-3">
+                <i class="fa-solid fa-clock"></i>
+                <h4>@(stand.Supervisor?.Name ?? "nepriradený inštruktor")</h4>
+            </div>
+            <button class="w-full mt-3 button-main" @onclick='() => _navigationManager.NavigateTo("/current/stand/" + stand.Number)'>
+                Detail
+            </button>
+            <button class="w-full mt-1 bg-slate-200" @onclick="() => _editStandModal?.Open(stand.Id)" @onclick:stopPropagation=true>
+                Edit
+            </button>
+            <button class="w-full mt-1 button-delete" @onclick="() => _deleteStandModal?.Open(stand.Id, stand.Name)" @onclick:stopPropagation=true>
+                Delete
+            </button>
+        </div>
+    }
+    </div>
+} else {
+    <div class="flex flex-col space-y-4 mt-10">
+        <div class="flex flex-row justify-center w-full">
+            <img src="/images/reshot-illustration-architects-and-workers-VYQWJ2CB3L.png" class="w-3/4 md:w-2/3 lg:w-1/2" />
+        </div>
+        <h3 class="text-mainPurple font-semibold text-center">
+            Stanoviska sú v štádiu prípravy. Na urýchlenie príprav môžeš zvolať poradu vedúcich do baru.
+        </h3>
     </div>
 }
 
-@if(Year.Equals(DateTime.Now.Year) && _currentYear is not null)
-{
-    <button @onclick="() => _createStandModal?.Open(_currentYear.Id)">Create stand</button>
-}
 
 @code {
     [Parameter]

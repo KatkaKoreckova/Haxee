@@ -197,7 +197,11 @@ h6 {
 }
 
 button {
-    @apply transition duration-200 bg-slate-200 hover:bg-blue text-darkBlue hover:text-white hover:font-normal px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md text-center font-semibold tracking-wide;
+    @apply transition duration-200 hover:bg-slate-300 text-darkBlue px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md text-center font-semibold tracking-wide;
+}
+
+.button-main {
+    @apply transition duration-200 bg-blue hover:bg-orange text-white w-full rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block;
 }
 
 .button-submit {
