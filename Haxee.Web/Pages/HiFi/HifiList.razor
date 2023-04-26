@@ -5,13 +5,27 @@
 <PageTitle>Haxee - HiFi Ralley</PageTitle>
 
 <h1 class="title">HiFi Ralley</h1>
+
+<div class="mt-2 grid gap-4 lg:gap-6 sm:grid-cols-3 lg:grid-cols-4">
 @foreach(var year in _years.OrderByDescending(x => x.YearValue))
 {
     var attendees = year.Attendees.Where(x => x.StartedAt != null && x.EndedAt != null);
-    <div @onclick='() => _navigationManager.NavigateTo("/hifiyear/" + year.YearValue)'>
-        @year.YearValue @year.Stands.Count() @(attendees.Any() ? TimeSpan.FromSeconds(attendees.Average(x => (x.EndedAt! - x.StartedAt!).Value.TotalSeconds)).ToString() : "-")
+    <div class="w-full bg-slate-200 rounded-md shadow-md shadow-slate-300 p-4">
+        <h1 class="text-mainPurple text-center font-bold">@year.YearValue</h1>
+        <div class="flex flex-row space-x-2 items-center text-darkBlue mt-3">
+            <i class="fa-solid fa-map-location-dot"></i>
+            <h4>@year.Stands.Count()</h4>
+        </div>
+        <div class="flex flex-row space-x-2 items-center text-darkBlue mt-3">
+            <i class="fa-solid fa-clock"></i>
+            <h4>@(attendees.Any() ? TimeSpan.FromSeconds(attendees.Average(x => (x.EndedAt! - x.StartedAt!).Value.TotalSeconds)).ToString() : "-")</h4>
+        </div>
+        <button class="w-full mt-3 transition duration-200 bg-blue hover:bg-orange hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick='() => _navigationManager.NavigateTo("/hifiyear/" + year.YearValue)'>
+            Detail
+        </button>
     </div>
 }
+</div>
 
 @code {
     private List<Year> _years = new();
