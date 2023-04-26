@@ -78,6 +78,15 @@
 
             db.Attendees.Add(attendee);
 
+            var attendee2 = new Attendee
+            {
+                UserId = participant2.Id,
+                YearId = year.Id,
+                CardId = "testing_id"
+            };
+
+            db.Attendees.Add(attendee2);
+
             var stand = new Stand 
             { 
                 Location = "Test lokacia ", 

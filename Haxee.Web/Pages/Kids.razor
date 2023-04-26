@@ -5,22 +5,42 @@
 
 <h1 class="title">Účastníci</h1>
 
+<div class="flex flex-col mt-2 space-y-4">
 @foreach(var attendee in _attendees)
 {
-    <div>
-        @attendee.User.Name @attendee.User.Email @attendee.User.DateOfBirth @attendee.StandVisits.Count/@attendee.Year.Stands.Count
-        @if(attendee.EndedAt is not null)
-        {
-            <label>ukoncene</label>
-        } else if(attendee.StartedAt is null)
-        {
-            <label @onclick="() => StartAttendee(attendee)">START</label>
-        } else
-        {
-            <label @onclick="() => EndAttendee(attendee)">END</label>
-        }
+    <div class="bg-slate-200 rounded-md shadow-md shadow-slate-300 flex flex-col border-l-8 border-mint p-3">
+        <div class="flex flex-col md:flex-row justify-between items-center text-darkBlue w-full">
+            <div class="font-bold m-0 w-full md:w-1/2">
+                @attendee.User.Name
+            </div>
+            <div class="flex flex-row items-center w-full md:w-1/2">
+                <div class="w-2/6 text-center">
+                    @attendee.User.DateOfBirth
+                </div>
+                <div class="w-2/6 text-center">
+                    @attendee.StandVisits.Count/@attendee.Year.Stands.Count
+                </div>
+                <div class="w-2/6">
+                    @if(attendee.EndedAt is not null)
+                    {
+                        <div class="text-center">ukoncene</div>
+                    } else if(attendee.StartedAt is null)
+                    {
+                        <label class="w-full transition duration-200 bg-blue hover:bg-orange hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick="() => StartAttendee(attendee)">
+                            Štart
+                        </label>
+                    } else
+                    {
+                        <label class="w-full transition duration-200 bg-yellow hover:bg-orange text-darkBlue px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick="() => EndAttendee(attendee)">
+                            Koniec
+                        </label>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
 }
+</div>
 
 @code {
     private List<Attendee> _attendees = new();
