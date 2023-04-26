@@ -1,6 +1,7 @@
-﻿@page "/leaderboard"
+﻿@inject IDbContextFactory<DataContext> _dbContextFactory
+@page "/leaderboard"
+
+<h1 class="title">Aktuálne poradie</h1>
 <Leaderboard Year="DateTime.Now.Year"></Leaderboard>
 
-@code {
-
-}
+@code {}
