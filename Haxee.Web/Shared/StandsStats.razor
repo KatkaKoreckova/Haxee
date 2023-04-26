@@ -3,9 +3,26 @@
 <div>
     @if (_standStatsModel is not null)
     {
-        <label>Stanoviská</label>
-        <label>Najdlhšie čakanie @(_standStatsModel.LongestWaitStand?.Number.ToString() ?? "-")</label>
-        <label>Najkratšie čakanie @(_standStatsModel.ShortestWaitStand?.Number.ToString() ?? "-")</label>
+        <div class="bg-slate-200 rounded-md shadow-md shadow-slate-300 flex flex-col border-l-8 border-orange p-3 h-full">
+            <div class="flex flex-row items-center text-darkBlue mr-14">
+                <h3 class="self-center font-extralight"><i class="fa-solid fa-map-location-dot"></i></h3>
+                <h3 class="ml-3 self-center">Stanoviská</h3>
+            </div>
+            <div class="grid grid-cols-3 grid-rows-2 gap-2 mt-3">
+                <div class="col-start-1 row-start-1 col-span-2">
+                    Najdlhšie čakanie:
+                </div>
+                <div class="col-start-3 text-orange text-center font-bold row-start-1 col-span-2">
+                    @(_standStatsModel.LongestWaitStand?.Number.ToString() ?? "-")
+                </div>
+                <div class="col-start-1 row-start-2 col-span-2">
+                    Najkratšie čakanie
+                </div>
+                <div class="col-start-3 text-orange text-center font-bold row-start-2 col-span-2">
+                   @(_standStatsModel.ShortestWaitStand?.Number.ToString() ?? "-")
+                </div>
+            </div>
+        </div>
     }
 </div>
 
