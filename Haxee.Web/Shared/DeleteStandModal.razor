@@ -1,9 +1,9 @@
 ﻿@inherits AbstractModal
 @inject IDbContextFactory<DataContext> _dbContextFactory
 
-<Modal @ref="Modal" Title="Zmazať stanovisko" OnSubmitAttempted="OnSubmitAttempted" RedSubmit="true">
-    Ste si istý, že chcete zmazať stanovisko <b>@_standName</b>?<br />
-    <b>Táto akcia sa nedá navrátiť.</b>
+<Modal @ref="Modal" Title="Zmazať stanovisko" SubmitText="Odstrániť" OnSubmitAttempted="OnSubmitAttempted" RedSubmit="true">
+    Ste si istý, že chcete zmazať stanovisko <span class="warning-text">@_standName</span>?<br />
+    <span class="italic">Táto akcia sa nedá navrátiť.</span>
 </Modal>
 
 @code {

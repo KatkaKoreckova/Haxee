@@ -1,7 +1,7 @@
 ﻿@inherits AbstractModal
 @inject IDbContextFactory<DataContext> _dbContextFactory
 
-<Modal @ref="Modal" Title="Vytvoriť stanovisko" OnSubmitAttempted="OnSubmitAttempted">
+<Modal @ref="Modal" Title="Vytvoriť stanovisko" SubmitText="Vytvoriť" OnSubmitAttempted="OnSubmitAttempted">
     <EditForm class="form" EditContext="_editContext" OnSubmit="OnSubmitAttempted">
         <DataAnnotationsValidator />
 

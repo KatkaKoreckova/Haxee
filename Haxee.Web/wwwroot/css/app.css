@@ -1131,6 +1131,10 @@ video {
   text-transform: uppercase;
 }
 
+.italic {
+  font-style: italic;
+}
+
 .leading-normal {
   line-height: 1.5;
 }
@@ -1652,6 +1656,12 @@ button:hover {
   margin-bottom: 0.5rem;
   --tw-text-opacity: 1;
   color: rgb(55 65 81 / var(--tw-text-opacity));
+}
+
+.warning-text {
+  font-weight: 700;
+  --tw-text-opacity: 1;
+  color: hsl(21 100% 55% / var(--tw-text-opacity));
 }
 
 .hover\:bg-darkBlue:hover {

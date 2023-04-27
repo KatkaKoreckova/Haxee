@@ -223,3 +223,7 @@ button {
 .form-group label {
     @apply mb-2 text-gray-700;
 }
+
+.warning-text {
+    @apply text-orange font-bold;
+}
