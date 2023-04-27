@@ -4,15 +4,15 @@
 <Modal @ref="Modal" Title="Zmena stavu">
     @if(_standVisitId is null)
     {
-        <button @onclick="() => ArrivalStart(StandVisitStatus.Waiting)">Zacat cakanie</button>
-        <button @onclick="() => ArrivalStart(StandVisitStatus.Working)">Zacat pracu</button>
-        <button @onclick="ArrivedAndSkip">Preskocit</button>
+        <button @onclick="() => ArrivalStart(StandVisitStatus.Waiting)">Začať čakanie</button>
+        <button @onclick="() => ArrivalStart(StandVisitStatus.Working)">Začať prácu</button>
+        <button @onclick="ArrivedAndSkip">Preskočiť</button>
     } else
     {
         if(_standVisit is not null)
         {
-            <button disabled="@(_standVisit.Status != StandVisitStatus.Waiting)" @onclick=EndWait>Ukoncit cakanie a zacat pracu</button>
-            <button disabled="@(_standVisit.Status != StandVisitStatus.Working)" @onclick=EndWork>Ukoncit pracu</button>
+            <button disabled="@(_standVisit.Status != StandVisitStatus.Waiting)" @onclick=EndWait>Ukončiť čakanie a Začať prácu</button>
+            <button disabled="@(_standVisit.Status != StandVisitStatus.Working)" @onclick=EndWork>Ukončiť prácu</button>
             <button @onclick=SkipStand>Preskocit</button>
         }
     }

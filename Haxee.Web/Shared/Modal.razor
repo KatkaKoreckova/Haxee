@@ -12,8 +12,8 @@
                 </div>
                 <div class="relative p-3">@ChildContent</div>
                 <div class="flex flex-shrink-0 flex-wrap items-center justify-around p-3 border-t border-gray-200 rounded-b-md">
-                    <button class="w-[40%]" @onclick="Cancel">Zrušiť</button>
-                    <button class='w-[40%] @(RedSubmit ? "button-delete" : "button-submit")' @onclick="Submit">@SubmitText</button>
+                    <button class='@((SubmitText is null) ? "w-full" : "w-[40%]")' @onclick="Cancel">Zrušiť</button>
+                    <button class='@((SubmitText is null) ? "hidden" : "w-[40%]") @(RedSubmit ? "button-delete" : "button-submit")' @onclick="Submit">@SubmitText</button>
                 </div>
             </div>
         </div>
@@ -25,7 +25,7 @@
     public required string Title { get; set; }
 
     [Parameter]
-    public required string SubmitText { get; set; }
+    public string? SubmitText { get; set; }
 
     [Parameter]
     public required RenderFragment ChildContent { get; set; }
