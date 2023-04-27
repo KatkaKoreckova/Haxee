@@ -209,7 +209,7 @@ button {
 }
 
 .button-delete {
-    @apply bg-red-200 hover:bg-red-800 text-darkBlue hover:text-white hover:font-normal;
+    @apply bg-red-200 hover:bg-red-800 text-red-800 hover:text-white hover:font-normal;
 }
 
 .button-card {

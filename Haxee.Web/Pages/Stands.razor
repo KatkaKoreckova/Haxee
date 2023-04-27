@@ -22,7 +22,7 @@
 
 @if(_stands.Count() > 0) {
     int i = 1;
-    <div class="mt-2 grid gap-4 lg:gap-6 md:grid-cols-3 lg:grid-cols-4">
+    <div class="mt-2 grid gap-4 lg:gap-6 md:grid-cols-2 lg:grid-cols-4">
     @foreach(var stand in _stands.OrderBy(x => x.Number))
     {
         <div class="w-full bg-slate-100 rounded-md shadow-md shadow-slate-300 p-4">
@@ -39,12 +39,14 @@
             <button class="w-full mt-3 button-main" @onclick='() => _navigationManager.NavigateTo("/current/stand/" + stand.Number)'>
                 Detail
             </button>
-            <button class="w-full mt-1 bg-slate-200" @onclick="() => _editStandModal?.Open(stand.Id)" @onclick:stopPropagation=true>
-                Edit
-            </button>
-            <button class="w-full mt-1 button-delete" @onclick="() => _deleteStandModal?.Open(stand.Id, stand.Name)" @onclick:stopPropagation=true>
-                Delete
-            </button>
+            <div class="flex flex-row space-x-1 mt-1">
+                <button class="w-1/2 bg-slate-200" @onclick="() => _editStandModal?.Open(stand.Id)" @onclick:stopPropagation=true>
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button class="w-1/2 button-delete" @onclick="() => _deleteStandModal?.Open(stand.Id, stand.Name)" @onclick:stopPropagation=true>
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
         </div>
         i++;
     }
