@@ -33,7 +33,7 @@
                 <h4>@stand.Location</h4>
             </div>
             <div class="flex flex-row space-x-2 items-center text-darkBlue mt-3">
-                <i class="fa-solid fa-clock"></i>
+                <i class="fa-solid fa-user-tie"></i>
                 <h4>@(stand.Supervisor?.Name ?? "nepriradený inštruktor")</h4>
             </div>
             <button class="w-full mt-3 button-main" @onclick='() => _navigationManager.NavigateTo("/current/stand/" + stand.Number)'>
