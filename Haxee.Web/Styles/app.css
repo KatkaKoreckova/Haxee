@@ -219,3 +219,7 @@ button {
 .button-card {
     @apply w-full bg-slate-200 rounded-md shadow-md shadow-slate-300 px-4 py-6 space-x-2 hover:bg-yellow;
 }
+
+.form-group label {
+    @apply mb-2 text-gray-700;
+}

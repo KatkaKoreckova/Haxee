@@ -1,20 +1,21 @@
 ﻿@if (_triggeredShow)
 {
-    <div data-active="@_shown.ToString()" class="z-10 fixed top-0 left-0 w-screen h-screen bg-gray-600 bg-opacity-0
-		flex justify-center items-center ease-in-out transition-all
-		data-[active=True]:bg-opacity-40">
-        <div data-active="@_shown.ToString()" class="bg-white bg-opacity-0 flex flex-col divide-y
-			rounded-lg m-5 transition-all ease-in-out overflow-hidden
-			data-[active=False]:translate-y-[500%] data-[active=True]:bg-opacity-100" @onclick="() => {}">
-            <section class="flex flex-row items-center py-3 px-7 justify-between w-100 gap-10">
-                <h5 class="">@Title</h5>
-                <i class="fa fa-xmark cursor-pointer text-gray-400 hover:text-gray-800" @onclick="Cancel"></i>
-            </section>
-            <section class="py-5 px-7 overflow-y-auto max-h-[80vh]">@ChildContent</section>
-            <section class="py-5 px-7 flex flex-row justify-end gap-5">
-                <button class="px-5 py-2 bg-gray-500 hover:bg-gray-700" @onclick="Cancel">Cancel</button>
-                <button class='px-5 py-2 @(RedSubmit ? "bg-red-500 hover:bg-red-700" : "")' @onclick="Submit">Done</button>
-            </section>
+    <div data-active="@_shown.ToString()" class="fixed top-0 left-0 w-full h-full outline-none overflow-x-hidden overflow-y-auto bg-gray-700 ease-in-out transition-all bg-opacity-0 data-[active=True]:bg-opacity-40">
+        <div class="relative max-w-lg mx-auto mt-4">
+            <div data-active="@_shown.ToString()" class="border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current bg-opacity-0 transition-all ease-in-out data-[active=False]:translate-y-[500%] data-[active=True]:bg-opacity-100" @onclick="() => {}">
+                <div class="flex flex-shrink-0 items-center justify-between p-3 border-b border-gray-200 rounded-t-md">
+                    <h5 class="text-xl font-medium leading-normal text-gray-800">@Title</h5>
+                    <button class="box-content text-xl w-4 h-full p-1 font-black text-gray-400 border-none rounded-none focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline hover:bg-transparent hover:shadow-none" @onclick="Cancel">
+                        <i class="fa fa-xmark"></i>
+                    </button>
+                    
+                </div>
+                <div class="relative p-3">@ChildContent</div>
+                <div class="flex flex-shrink-0 flex-wrap items-center justify-around p-3 border-t border-gray-200 rounded-b-md">
+                    <button class="w-[40%]" @onclick="Cancel">Zrušiť</button>
+                    <button class='w-[40%] @(RedSubmit ? "button-delete" : "button-submit")' @onclick="Submit">Vytvoriť</button>
+                </div>
+            </div>
         </div>
     </div>
 }
