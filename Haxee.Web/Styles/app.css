@@ -227,3 +227,7 @@ button {
 .warning-text {
     @apply text-orange font-bold;
 }
+
+button:disabled {
+    @apply opacity-50 cursor-not-allowed;
+}
