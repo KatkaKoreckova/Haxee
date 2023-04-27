@@ -1,7 +1,7 @@
 ﻿@inherits AbstractModal
 @inject IDbContextFactory<DataContext> _dbContextFactory
 
-<Modal @ref="Modal" Title="Edit stand" OnSubmitAttempted="OnSubmitAttempted">
+<Modal @ref="Modal" Title="Edit stand" SubmitText="Uložiť" OnSubmitAttempted="OnSubmitAttempted">
     <EditForm class="form" EditContext="_editContext" OnSubmit="OnSubmitAttempted">
         <DataAnnotationsValidator />
 
@@ -11,19 +11,19 @@
             <ValidationMessage For="() => _createStandModel.Name" />
         </div>
 
-        <div class="form-group">
+        <div class="form-group mt-3">
             <Name For="() => _createStandModel.Location" />
             <InputText class="form-control" @bind-Value="_createStandModel.Location" />
             <ValidationMessage For="() => _createStandModel.Location" />
         </div>
 
-        <div class="form-group">
+        <div class="form-group mt-3">
             <Name For="() => _createStandModel.PenaltyInMinutes" />
             <InputNumber class="form-control" @bind-Value="_createStandModel.PenaltyInMinutes" />
             <ValidationMessage For="() => _createStandModel.PenaltyInMinutes" />
         </div>
 
-        <div class="form-group">
+        <div class="form-group mt-3">
             <Name For="() => _createStandModel.Supervisor" />
             <BlazoredTypeahead MaximumSuggestions="999"
                                MinimumLength="0"
