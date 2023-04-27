@@ -2,20 +2,22 @@
 @inject IDbContextFactory<DataContext> _dbContextFactory
 
 <Modal @ref="Modal" Title="Zmena stavu">
-    @if(_standVisitId is null)
-    {
-        <button @onclick="() => ArrivalStart(StandVisitStatus.Waiting)">Začať čakanie</button>
-        <button @onclick="() => ArrivalStart(StandVisitStatus.Working)">Začať prácu</button>
-        <button @onclick="ArrivedAndSkip">Preskočiť</button>
-    } else
-    {
-        if(_standVisit is not null)
+    <div class="flex flex-col space-y-3">
+        @if(_standVisitId is null)
         {
-            <button disabled="@(_standVisit.Status != StandVisitStatus.Waiting)" @onclick=EndWait>Ukončiť čakanie a Začať prácu</button>
-            <button disabled="@(_standVisit.Status != StandVisitStatus.Working)" @onclick=EndWork>Ukončiť prácu</button>
-            <button @onclick=SkipStand>Preskocit</button>
+            <button class="w-full button-main" @onclick="() => ArrivalStart(StandVisitStatus.Waiting)">Začať čakanie</button>
+            <button class="w-full button-main" @onclick="() => ArrivalStart(StandVisitStatus.Working)">Začať prácu</button>
+            <button class="w-full button-main" @onclick="ArrivedAndSkip">Preskočiť</button>
+        } else
+        {
+            if(_standVisit is not null)
+            {
+                <button class="w-full button-main" disabled="@(_standVisit.Status != StandVisitStatus.Waiting)" @onclick=EndWait>Ukončiť čakanie a Začať prácu</button>
+                <button class="w-full button-main" disabled="@(_standVisit.Status != StandVisitStatus.Working)" @onclick=EndWork>Ukončiť prácu</button>
+                <button class="w-full button-main" @onclick=SkipStand>Preskocit</button>
+            }
         }
-    }
+    </div>
 </Modal>
 
 @code {
