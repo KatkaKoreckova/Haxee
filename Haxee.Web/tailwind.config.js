@@ -4,7 +4,9 @@
     theme: {
         screens: {
             sm: '480px',
+            m: '641px',
             md: '720px',
+            l: '848px',
             lg: '976px',
             xl: '1440px'
         },
