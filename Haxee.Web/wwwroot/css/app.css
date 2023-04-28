@@ -513,6 +513,46 @@ video {
   --tw-backdrop-sepia:  ;
 }
 
+.container {
+  width: 100%;
+}
+
+@media (min-width: 480px) {
+  .container {
+    max-width: 480px;
+  }
+}
+
+@media (min-width: 641px) {
+  .container {
+    max-width: 641px;
+  }
+}
+
+@media (min-width: 720px) {
+  .container {
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 848px) {
+  .container {
+    max-width: 848px;
+  }
+}
+
+@media (min-width: 976px) {
+  .container {
+    max-width: 976px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .container {
+    max-width: 1440px;
+  }
+}
+
 .pointer-events-none {
   pointer-events: none;
 }
@@ -584,6 +624,11 @@ video {
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
+}
+
+.my-5 {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 
 .mb-2 {
@@ -1863,10 +1908,6 @@ button:disabled {
 
 .data-\[active\=True\]\:bg-opacity-40[data-active=True] {
   --tw-bg-opacity: 0.4;
-}
-
-.data-\[active\=True\]\:opacity-100[data-active=True] {
-  opacity: 1;
 }
 
 .data-\[animated\=True\]\:opacity-100[data-animated=True] {
