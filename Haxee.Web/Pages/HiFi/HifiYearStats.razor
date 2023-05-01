@@ -7,22 +7,22 @@
 @if(_year is not null)
 {
     <RadzenChart>
-        <RadzenLineSeries Smooth="@smooth" Data="@NumberOfDone" CategoryProperty="StandId" Title="Zvládli" ValueProperty="Value">
+        <RadzenLineSeries Smooth="@_smooth" Data="@_finishedCounts" CategoryProperty="StandId" Title="Zvládli" ValueProperty="Value">
             <RadzenMarkers MarkerType="MarkerType.Circle" />
-            <RadzenSeriesDataLabels Visible="@showDataLabels" />
+            <RadzenSeriesDataLabels Visible="@_showDataLabels" />
         </RadzenLineSeries>
-        <RadzenLineSeries Smooth="@smooth" Data="@NumberOfNotDone" CategoryProperty="StandId" Title="Nedokončili" ValueProperty="Value">
+        <RadzenLineSeries Smooth="@_smooth" Data="@_notFinishedCounts" CategoryProperty="StandId" Title="Nedokončili" ValueProperty="Value">
             <RadzenMarkers MarkerType="MarkerType.Circle" />
-            <RadzenSeriesDataLabels Visible="@showDataLabels" />
+            <RadzenSeriesDataLabels Visible="@_showDataLabels" />
         </RadzenLineSeries>
-        <RadzenLineSeries Smooth="@smooth" Data="@NumberOfSkipped" CategoryProperty="StandId" Title="Preskočili" ValueProperty="Value">
+        <RadzenLineSeries Smooth="@_smooth" Data="@_skippedCounts" CategoryProperty="StandId" Title="Preskočili" ValueProperty="Value">
             <RadzenMarkers MarkerType="MarkerType.Circle" />
-            <RadzenSeriesDataLabels Visible="@showDataLabels" />
+            <RadzenSeriesDataLabels Visible="@_showDataLabels" />
         </RadzenLineSeries>
-        <RadzenCategoryAxis Padding="5">
+        <RadzenCategoryAxis Padding="5" Min="0" Max="@_year.Stands.Count()">
             <RadzenAxisTitle Text="Číslo stanoviska" />
         </RadzenCategoryAxis>
-        <RadzenValueAxis>
+        <RadzenValueAxis Step="5">
             <RadzenGridLines Visible="true" />
             <RadzenAxisTitle Text="Počet účastníkov" />
         </RadzenValueAxis>
@@ -44,8 +44,18 @@
 
     private Year? _year;
 
-    bool smooth = true;
-    bool showDataLabels = true;
+    bool _smooth = true;
+    bool _showDataLabels = true;
+
+    public class StatInfo
+    {
+        public int StandId { get; set; }
+        public int Value { get; set; }
+    }
+
+    private List<StatInfo> _finishedCounts = new();
+    private List<StatInfo> _notFinishedCounts = new();
+    private List<StatInfo> _skippedCounts = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -60,184 +70,28 @@
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.YearValue.Equals(Year));
 
-        if (_year is not null)
+        if (_year is null)
+            return;
+
+        _finishedCounts = _year.Stands.Select(x => new StatInfo
         {
-            int i = 1;
-            foreach (var stand in _year.Stands.OrderBy(x => x.Number))
-            {
-                //NumberOfDone.Add(stand.StandVisits.Where(x => x.Status == StandVisitStatus.Done && !x.Skipped).Count());
-                //NumberOfSkipped.Add(stand.StandVisits.Where(x => !x.Skipped && x.Penalty.TotalSeconds > 0).Count());
-                //NumberOfFailed.Add(stand.StandVisits.Where(x => x.Skipped).Count());
-                i++;
-            }
-        }
+            StandId = x.Number,
+            Value = x.StandVisits.Where(x => x.LeaveTime != null && !x.Skipped).Count()
+        }).ToList();
+
+        _notFinishedCounts = _year.Stands.Select(x => new StatInfo
+        {
+            StandId = x.Number,
+            Value = x.StandVisits.Where(x => x.LeaveTime == null).Count()
+        }).ToList();
+
+        _skippedCounts = _year.Stands.Select(x => new StatInfo
+        {
+            StandId = x.Number,
+            Value = x.StandVisits.Where(x => x.LeaveTime != null && x.Skipped).Count()
+        }).ToList();
 
         StateHasChanged();
     }
-
-    class StatInfo
-    {
-        public int StandId { get; set; }
-        public int Value { get; set; }
-    }
-
-    StatInfo[] NumberOfDone = new StatInfo[] {
-        new StatInfo
-        {
-            StandId = 1,
-            Value = 12
-        },
-        new StatInfo
-        {
-            StandId = 2,
-            Value = 29
-        },
-        new StatInfo
-        {
-            StandId = 3,
-            Value = 10
-        },
-        new StatInfo
-        {
-            StandId = 4,
-            Value = 33
-        },
-        new StatInfo
-        {
-            StandId = 5,
-            Value = 38
-        },
-        new StatInfo
-        {
-            StandId = 6,
-            Value = 21
-        },
-        new StatInfo
-        {
-            StandId = 7,
-            Value = 27
-        },
-        new StatInfo
-        {
-            StandId = 8,
-            Value = 15
-        },
-        new StatInfo
-        {
-            StandId = 9,
-            Value = 19
-        },
-        new StatInfo
-        {
-            StandId = 10,
-            Value = 8
-        }
-    };
-
-    StatInfo[] NumberOfNotDone = new StatInfo[] {
-        new StatInfo
-        {
-            StandId = 1,
-            Value = 8
-        },
-        new StatInfo
-        {
-            StandId = 2,
-            Value = 2
-        },
-        new StatInfo
-        {
-            StandId = 3,
-            Value = 5
-        },
-        new StatInfo
-        {
-            StandId = 4,
-            Value = 1
-        },
-        new StatInfo
-        {
-            StandId = 5,
-            Value = 2
-        },
-        new StatInfo
-        {
-            StandId = 6,
-            Value = 8
-        },
-        new StatInfo
-        {
-            StandId = 7,
-            Value = 9
-        },
-        new StatInfo
-        {
-            StandId = 8,
-            Value = 10
-        },
-        new StatInfo
-        {
-            StandId = 9,
-            Value = 12
-        },
-        new StatInfo
-        {
-            StandId = 10,
-            Value = 32
-        }
-    };
-
-    StatInfo[] NumberOfSkipped = new StatInfo[] {
-        new StatInfo
-        {
-            StandId = 1,
-            Value = 20
-        },
-        new StatInfo
-        {
-            StandId = 2,
-            Value = 9
-        },
-        new StatInfo
-        {
-            StandId = 3,
-            Value = 25
-        },
-        new StatInfo
-        {
-            StandId = 4,
-            Value = 6
-        },
-        new StatInfo
-        {
-            StandId = 5,
-            Value = 0
-        },
-        new StatInfo
-        {
-            StandId = 6,
-            Value = 11
-        },
-        new StatInfo
-        {
-            StandId = 7,
-            Value = 4
-        },
-        new StatInfo
-        {
-            StandId = 8,
-            Value = 15
-        },
-        new StatInfo
-        {
-            StandId = 9,
-            Value = 9
-        },
-        new StatInfo
-        {
-            StandId = 10,
-            Value = 0
-        }
-    };
 
 }
