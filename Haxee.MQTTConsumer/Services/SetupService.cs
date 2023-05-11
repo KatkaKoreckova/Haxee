@@ -16,7 +16,7 @@ namespace Haxee.MQTTConsumer.Services
             string year = String.Empty;
             string ip = String.Empty;
             string port = String.Empty;
-            string name = String.Empty;
+            //string name = String.Empty;
             string topic = String.Empty;
 
             Console.Clear();
@@ -33,8 +33,8 @@ namespace Haxee.MQTTConsumer.Services
                 Console.Write("Broker port:\n   ");
                 port = Console.ReadLine() ?? String.Empty;
 
-                Console.Write("Client name:\n   ");
-                name = Console.ReadLine() ?? String.Empty;
+                //Console.Write("Client name:\n   ");
+                //name = Console.ReadLine() ?? String.Empty;
 
                 Console.Write("Topic (topicname/#):\n   ");
                 topic = Console.ReadLine() ?? String.Empty;
@@ -48,7 +48,7 @@ namespace Haxee.MQTTConsumer.Services
 
             CurrentYear currentYear = CurrentYear.GetInstance();
             currentYear.BrokerIP = ip;
-            currentYear.ClientName = name;
+            //currentYear.ClientName = name;
             currentYear.GlobalTopic = topic;
             currentYear.BrokerPort = Convert.ToInt32(port);
             currentYear.Year = Convert.ToInt32(year);

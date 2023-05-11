@@ -4,7 +4,7 @@
     {
         public string BrokerIP { get; set; } = string.Empty;
         public int BrokerPort { get; set; }
-        public string ClientName { get; set; } = string.Empty;
+        public string ClientName { get; set; } = "MQTTConsumer";
         public string GlobalTopic { get; set; } = string.Empty;
         public int Year { get; set; }
 
