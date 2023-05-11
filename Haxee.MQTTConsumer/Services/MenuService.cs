@@ -75,8 +75,11 @@ namespace Haxee.MQTTConsumer.Services
         public static void HifiSettedUp()
         {
             Console.Clear();
-            DrawService.DrawErrorMessage("Hi-Fi Ralley already setted up");
-            Console.WriteLine("\n[D] delete configuration");
+            DrawService.DrawErrorMessage("Hi-Fi Ralley already setted up\n");
+
+            DrawService.ShowCurrentSettings();
+
+            Console.WriteLine("\n\n[D] delete configuration");
             Console.WriteLine("Press any other key to return");
             string input = Console.ReadLine() ?? String.Empty;
 
