@@ -36,7 +36,7 @@ namespace Haxee.MQTTConsumer.Services
 
             if (!CurrentYear.SettedUp())
             {
-                DrawErrorMessage("Missin current year setup");
+                DrawErrorMessage("Missing current year setup");
                 Console.WriteLine("\nPress any key to return ...");
                 Console.ReadLine();
                 return;
