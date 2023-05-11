@@ -113,21 +113,17 @@ namespace Haxee.MQTTConsumer.Services
             return valid;
         }
 
-        public static YearStatus GetStatusFromString(string s)
+        public static YearStatus? GetStatusFromString(string s)
         {
             switch(s) {
-                case "Start":
-                    return YearStatus.Start;
-                case "End":
-                    return YearStatus.End;
                 case "Waiting":
-                    return YearStatus.Waiting;
+                    return YearStatus.Pending;
                 case "Working":
-                    return YearStatus.Working;
+                    return YearStatus.InProgress;
                 case "Done":
-                    return YearStatus.Done;
+                    return YearStatus.Finished;
                 default:
-                    return YearStatus.None;
+                    return null;
             }
         }
 
@@ -142,9 +138,9 @@ namespace Haxee.MQTTConsumer.Services
             if (!DateTime.TryParse(m[1], out dateTime))
                 return null;
 
-            YearStatus s = GetStatusFromString(m[2]);
+            YearStatus? s = GetStatusFromString(m[2]);
 
-            if (s is YearStatus.None)
+            if (s is null)
                 return null;
 
             AttendeeInformationDTO attendeeInformation = new AttendeeInformationDTO
