@@ -1,10 +1,12 @@
-﻿@page
-@model Haxee.Web.Pages.Admin.AccountsModel
-@{
-}
+﻿@page "/admin/accounts"
+@inject IDbContextFactory<DataContext> _dbContextFactory
+@layout AdminPanelLayout
 
 <h1 class="title">Zoznam účtov</h1>
-@if(@Model.Users.Count == 0     )
+@if(_users is null)
+{
+    <Spinner/>
+} else if(_users.Count == 0)
 {
     <h2>No accounts</h2>
 } else
@@ -29,7 +31,7 @@
             Zmazať účty vedúcim
         </button>
     </div>
-    foreach (var user in Model.Users)
+    foreach (var user in _users)
     {
         <div class="flex flex-col mt-2 space-y-4">
               
@@ -57,5 +59,19 @@
                 </div>
             </div>
         </div>
+    }
+}
+
+@code {
+    private List<User>? _users;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+        _users = await db.Users.ToListAsync();
+        StateHasChanged();
     }
 }

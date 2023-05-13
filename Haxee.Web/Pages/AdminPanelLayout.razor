@@ -2,18 +2,31 @@
 @inject NavigationManager _navigationManager
 @inject IDbContextFactory<DataContext> _dbContextFactory
 
-<PageTitle>Haxee.Web</PageTitle>
-
 <CascadingValue Name="@Constants.CascadingParameters.CurrentAccount" Value="@_user">
-    <div class="flex flex-col l:flex-row">
-        <NavMenu />
-
-        <main class="p-4 w-full l:left-60">
-            @Body
-        </main>
+    <div class="bg-mainBlue text-white py-2">
+        <div class="max-w-[95%] mx-auto flex flex-row justify-between items-stretch">
+            <div class="self-center">
+                <a href="/admin/menu" class="no-underline hover:text-darkBlue">
+                    <h4><i class="fa-solid fa-arrow-left"></i></h4>
+                </a>
+            </div>
+            <div class="self-center">
+                <h2 class="font-bold">Admin panel</h2>
+            </div>
+            <div class="self-center flex flex-row space-x-2">
+                <h4>@(_user?.Name ?? string.Empty)</h4>
+                <div>
+                    <a href="/auth/logout" class="no-underline hover:text-darkBlue">
+                        <h4><i class="fa-solid fa-arrow-right-from-bracket"></i></h4>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="w-[95%] max-w-[95%] mx-auto mt-3">
+        @Body
     </div>
 </CascadingValue>
-
 
 @code {
     [CascadingParameter]
