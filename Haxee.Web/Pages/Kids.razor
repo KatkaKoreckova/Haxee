@@ -26,14 +26,14 @@
                         <div class="text-center">ukoncene</div>
                     } else if(attendee.StartedAt is null)
                     {
-                        <label class="w-full transition duration-200 bg-blue hover:bg-orange hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick="() => StartAttendee(attendee)">
+                        <button class="w-full transition duration-200 bg-blue hover:bg-orange hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick="() => StartAttendee(attendee)">
                             Štart
-                        </label>
+                        </button>
                     } else
                     {
-                        <label class="w-full transition duration-200 bg-yellow hover:bg-orange text-darkBlue px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick="() => EndAttendee(attendee)">
+                        <button disabled=@(!User.SuperInstructor && attendee.StandVisits.Count != _numberOfStands) class="w-full transition duration-200 bg-yellow hover:bg-orange text-darkBlue px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick="() => EndAttendee(attendee)">
                             Koniec
-                        </label>
+                        </button>
                     }
                 </div>
             </div>
@@ -43,7 +43,12 @@
 </div>
 
 @code {
+    [CascadingParameter(Name = Constants.CascadingParameters.CurrentAccount)]
+    private User User { get; set; } = default!;
+
     private List<Attendee> _attendees = new();
+
+    private int _numberOfStands;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -96,6 +101,12 @@
             .Where(x => x.User.UserType == Entities.Enums.UserType.Kid)
             .AsNoTracking()
             .ToListAsync();
+
+        _numberOfStands = await db.Stands
+            .Include(x => x.Year)
+            .Where(x => x.Year.YearValue.Equals(DateTime.Now.Year))
+            .AsNoTracking()
+            .CountAsync();
 
         StateHasChanged();
     }
