@@ -2,6 +2,8 @@
 @inject IDbContextFactory<DataContext> _dbContextFactory
 @layout AdminPanelLayout
 
+<DeleteUserModal @ref="_deleteUserModal" OnSubmit="LoadUsers" />
+
 <h1 class="title">Zoznam účtov</h1>
 @if(_users is null)
 {
@@ -51,7 +53,8 @@
                             <button class="w-1/3 transition duration-200 bg-blue hover:bg-yellow hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center">
                                 Heslo
                             </button>
-                            <button class="w-1/3 transition duration-200 bg-orange hover:bg-red-800 text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center">
+                            <button disabled=@user.Id.Equals(User.Id) class="w-1/3 transition duration-200 bg-orange hover:bg-red-800 text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center"
+                                @onclick="() => _deleteUserModal?.Open(user.Id, user.Name)">
                                 Delete
                             </button>
                         </div>
@@ -63,6 +66,11 @@
 }
 
 @code {
+    [CascadingParameter(Name = Constants.CascadingParameters.CurrentAccount)]
+    private User User { get; set; } = default!;
+
+    private DeleteUserModal? _deleteUserModal;
+
     private List<User>? _users;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -70,8 +78,17 @@
         if (!firstRender)
             return;
 
+        await LoadUsers();
+    }
+
+
+
+    private async Task LoadUsers()
+    {
         using var db = _dbContextFactory.CreateDbContext();
+
         _users = await db.Users.ToListAsync();
+
         StateHasChanged();
     }
 }
