@@ -18,13 +18,13 @@
 } else
 {
     <div class="flex flex-row space-x-4">
-        <button>
+        <button @onclick='async () => await SendPasswordsToAll()'>
             Poslať heslo všetkým
         </button>
-        <button>
+        <button @onclick='async () => await SendPasswordsToKids()'>
             Poslať heslo učastníkom
         </button>
-        <button>
+        <button @onclick='async () => await SendPasswordsToInstructors()'>
             Poslať heslo vedúcim
         </button>
         <button class="button-delete" @onclick="() => _deleteUsersModal?.Open(true, true)">
@@ -93,6 +93,30 @@
         query["id"] = user.Id;
         var response = await _httpClient.PostAsync($"{_navigationManager.BaseUri}api/password?{query}", null);
         response.EnsureSuccessStatusCode();
+    }
+
+    private async Task SendPasswordsToInstructors() 
+    {
+        if (_users is null)
+            return;
+
+        foreach(var instructor in _users.Where(x => x.UserType.Equals(UserType.Instructor)))
+            await SendPasswordToUser(instructor);
+    }
+
+    private async Task SendPasswordsToKids()
+    {
+        if (_users is null)
+            return;
+
+        foreach (var kid in _users.Where(x => x.UserType.Equals(UserType.Kid)))
+            await SendPasswordToUser(kid);
+    }
+
+    private async Task SendPasswordsToAll()
+    {
+        await SendPasswordsToInstructors();
+        await SendPasswordsToKids();
     }
 
     private async Task LoadUsers()
