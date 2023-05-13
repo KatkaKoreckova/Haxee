@@ -2,7 +2,8 @@
 @inject IDbContextFactory<DataContext> _dbContextFactory
 @layout AdminPanelLayout
 
-<DeleteUserModal @ref="_deleteUserModal" OnSubmit="LoadUsers" />
+<DeleteUserModal @ref="_deleteUserModal" OnSubmit="LoadUsers"/>
+<DeleteUsersModal @ref="_deleteUsersModal" OnSubmit="LoadUsers" />
 
 <h1 class="title">Zoznam účtov</h1>
 @if(_users is null)
@@ -23,13 +24,13 @@
         <button>
             Poslať heslo vedúcim
         </button>
-        <button class="button-delete">
+        <button class="button-delete" @onclick="() => _deleteUsersModal?.Open(true, true)">
             Zmazať všetky účty
         </button>
-        <button class="button-delete">
+        <button class="button-delete" @onclick="() => _deleteUsersModal?.Open(true, false)">
             Zmazať účty účastníkom
         </button>
-        <button class="button-delete">
+        <button class="button-delete" @onclick="() => _deleteUsersModal?.Open(false, true)">
             Zmazať účty vedúcim
         </button>
     </div>
@@ -70,6 +71,7 @@
     private User User { get; set; } = default!;
 
     private DeleteUserModal? _deleteUserModal;
+    private DeleteUsersModal? _deleteUsersModal;
 
     private List<User>? _users;
 

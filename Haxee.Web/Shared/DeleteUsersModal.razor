@@ -1,0 +1,66 @@
+﻿@inherits AbstractModal
+@inject IDbContextFactory<DataContext> _dbContextFactory
+
+<Modal @ref="Modal" Title="Zmazať používateľov" SubmitText="Odstrániť" OnSubmitAttempted="OnSubmitAttempted" RedSubmit="true">
+    Ste si istý, že chcete zmazať všetky účty
+    @if (_deleteInstructors && _deleteUsers)
+    {
+
+    }
+    else if (_deleteInstructors)
+    {
+        <span class="warning-text"> inštruktorov</span>
+    } else
+    {
+
+        <span class="warning-text"> účastníkov</span>
+    }
+    ?<br />
+    <span class="italic">Táto akcia sa nedá navrátiť.</span>
+</Modal>
+
+@code {
+    [CascadingParameter(Name = Constants.CascadingParameters.CurrentAccount)]
+    private User _user { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback OnSubmit { get; set; }
+
+    private bool _deleteInstructors;
+    private bool _deleteUsers;
+
+    public void Open(bool deleteUsers, bool deleteInstructors)
+    {
+        _deleteUsers = deleteUsers;
+        _deleteInstructors = deleteInstructors;
+
+        StateHasChanged();
+        base.Open();
+    }
+
+    private async Task OnSubmitAttempted()
+    {
+        if (Modal is null)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var targetUsers = new List<User>();
+
+        if (_deleteUsers && _deleteInstructors)
+            targetUsers = await db.Users.Where(x => !x.Id.Equals(_user.Id)).ToListAsync();
+        else if (_deleteInstructors)
+            targetUsers = await db.Users.Where(x => x.UserType.Equals(UserType.Instructor) && !x.Id.Equals(_user.Id)).ToListAsync();
+        else
+            targetUsers = await db.Users.Where(x => x.UserType.Equals(UserType.Kid) && !x.Id.Equals(_user.Id)).ToListAsync();
+
+        if (targetUsers is null || !targetUsers.Any())
+            return;
+
+        db.Users.RemoveRange(targetUsers);
+        await db.SaveChangesAsync();
+
+        await Modal.Close();
+        await OnSubmit.InvokeAsync();
+    }
+}

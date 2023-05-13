@@ -32,12 +32,12 @@
 
         using var db = _dbContextFactory.CreateDbContext();
 
-        var targetStand = await db.Users.FirstOrDefaultAsync(x => x.Id.Equals(_userId));
+        var targetUser = await db.Users.FirstOrDefaultAsync(x => x.Id.Equals(_userId));
 
-        if (targetStand is null)
+        if (targetUser is null)
             return;
 
-        db.Users.Remove(targetStand);
+        db.Users.Remove(targetUser);
         await db.SaveChangesAsync();
 
         await Modal.Close();
