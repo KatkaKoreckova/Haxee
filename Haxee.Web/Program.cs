@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NETCore.MailKit.Extensions;
+using NETCore.MailKit.Infrastructure.Internal;
 using System.Security.Claims;
 using System.Security.Principal;
 
@@ -57,6 +59,15 @@ namespace Haxee.Web
                 config.AccessDeniedPath = "/auth/login";
             });
 
+            builder.Services.AddHttpClient();
+
+            builder.Services.AddControllers();
+
+            var mailKitOptions = builder.Configuration.GetSection("Email").Get<MailKitOptions>();
+            builder.Services.AddMailKit(config => config.UseMailKit(mailKitOptions));
+
+            builder.Services.AddScoped<MailService>();
+
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())
@@ -81,6 +92,7 @@ namespace Haxee.Web
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.MapControllers();
             app.MapBlazorHub();
             app.MapFallbackToPage("/_Host");
 

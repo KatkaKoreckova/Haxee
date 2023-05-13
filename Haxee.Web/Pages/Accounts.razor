@@ -1,5 +1,8 @@
 ﻿@page "/admin/accounts"
+@using System.Web;
 @inject IDbContextFactory<DataContext> _dbContextFactory
+@inject HttpClient _httpClient
+@inject NavigationManager _navigationManager
 @layout AdminPanelLayout
 
 <DeleteUserModal @ref="_deleteUserModal" OnSubmit="LoadUsers"/>
@@ -51,7 +54,8 @@
                             @user.Email
                         </div>
                         <div class="w-2/6 flex flex-row justify-around">
-                            <button class="w-1/3 transition duration-200 bg-blue hover:bg-yellow hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center">
+                            <button class="w-1/3 transition duration-200 bg-blue hover:bg-yellow hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center"
+                                @onclick='async () => await SendPasswordToUser(user)'>
                                 Heslo
                             </button>
                             <button disabled=@user.Id.Equals(User.Id) class="w-1/3 transition duration-200 bg-orange hover:bg-red-800 text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center"
@@ -83,7 +87,13 @@
         await LoadUsers();
     }
 
-
+    private async Task SendPasswordToUser(User user)
+    {
+        var query = HttpUtility.ParseQueryString(string.Empty);
+        query["id"] = user.Id;
+        var response = await _httpClient.PostAsync($"{_navigationManager.BaseUri}api/password?{query}", null);
+        response.EnsureSuccessStatusCode();
+    }
 
     private async Task LoadUsers()
     {
