@@ -3,7 +3,7 @@
 
 <PageTitle>Haxee - Nastavenia</PageTitle>
 
-<h1 class="title">Settings</h1>
+<h1 class="title">Nastavenia</h1>
 <EditForm Model="_changeSettingsModel" OnValidSubmit="HandleValidSubmit">
     <DataAnnotationsValidator />
     
@@ -19,7 +19,7 @@
     <InputText class="input-field" @bind-Value="_changeSettingsModel.Email" />
     <ValidationMessage For="() => _changeSettingsModel.Email" />
 
-    <button type="submit" class="button-submit">Submit</button>
+    <button type="submit" class="button-submit">Uložiť</button>
 
 </EditForm>
 
