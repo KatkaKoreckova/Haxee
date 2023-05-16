@@ -13,10 +13,15 @@
     
     @if(Year.Equals(DateTime.Now.Year) && _currentYear is not null)
     {
-        <button class="max-h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick="() => _createStandModal?.Open(_currentYear.Id)">
-            <span class="inline-block"><i class="fa-solid fa-plus"></i></span>
-            <span class="hidden md:inline-block">Vytvoriť</span> 
-        </button>
+        <div>
+            <button class="h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick="() => _createStandModal?.Open(_currentYear.Id)">
+                <span class="inline-block"><i class="fa-solid fa-plus"></i></span>
+                <span class="hidden md:inline-block">Vytvoriť</span>
+            </button>
+            <button class="h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick="() => _createStandModal?.Open(_currentYear.Id)">
+                <span class="inline-block">Kvíz</span>
+            </button>
+        </div>
     }
 </div>
 
