@@ -127,27 +127,27 @@ namespace Haxee.MQTTConsumer.Services
             }
         }
 
-        public static AttendeeInformationDTO? ParseMessage(string message)
+        public static AttendeeInformationDTO? ParseMessage(string message, string stand)
         {
             List<string> m = message.Split('|').ToList();
 
-            if (m.Count != 3)
+            if (m.Count != 2)
                 return null;
 
             DateTime dateTime;
             if (!DateTime.TryParse(m[1], out dateTime))
                 return null;
 
-            YearStatus? s = GetStatusFromString(m[2]);
+            //YearStatus? s = GetStatusFromString(m[2]);
 
-            if (s is null)
-                return null;
+            //if (s is null)
+              //  return null;
 
             AttendeeInformationDTO attendeeInformation = new AttendeeInformationDTO
             {
                 CardId = m[0].Replace(" ", "").ToUpper(),
                 DateTime = dateTime,
-                Status = (Entities.Enums.YearStatus)s
+                Stand = stand
             };
 
             return attendeeInformation;

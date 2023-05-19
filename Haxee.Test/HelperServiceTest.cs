@@ -100,7 +100,7 @@ namespace Haxee.Test
         [Test]
         public void ValidateMessageValid()
         {
-            AttendeeInformation? attendeeInformation = HelperService.ParseMessage("1 12.1.2023 10:50 1");
+            AttendeeInformationDTO? attendeeInformation = HelperService.ParseMessage("1 12.1.2023 10:50 1", "my/topic");
             if (attendeeInformation is not null)
                 Assert.Pass();
             else
@@ -110,7 +110,7 @@ namespace Haxee.Test
         [Test]
         public void ValidateMessageInvalid()
         {
-            AttendeeInformation? attendeeInformation = HelperService.ParseMessage("1 12.1 10:50 1");
+            AttendeeInformationDTO? attendeeInformation = HelperService.ParseMessage("1 12.1 10:50 1", "my/topic");
             if (attendeeInformation is null)
                 Assert.Pass();
             else
