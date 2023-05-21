@@ -1,4 +1,6 @@
-﻿namespace Haxee.Entities
+﻿using System.Text.Json;
+
+namespace Haxee.Entities
 {
     public static class Constants
     {
@@ -32,5 +34,10 @@
         {
             public const string CurrentAccount = "CurrentAccount";
         }
+
+        public static JsonSerializerOptions DEFAULT_OPTIONS = new JsonSerializerOptions
+        {
+            WriteIndented = true
+        };
     }
 }

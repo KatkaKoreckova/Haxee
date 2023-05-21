@@ -96,7 +96,23 @@
                 YearId = year.Id
             };
 
+            var quizStand = new Stand
+            {
+                Location = "Test kviz",
+                Name = "Test kviz",
+                Number = 2,
+                Penalty = TimeSpan.FromSeconds(60),
+                YearId = year.Id,
+                IsQuiz = true,
+                QuestionsAndAnswers = new()
+                {
+                    QuizHelper.GetQuestionAnswerPair("Testing question?", "Answer"),
+                    QuizHelper.GetQuestionAnswerPair("Testing question2?", "Answer2")
+                }
+            };
+
             db.Stands.Add(stand);
+            db.Stands.Add(quizStand);
 
             var standVisit = new StandVisit 
             {
