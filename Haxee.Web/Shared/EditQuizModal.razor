@@ -1,0 +1,94 @@
+﻿@inherits AbstractModal
+@inject IDbContextFactory<DataContext> _dbContextFactory
+
+<Modal @ref="Modal" Title="Upraviť kvíz" SubmitText="Uložiť" OnSubmitAttempted="OnSubmitAttempted">
+    <EditForm class="form" EditContext="_editContext" OnSubmit="OnSubmitAttempted">
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <Name For="() => _createQuizModel.Name" />
+            <InputText class="input-field" @bind-Value="_createQuizModel.Name" />
+            <ValidationMessage For="() => _createQuizModel.Name" />
+        </div>
+
+        <div class="form-group mt-3">
+            <Name For="() => _createQuizModel.Location" />
+            <InputText class="input-field" @bind-Value="_createQuizModel.Location" />
+            <ValidationMessage For="() => _createQuizModel.Location" />
+        </div>
+
+        <div class="form-group mt-3">
+            <Name For="() => _createQuizModel.PenaltyInMinutes" />
+            <InputNumber class="input-field" @bind-Value="_createQuizModel.PenaltyInMinutes" />
+            <ValidationMessage For="() => _createQuizModel.PenaltyInMinutes" />
+        </div>
+
+        <div class="form-group mt-3">
+            <Name For="() => _createQuizModel.QuestionsAndAnswers" />
+            <InputTextArea class="input-field" @bind-Value="_createQuizModel.QuestionsAndAnswers" />
+            <ValidationMessage For="() => _createQuizModel.QuestionsAndAnswers" />
+        </div>
+
+        <button class="hidden" type="submit">Edit</button>
+    </EditForm>
+</Modal>
+
+@code {
+    [Parameter]
+    public EventCallback OnSubmit { get; set; }
+
+    private CreateQuizModel _createQuizModel = new();
+
+    private EditContext? _editContext;
+
+    private Stand? _stand;
+
+    public async void Open(int standId)
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+        _stand = await db.Stands
+            .Include(x => x.Supervisor)
+            .FirstOrDefaultAsync(x => x.Id.Equals(standId));
+
+        if (_stand is null)
+            return;
+
+        _createQuizModel = new()
+        {
+            Name = _stand.Name,
+            Location = _stand.Location,
+            PenaltyInMinutes = (int) _stand.Penalty.TotalMinutes,
+            QuestionsAndAnswers = string.Join('\n', _stand.QuestionsAndAnswers)
+        };
+        _editContext = new EditContext(_createQuizModel);
+
+        base.Open();
+    }
+
+    private async Task OnSubmitAttempted()
+    {
+        if (Modal is null || _editContext is null || _createQuizModel is null || _stand is null)
+            return;
+
+        if (!_editContext.Validate())
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var targetStand = await db.Stands
+            .FirstOrDefaultAsync(x => x.Id.Equals(_stand.Id));
+
+        if (targetStand is null)
+            return;
+
+        targetStand.Name = _createQuizModel.Name;
+        targetStand.Location = _createQuizModel.Location;
+        targetStand.Penalty = TimeSpan.FromMinutes(_createQuizModel.PenaltyInMinutes);
+        targetStand.QuestionsAndAnswers = _createQuizModel.QuestionsAndAnswers.Split("\n").ToList();
+
+        await db.SaveChangesAsync();
+
+        await Modal.Close();
+        await OnSubmit.InvokeAsync();
+    }
+}

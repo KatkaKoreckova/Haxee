@@ -74,7 +74,7 @@
         {
             int j = i;
             <label>@QuizHelper.GetQuestion(questionAndAnswer)</label>
-            <input type="text" class="input-field mb-3" @oninput="(e) => {_answers[j] = e.Value?.ToString() ?? string.Empty; }" />
+            <input type="text" class="input-field mb-3" @oninput="(e) => {_answers[j] = e.Value?.ToString(); }" />
 
             i++;
         }
@@ -91,7 +91,7 @@
 
     private Stand? _stand;
     private bool _isLoaded;
-    private string[]? _answers;
+    private string?[]? _answers;
     private StandVisit? _standVisit;
     private bool _isCompleted;
 
@@ -153,7 +153,7 @@
 
         foreach (var answer in _answers)
         {
-            if (!QuizHelper.IsAnswerCorrect(_stand.QuestionsAndAnswers[i], answer))
+            if (answer is null || !QuizHelper.IsAnswerCorrect(_stand.QuestionsAndAnswers[i], answer))
                 penaltyMinutes += _stand.Penalty;
 
             i++;

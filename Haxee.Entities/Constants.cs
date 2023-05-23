@@ -4,6 +4,8 @@ namespace Haxee.Entities
 {
     public static class Constants
     {
+        public const string QA_SEPARATOR = "---";
+
         public static class Roles
         {
             public const string User = "User";

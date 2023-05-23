@@ -4,7 +4,9 @@
 
 <PageTitle>Haxee - Kids</PageTitle>
 
+<CreateQuizModal @ref="_createQuizModal" OnSubmit="LoadStands" />
 <CreateStandModal @ref="_createStandModal" OnSubmit="LoadStands" />
+<EditQuizModal @ref="_editQuizModal" OnSubmit="LoadStands" />
 <EditStandModal @ref="_editStandModal" OnSubmit="LoadStands" />
 <DeleteStandModal @ref="_deleteStandModal" OnSubmit="LoadStands" />
 
@@ -18,7 +20,7 @@
                 <span class="inline-block"><i class="fa-solid fa-plus"></i></span>
                 <span class="hidden md:inline-block">Vytvoriť</span>
             </button>
-            <button class="h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick="() => _createStandModal?.Open(_currentYear.Id)">
+            <button class="h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick="() => _createQuizModal?.Open(_currentYear.Id)">
                 <span class="inline-block">Kvíz</span>
             </button>
         </div>
@@ -45,9 +47,16 @@
                 Detail
             </button>
             <div class="flex flex-row space-x-1 mt-1">
-                <button class="w-1/2 bg-slate-200" @onclick="() => _editStandModal?.Open(stand.Id)" @onclick:stopPropagation=true>
-                    <i class="fa-solid fa-pen-to-square"></i>
-                </button>
+                @if(stand.IsQuiz)
+                {
+                    <button class="w-1/2 bg-slate-200" @onclick="() => _editQuizModal?.Open(stand.Id)" @onclick:stopPropagation=true>
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                } else {
+                    <button class="w-1/2 bg-slate-200" @onclick="() => _editStandModal?.Open(stand.Id)" @onclick:stopPropagation=true>
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                }
                 <button class="w-1/2 button-delete" @onclick="() => _deleteStandModal?.Open(stand.Id, stand.Name)" @onclick:stopPropagation=true>
                     <i class="fa-solid fa-trash"></i>
                 </button>
@@ -77,6 +86,8 @@
     private Year? _currentYear;
 
     private CreateStandModal? _createStandModal;
+    private CreateQuizModal? _createQuizModal;
+    private EditQuizModal? _editQuizModal;
     private EditStandModal? _editStandModal;
     private DeleteStandModal? _deleteStandModal;
 
