@@ -12,7 +12,7 @@
 
          @if (_stand.Year.Status == YearStatus.InProgress)
          {
-            <button class="max-h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange">
+            <button class="max-h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick=StartScanning>
                 Spustiť čítačku
             </button>
          }
@@ -31,12 +31,12 @@
                             @ongoingVisit.Status.GetDisplayName()
                         </div>
                         <div class="w-full md:w-2/6 text-center">
-                            <button disabled="@((_stand.Year.Status == YearStatus.Pending) ? false : true)" type="button" class="w-full md:w-[95%] button-main" @onclick="() => _changeStateModal?.Open(_stand.Id, ongoingVisit.Id)">
+                            <button type="button" class="w-full md:w-[95%] button-main" @onclick="() => _changeStateModal?.Open(_stand.Id, ongoingVisit.Id)">
                                 Zmena statusu
                             </button>
                         </div>
                         <div class="w-full md:w-2/6">
-                            <button disabled="@((_stand.Year.Status == YearStatus.Pending) ? false : true)" type="button" class="w-full md:w-[95%] button-delete" @onclick="() => _addPenaltyModal?.Open(ongoingVisit.Id)">
+                            <button type="button" class="w-full md:w-[95%] button-delete" @onclick="() => _addPenaltyModal?.Open(ongoingVisit.Id)">
                                 Penalta
                             </button>
                         </div>
@@ -70,9 +70,12 @@
             return;
 
         await LoadStandAsync();
+    }
 
+    private async Task StartScanning()
+    {
         var reference = DotNetObjectReference.Create(this);
-        await _js.InvokeVoidAsync("initializeStandPage", reference);
+        await _js.InvokeVoidAsync("initializeScanning", reference);
     }
 
     [JSInvokable]
@@ -91,6 +94,7 @@
             .Include(x => x.StandVisits)
                 .ThenInclude(x => x.Attendee)
                     .ThenInclude(x => x.User)
+            .Include(x => x.Year)
             .FirstOrDefaultAsync(x => x.Number.Equals(StandNumber));
 
         if (_stand is null)

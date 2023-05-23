@@ -74,7 +74,7 @@
             {
                 UserId = participant1.Id,
                 YearId = year.Id,
-                CardId = "testing_id"
+                CardId = "e3:2e:98:a1"
             };
 
             db.Attendees.Add(attendee);
@@ -83,7 +83,7 @@
             {
                 UserId = participant2.Id,
                 YearId = year.Id,
-                CardId = "testing_id"
+                CardId = "d3:e0:61:1a"
             };
 
             db.Attendees.Add(attendee2);
@@ -114,16 +114,6 @@
 
             db.Stands.Add(stand);
             db.Stands.Add(quizStand);
-
-            var standVisit = new StandVisit 
-            {
-                ArrivalTime = DateTime.Now,
-                AttendeeId = attendee.Id,
-                Status = Entities.Enums.StandVisitStatus.Working,
-                StandId = stand.Id
-            };
-
-            db.StandVisits.Add(standVisit);
 
             await db.SaveChangesAsync();
         }

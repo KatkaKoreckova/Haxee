@@ -28,12 +28,14 @@
     private int? _standId;
     private int? _standVisitId;
     private StandVisit? _standVisit;
+    private DateTime? _arrivalTime;
 
     public async void Open(int standId, int? standVisitId = null, string? lastReceivedCardId = null)
     {
         _standId = standId;
         _standVisitId = standVisitId;
         _lastReceivedCardId = lastReceivedCardId;
+        _arrivalTime = DateTime.Now;
 
         using var db = _dbContextFactory.CreateDbContext();
 
@@ -44,29 +46,6 @@
                 .Include(x => x.Attendee)
                 .Where(x => x.StandId.Equals(standId))
                 .FirstOrDefaultAsync(x => lastReceivedCardId.Equals(x.Attendee.CardId));
-
-            if(_standVisit is null)
-            {
-                db.StandVisits.Add(new StandVisit
-                {
-                    Status = StandVisitStatus.Waiting,
-                    AttendeeId = await db.Attendees
-                            .Where(x => lastReceivedCardId.Equals(x.CardId))
-                        .Select(x => x.Id)
-                        .FirstOrDefaultAsync(),
-                    StandId = standId,
-                    ArrivalTime = DateTime.Now
-                });
-
-                await db.SaveChangesAsync();
-
-                using var db2 = _dbContextFactory.CreateDbContext();
-
-                _standVisit = await db2.StandVisits
-                    .Include(x => x.Attendee)
-                    .Where(x => x.StandId.Equals(standId))
-                    .FirstOrDefaultAsync(x => lastReceivedCardId.Equals(x.Attendee.CardId));
-            }
         }
 
         base.Open();
@@ -151,7 +130,7 @@
         db.StandVisits.Add(new StandVisit
         {
             StandId = (int) _standId,
-            ArrivalTime = DateTime.Now,
+            ArrivalTime = _arrivalTime ?? DateTime.Now,
             Status = desiredStatus,
             AttendeeId = targetAttendee.Id
         });
