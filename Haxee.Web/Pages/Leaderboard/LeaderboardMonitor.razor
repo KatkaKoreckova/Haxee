@@ -1,5 +1,6 @@
 ﻿@page "/leaderboardMonitor/{Year:int}"
 @layout EmptyLayout
+@inject NavigationManager _navigation
 
 <div class="bg-black min-h-[100vh]">
     <div class="bg-mainBlue text-white py-2">
@@ -13,7 +14,7 @@
                 <h2 class="font-bold">Aktuálne poradie</h2>
             </div>
             <div class="self-center flex flex-row space-x-2">
-                <h4>@DateTime.Now</h4>
+                <h4>Last updated @DateTime.Now</h4>
             </div>
         </div>
     </div>
@@ -23,4 +24,13 @@
 @code {
     [Parameter]
     public int Year { get; set; } = DateTime.Now.Year;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        await Task.Delay(30000);
+        _navigation.NavigateTo(_navigation.Uri, true);
+    }
 }
