@@ -1,0 +1,186 @@
+﻿@page "/current/quiz/{StandNumber:int}"
+@inject IDbContextFactory<DataContext> _dbContextFactory
+
+@if(_isCompleted)
+{
+    <div class="flex flex-col space-y-4 mt-[5%]">
+        <div class="flex flex-row justify-center w-full">
+            <img src="/images/reshot-illustration-construction-workers-DC8L5WUP23.png" class="w-3/4 md:w-2/3 lg:w-1/2" />
+        </div>
+        <h3 class="text-mainPurple font-semibold text-center">
+            Jéééj. Kvíz bol odoslaný. Môžeš ísť na ďalšie stanovisko.
+        </h3>
+    </div>
+} else if (!_isLoaded)
+{
+    <h3>Loading...</h3>
+} else if (_stand is null)
+{
+    <div class="flex flex-col space-y-4 mt-[5%]">
+        <div class="flex flex-row justify-center w-full">
+            <img src="/images/reshot-illustration-construction-workers-DC8L5WUP23.png" class="w-3/4 md:w-2/3 lg:w-1/2" />
+        </div>
+        <h3 class="text-mainPurple font-semibold text-center">
+            Toto stanovisko neexistuje.
+        </h3>
+    </div>
+} else if (_answers is null)
+{
+    <div class="flex flex-col space-y-4 mt-[5%]">
+        <div class="flex flex-row justify-center w-full">
+            <img src="/images/reshot-illustration-construction-workers-DC8L5WUP23.png" class="w-3/4 md:w-2/3 lg:w-1/2" />
+        </div>
+        <h3 class="text-mainPurple font-semibold text-center">
+            Kvíz nemá otázky.
+        </h3>
+    </div>
+} else if (!_stand.IsQuiz)
+{
+    <div class="flex flex-col space-y-4 mt-[5%]">
+        <div class="flex flex-row justify-center w-full">
+            <img src="/images/reshot-illustration-construction-workers-DC8L5WUP23.png" class="w-3/4 md:w-2/3 lg:w-1/2" />
+        </div>
+        <h3 class="text-mainPurple font-semibold text-center">
+            Toto stanovisko nie je kvíz.
+        </h3>
+    </div>    
+} else if (_stand.Year.Status == YearStatus.Pending)
+{
+    <div class="flex flex-col space-y-4 mt-[5%]">
+        <div class="flex flex-row justify-center w-full">
+            <img src="/images/reshot-illustration-construction-workers-DC8L5WUP23.png" class="w-3/4 md:w-2/3 lg:w-1/2" />
+        </div>
+        <h3 class="text-mainPurple font-semibold text-center">
+            Kvíz ešte nie je spustený.
+        </h3>
+    </div>
+} else if (_stand.Year.Status == YearStatus.Finished)
+{
+    <div class="flex flex-col space-y-4 mt-[5%]">
+        <div class="flex flex-row justify-center w-full">
+            <img src="/images/reshot-illustration-construction-workers-DC8L5WUP23.png" class="w-3/4 md:w-2/3 lg:w-1/2" />
+        </div>
+        <h3 class="text-mainPurple font-semibold text-center">
+            Kvíz je už zatvorený.
+        </h3>
+    </div>
+} else
+{
+    <form @onsubmit=OnSubmitAsync @onsubmit:preventDefault="true">
+        @{
+            int i = 0;
+        }
+        @foreach (var questionAndAnswer in _stand.QuestionsAndAnswers)
+        {
+            int j = i;
+            <label>@QuizHelper.GetQuestion(questionAndAnswer)</label>
+            <input type="text" class="input-field mb-3" @oninput="(e) => {_answers[j] = e.Value?.ToString() ?? string.Empty; }" />
+
+            i++;
+        }
+        <button type="submit">Submit</button>
+    </form>
+}
+
+@code {
+    [CascadingParameter(Name = Constants.CascadingParameters.CurrentAccount)]
+    private User User { get; set; } = default!;
+
+    [Parameter]
+    public int StandNumber { get; set; }
+
+    private Stand? _stand;
+    private bool _isLoaded;
+    private string[]? _answers;
+    private StandVisit? _standVisit;
+    private bool _isCompleted;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        await LoadQuizStandAsync();
+    }
+
+    private async Task LoadQuizStandAsync()
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+        var stand = await db.Stands
+            .Include(x => x.Year)
+            .FirstOrDefaultAsync(x => x.Number.Equals(StandNumber));
+
+        _isLoaded = true;
+        StateHasChanged();
+
+        if (stand is null || !stand.QuestionsAndAnswers.Any())
+            return;
+
+        _answers = new string[stand.QuestionsAndAnswers.Count];
+
+        var attendee = User.Attendances.FirstOrDefault(x => x.YearId.Equals(stand.YearId));
+
+        if (attendee is null)
+            return;
+
+        _standVisit = attendee.StandVisits.FirstOrDefault(x => x.StandId.Equals(stand.Id));
+
+        if (_standVisit is null)
+        {
+            _standVisit = new StandVisit
+                {
+                    ArrivalTime = DateTime.Now,
+                    Status = StandVisitStatus.Working,
+                    AttendeeId = attendee.Id,
+                    StandId = stand.Id
+                };
+
+            stand.StandVisits.Add(_standVisit);
+            await db.SaveChangesAsync();
+        }
+
+        _stand = stand;
+        StateHasChanged();
+    }
+
+    private async void OnSubmitAsync()
+    {
+        if (_answers is null || _stand is null || _standVisit is null)
+            return;
+
+        int i = 0;
+        TimeSpan penaltyMinutes = TimeSpan.Zero;
+
+        foreach (var answer in _answers)
+        {
+            if (!QuizHelper.IsAnswerCorrect(_stand.QuestionsAndAnswers[i], answer))
+                penaltyMinutes += _stand.Penalty;
+
+            i++;
+        }
+
+        Console.WriteLine($"Penalty minutes: {penaltyMinutes}\n");
+
+        using var db = _dbContextFactory.CreateDbContext();
+        var stand = await db.Stands
+            .Include(x => x.StandVisits)
+            .FirstOrDefaultAsync(x => x.Id.Equals(_stand.Id));
+
+        if (stand is null)
+            return;
+
+        var targetVisit = stand.StandVisits.FirstOrDefault(x => x.Id.Equals(_standVisit.Id));
+
+        if (targetVisit is null)
+            return;
+
+        targetVisit.Status = StandVisitStatus.Done;
+        targetVisit.LeaveTime = DateTime.Now;
+        targetVisit.Penalty = penaltyMinutes;
+
+        await db.SaveChangesAsync();
+
+        _isCompleted = true;
+        StateHasChanged();
+    }
+}

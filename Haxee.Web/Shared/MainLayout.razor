@@ -31,6 +31,8 @@
             {
                 using var db = _dbContextFactory.CreateDbContext();
                 _user = await db.Users
+                    .Include(x => x.Attendances)
+                        .ThenInclude(x => x.StandVisits)
                     .SingleOrDefaultAsync(x => x.Email != null && x.Email.Equals(authState.User.Identity.Name));
 
                 if (_user is not null)

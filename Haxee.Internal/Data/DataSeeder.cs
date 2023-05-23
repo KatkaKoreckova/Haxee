@@ -64,7 +64,8 @@
 
             var year = new Year
             { 
-                YearValue = DateTime.Now.Year
+                YearValue = DateTime.Now.Year,
+                Status = Entities.Enums.YearStatus.InProgress
             };
 
             db.Years.Add(year);
