@@ -3,19 +3,16 @@
 
 <Modal @ref="Modal" Title="Zmena stavu">
     <div class="flex flex-col space-y-3">
-        @if(_standVisitId is null)
+        @if(_standVisit is null)
         {
             <button class="w-full button-main" @onclick="() => ArrivalStart(StandVisitStatus.Waiting)">Začať čakanie</button>
             <button class="w-full button-main" @onclick="() => ArrivalStart(StandVisitStatus.Working)">Začať prácu</button>
             <button class="w-full button-main" @onclick="ArrivedAndSkip">Preskočiť</button>
         } else
         {
-            if(_standVisit is not null)
-            {
-                <button class="w-full button-main" disabled="@(_standVisit.Status != StandVisitStatus.Waiting)" @onclick=EndWait>Ukončiť čakanie a Začať prácu</button>
-                <button class="w-full button-main" disabled="@(_standVisit.Status != StandVisitStatus.Working)" @onclick=EndWork>Ukončiť prácu</button>
-                <button class="w-full button-main" @onclick=SkipStand>Preskocit</button>
-            }
+            <button class="w-full button-main" disabled="@(_standVisit.Status != StandVisitStatus.Waiting)" @onclick=EndWait>Ukončiť čakanie a Začať prácu</button>
+            <button class="w-full button-main" disabled="@(_standVisit.Status != StandVisitStatus.Working)" @onclick=EndWork>Ukončiť prácu</button>
+            <button class="w-full button-main" @onclick=SkipStand>Preskocit</button>
         }
     </div>
 </Modal>
@@ -40,13 +37,17 @@
         using var db = _dbContextFactory.CreateDbContext();
 
         if (lastReceivedCardId is null)
-            _standVisit = await db.StandVisits.FirstOrDefaultAsync(x => x.Id.Equals(standVisitId));
+            _standVisit = await db.StandVisits
+                .Include(x => x.Attendee)
+                .FirstOrDefaultAsync(x => x.Id.Equals(standVisitId));
         else {
             _standVisit = await db.StandVisits
                 .Include(x => x.Attendee)
                 .Where(x => x.StandId.Equals(standId))
                 .FirstOrDefaultAsync(x => lastReceivedCardId.Equals(x.Attendee.CardId));
         }
+
+        _standVisitId = _standVisitId ?? _standVisit?.Id;
 
         base.Open();
     }
