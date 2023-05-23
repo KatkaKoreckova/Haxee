@@ -1,4 +1,5 @@
 ﻿@page "/"
+@inject IDbContextFactory<DataContext> _dbContextFactory
 @layout EmptyLayout
 
 <PageTitle>Haxee</PageTitle>
@@ -10,14 +11,39 @@
             <img src="images/LSTME_logo_white.svg" class="w-xs self-center " />
         </div>
         <div class="flex flex-row space-x-4">
-            <a href="/leaderboardMonitor" class="button-card">
-                <h1 class="text-mainPurple text-center"><i class="fa-solid fa-award"></i></h1>
-                <h2 class=" text-darkBlue text-center">Leaderboard</h2>
-            </a>
+            @if (_isLoaded && _year is not null && _year.Status != YearStatus.Pending)
+            {
+                <a href="/leaderboardMonitor/@_year.YearValue" class="button-card">
+                    <h1 class="text-mainPurple text-center"><i class="fa-solid fa-award"></i></h1>
+                    <h2 class=" text-darkBlue text-center">Leaderboard</h2>
+                </a>
+            }
             <a href="/auth/login" class="button-card">
-                <h1 class="text-mainPurple text-center"><i class="fa-solid fa-arrow-right-to-bracket"></i></h1>
-                <h2 class=" text-darkBlue text-center">Log in</h2>
+               <h1 class="text-mainPurple text-center"><i class="fa-solid fa-arrow-right-to-bracket"></i></h1>
+               <h2 class=" text-darkBlue text-center">Log in</h2>
             </a>
         </div>
     </div>
 </div>
+
+@code {
+    private Year? _year;
+    private bool _isLoaded;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        await LoadYearAsync();
+    }
+
+    private async Task LoadYearAsync()
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+        _year = await db.Years.AsNoTracking().FirstOrDefaultAsync(x => x.YearValue.Equals(DateTime.Now.Year));
+
+        _isLoaded = true;
+        StateHasChanged();
+    }
+}
