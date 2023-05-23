@@ -3,13 +3,21 @@
 
 <Modal @ref="Modal" Title="Zmena stavu">
     <div class="flex flex-col space-y-3">
-        @if(_standVisit is null)
+        @if(_attendee is null && _lastReceivedCardId is not null)
         {
+            <label>Tento uzivatel nema priradenu karticku</label>
+        } else if(_attendee is not null && _attendee.StartedAt is null)
+        {
+            <label>Uzivatel nezacal sutaz</label>
+        } else if(_standVisit is null)
+        {
+            <label>@_attendee!.User.Name</label>
             <button class="w-full button-main" @onclick="() => ArrivalStart(StandVisitStatus.Waiting)">Začať čakanie</button>
             <button class="w-full button-main" @onclick="() => ArrivalStart(StandVisitStatus.Working)">Začať prácu</button>
             <button class="w-full button-main" @onclick="ArrivedAndSkip">Preskočiť</button>
         } else
         {
+            <label>@_attendee!.User.Name</label>
             <button class="w-full button-main" disabled="@(_standVisit.Status != StandVisitStatus.Waiting)" @onclick=EndWait>Ukončiť čakanie a Začať prácu</button>
             <button class="w-full button-main" disabled="@(_standVisit.Status != StandVisitStatus.Working)" @onclick=EndWork>Ukončiť prácu</button>
             <button class="w-full button-main" @onclick=SkipStand>Preskocit</button>
@@ -22,6 +30,7 @@
     public EventCallback OnSubmit { get; set; }
 
     private string? _lastReceivedCardId;
+    private Attendee? _attendee;
     private int? _standId;
     private int? _standVisitId;
     private StandVisit? _standVisit;
@@ -46,6 +55,10 @@
                 .Where(x => x.StandId.Equals(standId))
                 .FirstOrDefaultAsync(x => lastReceivedCardId.Equals(x.Attendee.CardId));
         }
+
+        _attendee = await db.Attendees
+            .Include(x => x.User)
+            .FirstOrDefaultAsync(x => x.CardId != null && x.CardId.Equals(_lastReceivedCardId));
 
         _standVisitId = _standVisitId ?? _standVisit?.Id;
 
