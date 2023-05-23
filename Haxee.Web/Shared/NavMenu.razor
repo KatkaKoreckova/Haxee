@@ -20,30 +20,33 @@
                     </div>
                 </NavLink>
             </div>
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="hifilist">
-                    <div class="w-full flex flex-row justify-start items-stretch p-2">
-                    <h3 class="self-center font-extralight"><i class="fa-solid fa-person-running"></i></h3>
-                    <h3 class="ml-3 self-center">Hi-Fi Ralley</h3>
-                    </div>
-                </NavLink>
-            </div>
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="leaderboard">
-                    <div class="w-full flex flex-row justify-start items-stretch p-2">
-                    <h3 class="self-center font-extralight"><i class="fa-solid fa-ranking-star"></i></h3>
-                    <h3 class="ml-3 self-center">Leaderboard</h3>
-                    </div>
-                </NavLink>
-            </div>
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="kids">
-                    <div class="w-full flex flex-row justify-start items-stretch p-2">
-                    <h3 class="self-center font-extralight"><i class="fa-solid fa-user-group"></i></h3>
-                    <h3 class="ml-3 self-center">Účastníci</h3>
-                    </div>
-                </NavLink>
-            </div>
+            @if (User.UserType == UserType.Instructor)
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="hifilist">
+                        <div class="w-full flex flex-row justify-start items-stretch p-2">
+                            <h3 class="self-center font-extralight"><i class="fa-solid fa-person-running"></i></h3>
+                            <h3 class="ml-3 self-center">Hi-Fi Ralley</h3>
+                        </div>
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="leaderboard">
+                        <div class="w-full flex flex-row justify-start items-stretch p-2">
+                            <h3 class="self-center font-extralight"><i class="fa-solid fa-ranking-star"></i></h3>
+                            <h3 class="ml-3 self-center">Leaderboard</h3>
+                        </div>
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="kids">
+                        <div class="w-full flex flex-row justify-start items-stretch p-2">
+                            <h3 class="self-center font-extralight"><i class="fa-solid fa-user-group"></i></h3>
+                            <h3 class="ml-3 self-center">Účastníci</h3>
+                        </div>
+                    </NavLink>
+                </div>
+            }
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="settings">
                     <div class="w-full flex flex-row justify-start items-stretch p-2">
