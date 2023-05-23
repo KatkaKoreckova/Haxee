@@ -13,7 +13,7 @@
 <div class="flex flex-row justify-between">
     <h1 class="title">Stanoviska 2023</h1>
     
-    @if(Year.Equals(DateTime.Now.Year) && _currentYear is not null)
+    @if(Year.Equals(DateTime.Now.Year) && _currentYear is not null && _currentYear.Status == YearStatus.Pending)
     {
         <div>
             <button class="h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick="() => _createStandModal?.Open(_currentYear.Id)">
@@ -57,7 +57,7 @@
                         <i class="fa-solid fa-pen-to-square"></i>
                     </button>
                 }
-                <button class="w-1/2 button-delete" @onclick="() => _deleteStandModal?.Open(stand.Id, stand.Name)" @onclick:stopPropagation=true>
+                <button disabled="@((_currentYear?.Status == YearStatus.Pending) ? false : true)" class="w-1/2 button-delete" @onclick="() => _deleteStandModal?.Open(stand.Id, stand.Name)" @onclick:stopPropagation=true>
                     <i class="fa-solid fa-trash"></i>
                 </button>
             </div>

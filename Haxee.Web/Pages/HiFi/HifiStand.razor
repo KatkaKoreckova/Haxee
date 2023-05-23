@@ -10,9 +10,12 @@
     <div class="flex flex-row justify-between">
         <h1 class="title">Stanovisko @_stand.Number: @_stand.Name</h1>
 
-        <button class="max-h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange">
-            Spustiť čítačku
-        </button>
+         @if (_stand.Year.Status == YearStatus.InProgress)
+         {
+            <button class="max-h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange">
+                Spustiť čítačku
+            </button>
+         }
     </div>
 
     <div class="flex flex-col mt-2 space-y-4">
@@ -28,12 +31,12 @@
                             @ongoingVisit.Status.GetDisplayName()
                         </div>
                         <div class="w-full md:w-2/6 text-center">
-                            <button type="button" class="w-full md:w-[95%] button-main" @onclick="() => _changeStateModal?.Open(_stand.Id, ongoingVisit.Id)">
+                            <button disabled="@((_stand.Year.Status == YearStatus.Pending) ? false : true)" type="button" class="w-full md:w-[95%] button-main" @onclick="() => _changeStateModal?.Open(_stand.Id, ongoingVisit.Id)">
                                 Zmena statusu
                             </button>
                         </div>
                         <div class="w-full md:w-2/6">
-                            <button type="button" class="w-full md:w-[95%] button-delete" @onclick="() => _addPenaltyModal?.Open(ongoingVisit.Id)">
+                            <button disabled="@((_stand.Year.Status == YearStatus.Pending) ? false : true)" type="button" class="w-full md:w-[95%] button-delete" @onclick="() => _addPenaltyModal?.Open(ongoingVisit.Id)">
                                 Penalta
                             </button>
                         </div>

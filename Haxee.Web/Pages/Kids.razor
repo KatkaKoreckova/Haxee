@@ -26,7 +26,7 @@
                         <div class="text-center">ukoncene</div>
                     } else if(attendee.StartedAt is null)
                     {
-                        <button class="w-full transition duration-200 bg-blue hover:bg-orange hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick="() => StartAttendee(attendee)">
+                        <button disabled="@((attendee.Year.Status == YearStatus.InProgress) ? false : true)" class="w-full transition duration-200 bg-blue hover:bg-orange hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick="() => StartAttendee(attendee)">
                             Štart
                         </button>
                     } else
