@@ -37,7 +37,7 @@ namespace Haxee.MQTTConsumer.Services
             DrawService.ShowCurrentSettings();
 
 
-            if (!CurrentYear.SettedUp())
+            if (!CurrentYear.IsSetUp())
                 return;
 
             CurrentYear currentYear = CurrentYear.GetInstance();

@@ -18,7 +18,7 @@
                     @attendee.User.DateOfBirth
                 </div>
                 <div class="w-2/6 text-center">
-                    @attendee.StandVisits.Count/@attendee.Year.Stands.Count
+                    @attendee.StandVisits.Where(x => x.Status == StandVisitStatus.Done).Count()/@attendee.Year.Stands.Count
                 </div>
                 <div class="w-2/6">
                     @if(attendee.EndedAt is not null)

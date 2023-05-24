@@ -1,4 +1,5 @@
-﻿using Haxee.Entities.Enums;
+﻿using Haxee.Entities.Entities.Mqtt;
+using Haxee.Entities.Enums;
 using System.Linq;
 
 namespace Haxee.MQTTConsumer.Services
@@ -127,15 +128,15 @@ namespace Haxee.MQTTConsumer.Services
             }
         }
 
-        public static AttendeeInformationDTO? ParseMessage(string message, string stand)
+        public static AttendeeInformationDTO? ParseMessage(string message, string topic)
         {
-            List<string> m = message.Split('|').ToList();
+            List<string> messageParts = message.Split('|').ToList();
 
-            if (m.Count != 2)
+            if (messageParts.Count != 2)
                 return null;
 
             DateTime dateTime;
-            if (!DateTime.TryParse(m[1], out dateTime))
+            if (!DateTime.TryParse(messageParts[1], out dateTime))
                 return null;
 
             //YearStatus? s = GetStatusFromString(m[2]);
@@ -145,9 +146,9 @@ namespace Haxee.MQTTConsumer.Services
 
             AttendeeInformationDTO attendeeInformation = new AttendeeInformationDTO
             {
-                CardId = m[0].Replace(" ", "").ToUpper(),
+                CardId = messageParts[0].Trim().Replace(" ", ":"),
                 DateTime = dateTime,
-                Stand = stand
+                Trigger = topic[(topic.IndexOf('/')+1)..]
             };
 
             return attendeeInformation;

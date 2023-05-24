@@ -21,7 +21,7 @@
             return _instance;
         }
 
-        public static bool SettedUp()
+        public static bool IsSetUp()
         {
             if (_instance == null)
                 return false;

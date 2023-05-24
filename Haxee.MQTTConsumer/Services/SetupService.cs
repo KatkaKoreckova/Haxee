@@ -6,7 +6,7 @@ namespace Haxee.MQTTConsumer.Services
     {
         public static void SetupCurrentYear()
         {
-            if (CurrentYear.SettedUp())
+            if (CurrentYear.IsSetUp())
             {
                 MenuService.HifiSettedUp();
                 return;

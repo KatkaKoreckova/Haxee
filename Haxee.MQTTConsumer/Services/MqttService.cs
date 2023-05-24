@@ -1,4 +1,5 @@
 ﻿using Haxee.Entities.Entities.Mqtt;
+using System.Text;
 
 namespace Haxee.MQTTConsumer.Services
 {
@@ -7,7 +8,7 @@ namespace Haxee.MQTTConsumer.Services
         public static void SetupAndRunMQTT()
         {
 
-            if (!CurrentYear.SettedUp())
+            if (!CurrentYear.IsSetUp())
             {
                 MenuService.MQTTMissingInfoScreen();
                 return;
@@ -50,7 +51,7 @@ namespace Haxee.MQTTConsumer.Services
                 .WithTopic(currentYear.GlobalTopic)
                 .Build()).GetAwaiter().GetResult();
 
-            mqttClient.UseApplicationMessageReceivedHandler(e =>
+            mqttClient.UseApplicationMessageReceivedHandler(async (e) =>
             {
                 try
                 {
@@ -61,15 +62,21 @@ namespace Haxee.MQTTConsumer.Services
 
                     if (attendeeInformation is not null)
                     {
-                        Console.Write(JsonSerializer.Serialize(attendeeInformation));
-                        if (attendeeInformation.CardId.Equals("D3E0611A"))
+                        using var client = new HttpClient();
+                        using StringContent jsonContent = new(JsonSerializer.Serialize(attendeeInformation), Encoding.UTF8, "application/json");
+
+                        var response = await client.PostAsync("https://localhost:7044/api/mqtt", jsonContent);
+
+                        Console.WriteLine(JsonSerializer.Serialize(response));
+
+                        if (response.IsSuccessStatusCode)
                         {
                             Console.WriteLine("ok");
-                            mqttClient.PublishAsync("start/checkResult", "1");
+                            await mqttClient.PublishAsync("start/checkResult", "1");
                         } else
                         {
                             Console.WriteLine("fail");
-                            mqttClient.PublishAsync("start/checkResult", "0");
+                            await mqttClient.PublishAsync("start/checkResult", "0");
                         }
                     }
                 }

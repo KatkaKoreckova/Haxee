@@ -31,7 +31,7 @@
                             @ongoingVisit.Status.GetDisplayName()
                         </div>
                         <div class="w-full md:w-2/6 text-center">
-                            <button type="button" class="w-full md:w-[95%] button-main" @onclick="() => _changeStateModal?.Open(_stand.Id, ongoingVisit.Id)">
+                            <button type="button" class="w-full md:w-[95%] button-main" @onclick="() => _changeStateModal?.Open(_stand.Id, ongoingVisit.Id, ongoingVisit.Attendee.CardId)">
                                 Zmena statusu
                             </button>
                         </div>

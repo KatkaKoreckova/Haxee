@@ -34,7 +34,7 @@ namespace Haxee.MQTTConsumer.Services
         public static void ShowCurrentSettings()
         {
 
-            if (!CurrentYear.SettedUp())
+            if (!CurrentYear.IsSetUp())
             {
                 DrawErrorMessage("Missing current year setup");
                 Console.WriteLine("\nPress any key to return ...");
