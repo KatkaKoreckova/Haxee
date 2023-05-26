@@ -31,10 +31,11 @@ namespace Haxee.MQTTConsumer.Services
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        public static void ShowCurrentSettings()
+        public static async Task ShowCurrentSettings()
         {
+            Console.Clear();
 
-            if (!CurrentYear.IsSetUp())
+            if (!(await CurrentYear.IsSetUp()))
             {
                 DrawErrorMessage("Missing current year setup");
                 Console.WriteLine("\nPress any key to return ...");

@@ -1,7 +1,7 @@
 ﻿class Program
 {
 
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
         bool quit = false;
 
@@ -12,13 +12,13 @@
             switch (option)
             {
                 case 1:
-                    SetupService.SetupCurrentYear();
+                    await SetupService.SetupCurrentYear();
                     break;
                 case 2:
-                    MenuService.CurrentSetup();
+                    await MenuService.CurrentSetup();
                     break;
                 case 3:
-                    MqttService.SetupAndRunMQTT();
+                    await MqttService.SetupAndRunMQTT();
                     break;
                 case 4:
                     quit = true;

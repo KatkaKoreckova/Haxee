@@ -1,4 +1,9 @@
-﻿namespace Haxee.Entities.Entities.Mqtt
+﻿using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.Text;
+using System.Net.Http.Json;
+
+namespace Haxee.Entities.Entities.Mqtt
 {
     public class CurrentYear
     {
@@ -10,7 +15,7 @@
 
         private static CurrentYear? _instance = null;
 
-        private CurrentYear() { }
+        public CurrentYear() { }
 
         public static CurrentYear GetInstance()
         {
@@ -21,10 +26,30 @@
             return _instance;
         }
 
-        public static bool IsSetUp()
+        public static async Task<bool> IsSetUp()
         {
-            if (_instance == null)
+            var instance = GetInstance();
+
+            if (instance.Year != 0)
+                return true;
+
+            using var client = new HttpClient();
+
+            var response = await client.GetAsync("https://localhost:7044/api/setup");
+
+            if (!response.IsSuccessStatusCode)
                 return false;
+
+            var currentYear = await response.Content.ReadFromJsonAsync<Year>();
+
+            if (currentYear is null)
+                return false;
+
+            instance.BrokerIP = currentYear.BrokerIp ?? string.Empty;
+            instance.BrokerPort = currentYear.BrokerPort ?? 0;
+            instance.GlobalTopic = currentYear.GlobalTopic ?? string.Empty;
+            instance.Year = currentYear.YearValue;
+
             return true;
         }
 

@@ -5,10 +5,10 @@ namespace Haxee.MQTTConsumer.Services
 {
     public class MqttService
     {
-        public static void SetupAndRunMQTT()
+        public static async Task SetupAndRunMQTT()
         {
 
-            if (!CurrentYear.IsSetUp())
+            if (!(await CurrentYear.IsSetUp()))
             {
                 MenuService.MQTTMissingInfoScreen();
                 return;
@@ -72,11 +72,11 @@ namespace Haxee.MQTTConsumer.Services
                         if (response.IsSuccessStatusCode)
                         {
                             Console.WriteLine("ok");
-                            await mqttClient.PublishAsync("start/checkResult", "1");
+                            await mqttClient.PublishAsync($"{topic}/checkResult", "1");
                         } else
                         {
                             Console.WriteLine("fail");
-                            await mqttClient.PublishAsync("start/checkResult", "0");
+                            await mqttClient.PublishAsync($"{topic}/checkResult", "0");
                         }
                     }
                 }

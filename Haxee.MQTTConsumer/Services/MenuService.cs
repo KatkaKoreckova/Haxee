@@ -31,16 +31,14 @@ namespace Haxee.MQTTConsumer.Services
             return option;
         }
 
-        public static void CurrentSetup()
+        public static async Task CurrentSetup()
         {
             Console.Clear();
-            DrawService.ShowCurrentSettings();
 
-
-            if (!CurrentYear.IsSetUp())
+            if (!(await CurrentYear.IsSetUp()))
                 return;
 
-            CurrentYear currentYear = CurrentYear.GetInstance();
+            await DrawService.ShowCurrentSettings();
 
             Console.WriteLine("\n[0] Back");
 
@@ -59,7 +57,7 @@ namespace Haxee.MQTTConsumer.Services
                     DrawService.DrawErrorOption(validOptions);
                 }
 
-                DrawService.ShowCurrentSettings();
+                await DrawService.ShowCurrentSettings();
 
                 Console.WriteLine("\n[0] Back");
             }
@@ -72,12 +70,12 @@ namespace Haxee.MQTTConsumer.Services
             Console.WriteLine("\nPress any key to return");
             Console.ReadLine();
         }
-        public static void HifiSettedUp()
+        public static async void HifiSetUp()
         {
             Console.Clear();
-            DrawService.DrawErrorMessage("Hi-Fi Ralley already setted up\n");
+            DrawService.DrawErrorMessage("Hi-Fi Ralley already set up\n");
 
-            DrawService.ShowCurrentSettings();
+            await DrawService.ShowCurrentSettings();
 
             Console.WriteLine("\n\n[D] delete configuration");
             Console.WriteLine("Press any other key to return");

@@ -4,20 +4,20 @@ namespace Haxee.MQTTConsumer.Services
 {
     class SetupService
     {
-        public static void SetupCurrentYear()
+        public static async Task SetupCurrentYear()
         {
-            if (CurrentYear.IsSetUp())
+            if (await CurrentYear.IsSetUp())
             {
-                MenuService.HifiSettedUp();
+                MenuService.HifiSetUp();
                 return;
             }
 
-            bool validSetup = false;
-            string year = String.Empty;
-            string ip = String.Empty;
-            string port = String.Empty;
-            //string name = String.Empty;
-            string topic = String.Empty;
+            var validSetup = false;
+            var year = string.Empty;
+            var ip = string.Empty;
+            var port = string.Empty;
+            //var name = string.Empty;
+            var topic = string.Empty;
 
             Console.Clear();
             Console.WriteLine($"Hi-Fi Ralley SETUP");
@@ -25,19 +25,19 @@ namespace Haxee.MQTTConsumer.Services
             while (!validSetup)
             {
                 Console.Write("Year:\n   ");
-                year = Console.ReadLine() ?? String.Empty;
+                year = Console.ReadLine() ?? string.Empty;
 
                 Console.Write("Broker IPv4 :\n   ");
-                ip = Console.ReadLine() ?? String.Empty;
+                ip = Console.ReadLine() ?? string.Empty;
 
                 Console.Write("Broker port:\n   ");
-                port = Console.ReadLine() ?? String.Empty;
+                port = Console.ReadLine() ?? string.Empty;
 
                 //Console.Write("Client name:\n   ");
-                //name = Console.ReadLine() ?? String.Empty;
+                //name = Console.ReadLine() ?? string.Empty;
 
                 Console.Write("Topic (topicname/#):\n   ");
-                topic = Console.ReadLine() ?? String.Empty;
+                topic = Console.ReadLine() ?? string.Empty;
 
                 Console.Clear();
                 Console.WriteLine($"Hi-Fi Ralley SETUP");
@@ -54,7 +54,7 @@ namespace Haxee.MQTTConsumer.Services
             currentYear.Year = Convert.ToInt32(year);
 
             Console.Clear();
-            DrawService.ShowCurrentSettings();
+            await DrawService.ShowCurrentSettings();
 
             Console.WriteLine("\n[1] Save & quit");
             Console.WriteLine("\n[2] Discard & quit");
@@ -74,7 +74,7 @@ namespace Haxee.MQTTConsumer.Services
                     DrawService.DrawErrorOption(validOptions);
                 }
 
-                DrawService.ShowCurrentSettings();
+                await DrawService.ShowCurrentSettings();
 
                 Console.WriteLine("\n[1] Save & quit");
                 Console.WriteLine("\n[2] Discard & quit");
@@ -82,6 +82,13 @@ namespace Haxee.MQTTConsumer.Services
 
             if (option == 2)
                 CurrentYear.Clear();
+            else
+            {
+                using var client = new HttpClient();
+                using StringContent jsonContent = new(JsonSerializer.Serialize(currentYear), Encoding.UTF8, "application/json");
+
+                var _ = await client.PostAsync("https://localhost:7044/api/setup", jsonContent);
+            }
 
         }
     }
