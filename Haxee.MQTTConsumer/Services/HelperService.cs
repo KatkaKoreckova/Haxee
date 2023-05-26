@@ -10,7 +10,7 @@ namespace Haxee.MQTTConsumer.Services
     public class HelperService
     {
         /// <summary>
-        /// Kontorla, či zadaná možnosť je zo zoznamu možností.
+        /// Kontrola, či zadaná možnosť je zo zoznamu možností.
         /// </summary>
         /// <param name="validOptions">Zoznam valídnych možností</param>
         /// <param name="option">zvolená možnosť</param>
@@ -25,7 +25,7 @@ namespace Haxee.MQTTConsumer.Services
         }
 
         /// <summary>
-        /// Kontorla, či zadaný rok je valídny
+        /// Kontrola, či zadaný rok je valídny
         /// </summary>
         /// <param name="year">Zadaný rok</param>
         /// <returns>Či je zadaný rok valídny</returns>
@@ -35,7 +35,7 @@ namespace Haxee.MQTTConsumer.Services
         }
 
         /// <summary>
-        /// Kontorla, či zadaná IP adresa je valídna.
+        /// Kontrola, či zadaná IP adresa je valídna.
         /// </summary>
         /// <param name="a">Zadaná IP adresa</param>
         /// <returns>Či je zadaná IP adresa valídna</returns>
@@ -60,7 +60,7 @@ namespace Haxee.MQTTConsumer.Services
         }
 
         /// <summary>
-        /// Kontorla, či zadaný port je valídny.
+        /// Kontrola, či zadaný port je valídny.
         /// </summary>
         /// <param name="p">Zadaný port</param>
         /// <returns>Či je zadaný port valídny</returns>
@@ -77,7 +77,7 @@ namespace Haxee.MQTTConsumer.Services
         }
 
         /// <summary>
-        /// Kontorla, či zadaná téma je valídna.
+        /// Kontrola, či zadaná téma je valídna.
         /// </summary>
         /// <param name="topic">Zadaná téma</param>
         /// <returns>Či je zadaná téma valídna</returns>
@@ -114,7 +114,7 @@ namespace Haxee.MQTTConsumer.Services
         }
 
         /// <summary>
-        /// Kontorla, či zadaná konfigurácia orčníka je valídna.
+        /// Kontrola, či zadaná konfigurácia ročníka je valídna.
         /// </summary>
         /// <param name="year">Zadaný rok</param>
         /// <param name="topic">Zadaná téma</param>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Internal;
 namespace Haxee.Web.Controllers;
 
 /// <summary>
-/// API pre komunikáciu MQTT Consumer-a a databázy.
+/// API ovladač pre komunikáciu MQTT Consumer-a a databázi.
 /// </summary>
 [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
 [ApiController]
@@ -20,7 +20,7 @@ public class MqttController : ControllerBase
     }
 
     /// <summary>
-    /// API  endpoint pre ukladanie dát z aplikácie MQTT Consumer do databázy
+    /// API endpoint pre ukladanie dát z aplikácie MQTT Consumer do databázy
     /// </summary>
     [HttpPost]
     public async Task<IActionResult> PostAsync([FromBody] AttendeeInformationDTO attendeeInformation)

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Internal;
 namespace Haxee.Web.Controllers;
 
 /// <summary>
-/// API na ukladanie setup MQTT Consumer-a
+/// API na ukladanie nastavení MQTT Consumer-a
 /// </summary>
 [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
 [ApiController]

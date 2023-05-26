@@ -5,7 +5,7 @@ namespace Haxee.MQTTConsumer.Services
     class SetupService
     {
         /// <summary>
-        /// Funkcia pre vytvorenie konfigurácie kočníka pre aplikáciu MQTT Consumer.
+        /// Funkcia pre vytvorenie konfigurácie ročníka pre aplikáciu MQTT Consumer.
         /// </summary>
         public static async Task SetupCurrentYear()
         {

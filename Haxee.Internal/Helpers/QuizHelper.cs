@@ -22,12 +22,12 @@ namespace Haxee.Internal.Helpers
         /// <summary>
         /// Funkcia na overenie správnosti odpovede.
         /// </summary>
-        /// <returns>True / false podľa toho či odpoveď je správna</returns>
+        /// <returns>True / false podľa toho, či odpoveď je správna</returns>
         public static bool IsAnswerCorrect(string questionAndAnswer, string providedAnswer)
             => providedAnswer.ToLower().Equals(GetAnswer(questionAndAnswer)?.ToLower());
 
         /// <summary>
-        /// Funkcia ktorá z dvoch reťazcov obsahujúcich otázku a odpoveď vytvorí jeden rozdelený vopred definovaným znakom . <see cref="Constants.QA_SEPARATOR">Zobraziť znak</see>
+        /// Funkcia, ktorá z dvoch reťazcov obsahujúcich otázku a odpoveď vytvorí jeden rozdelený vopred definovaným <see cref="Constants.QA_SEPARATOR">znakom</see>. 
         /// </summary>
         /// <returns>Reťazec obsahujúci otázku a odpoveď.</returns>
         public static string GetQuestionAnswerPair(string question, string answer)

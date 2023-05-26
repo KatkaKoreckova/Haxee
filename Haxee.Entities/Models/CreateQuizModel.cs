@@ -1,7 +1,7 @@
 namespace Haxee.Entities.Models
 {
     /// <summary>
-    /// Model do ktorého sa mapujú dáta pri vytváraní stanoviska typu kvíz.
+    /// Model, do ktorého sa mapujú dáta pri vytváraní stanoviska typu kvíz.
     /// </summary>
     public class CreateQuizModel
     {

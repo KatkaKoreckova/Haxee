@@ -6,7 +6,7 @@ using System.Net.Http.Json;
 namespace Haxee.Entities.Entities.Mqtt
 {
     /// <summary>
-    /// Objekt slúžiaci na uchovávanie konfiguračných dát ročníka súťaže pre aplikáciu MQTT Consumer. Tieto dáta slúžia na pripojenie na MQTT broker, prihlásenie na odoberanie tém a publikovanie tém.
+    /// Objekt slúžiaci na prácu s konfiguračnými dátami ročníka súťaže pre aplikáciu MQTT Consumer. Tieto dáta slúžia na pripojenie na MQTT broker, prihlásenie na odoberanie tém a publikovanie tém.
     /// </summary>
     public class CurrentYear
     {
@@ -16,17 +16,17 @@ namespace Haxee.Entities.Entities.Mqtt
         public string BrokerIP { get; set; } = string.Empty;
 
         /// <summary>
-        /// Číslo portu na ktorom je spustený.
+        /// Číslo portu, na ktorom je spustený.
         /// </summary>
         public int BrokerPort { get; set; }
 
         /// <summary>
-        /// Meno, pod akým sa alikácia MQTT Consumer prezentuje MQTT broker-u.
+        /// Meno, pod akým sa alikácia MQTT Consumer prezentuje MQTT broker-ovi.
         /// </summary>
         public string ClientName { get; set; } = "MQTTConsumer";
 
         /// <summary>
-        /// Téma, pod ktorou u v danom roku posielané dáta.
+        /// Téma, pod ktorou sú v danom roku posielané dáta.
         /// </summary>
         public string GlobalTopic { get; set; } = string.Empty;
 

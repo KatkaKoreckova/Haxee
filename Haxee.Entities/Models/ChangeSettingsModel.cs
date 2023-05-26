@@ -1,7 +1,7 @@
 namespace Haxee.Entities.Models
 {
     /// <summary>
-    /// Model do ktorého sa mapujú dáta pri zmene nastavení používateľského konta.
+    /// Model, do ktorého sa mapujú dáta pri zmene nastavení používateľského konta.
     /// </summary>
     public class ChangeSettingsModel
     {

@@ -1,16 +1,16 @@
-﻿namespace Haxee.Entities.DTOs
+namespace Haxee.Entities.DTOs
 {
     /// <summary>
-    /// Objekt pre pohyb dát. MQTT Consumer využíva tento objekt na rozparsovanie správy od MQTT Brokera a jej následné odoslanie na API.
+    /// Objekt používaný na prenos dát. MQTT Consumer využíva tento objekt na rozparsovanie správy od MQTT Brokera a jej následné odoslanie na API.
     /// </summary>
     public class AttendeeInformationDTO
     {
         /// <summary>
-        /// Idnetifikačné číslo karty.
+        /// Identifikačné číslo karty.
         /// </summary>
         public required string CardId { get; set; }
         /// <summary>
-        /// čas, kedy bola priložená.
+        /// Čas, kedy bola priložená.
         /// </summary>
         public required DateTime DateTime { get; set; }
 

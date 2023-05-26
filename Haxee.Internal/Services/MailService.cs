@@ -9,7 +9,7 @@ namespace Haxee.Internal.Services;
 public class MailService
 {
     /// <summary>
-    /// Emialová služba
+    /// E-mailová služba
     /// </summary>
     private readonly IEmailService _emailService;
 
@@ -26,7 +26,7 @@ public class MailService
     /// <summary>
     /// Konštruktor triedy
     /// </summary>
-    /// <param name="emailService">Emialová služba</param>
+    /// <param name="emailService">E-mailová služba</param>
     public MailService(IEmailService emailService)
     {
         _emailService = emailService;

@@ -1,7 +1,7 @@
 namespace Haxee.Entities.Models
 {
     /// <summary>
-    /// Model do ktorého sa mapujú dáta pri pridávani penalty za stanovisko.
+    /// Model, do ktorého sa mapujú dáta pri pridávani penalty na stanovisku.
     /// </summary>
     public class AddPenaltyModel
     {

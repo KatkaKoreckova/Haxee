@@ -1,7 +1,7 @@
 namespace Haxee.Entities.Models
 {
     /// <summary>
-    /// Model do ktorého sa mapujú dáta pri vytváraní účtu.
+    /// Model, do ktorého sa mapujú dáta pri vytváraní účtu.
     /// </summary>
     public class AddAccountModel
     {

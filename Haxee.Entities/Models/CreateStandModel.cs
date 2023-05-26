@@ -1,7 +1,7 @@
 namespace Haxee.Entities.Models
 {
     /// <summary>
-    /// Model do ktorého sa mapujú dáta pri vytváraní stanoviska.
+    /// Model, do ktorého sa mapujú dáta pri vytváraní stanoviska.
     /// </summary>
     public class CreateStandModel
     {

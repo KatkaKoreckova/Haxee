@@ -73,7 +73,7 @@ namespace Haxee.MQTTConsumer.Services
         }
 
         /// <summary>
-        /// Menu na stránke o chýbajucej konfigurácii.
+        /// Menu na stránke o chýbajúcej konfigurácii.
         /// </summary>
         public static void MQTTMissingInfoScreen()
         {

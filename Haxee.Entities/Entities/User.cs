@@ -21,7 +21,7 @@ namespace Haxee.Entities.DTOs
         public required UserType UserType { get; set; }
 
         /// <summary>
-        /// V prípade inštruktorského konta či má vyššie práva.
+        /// V prípade inštruktorského konta či má zvýšené práva.
         /// </summary>
         public bool SuperInstructor { get; set; } = false;
 

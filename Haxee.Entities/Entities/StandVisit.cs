@@ -7,7 +7,7 @@ namespace Haxee.Entities.Entities
     {
 
         /// <summary>
-        /// ID stanmoviska.
+        /// ID stanoviska.
         /// </summary>
         public required int StandId { get; set; }
 

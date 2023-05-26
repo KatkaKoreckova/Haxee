@@ -1,7 +1,7 @@
 namespace Haxee.Entities.Entities
 {
     /// <summary>
-    /// Databázový objektdát o ročníku súťaže.
+    /// Databázový objekt dát o ročníku súťaže.
     /// </summary>
     public class Year : AbstractEntity
     {

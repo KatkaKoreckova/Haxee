@@ -6,7 +6,7 @@ public static class PasswordHelper
     const int PASSWORD_LENGTH = 8;
 
     /// <summary>
-    /// Funkcia pre automatické gfenerovanie prístupového hesla pri požiadaní o resetovanie hesla ku kontu..
+    /// Funkcia pre automatické gfenerovanie prístupového hesla pri požiadaní o resetovanie hesla ku kontu.
     /// </summary>
     public static string GeneratePassword()
     {

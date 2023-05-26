@@ -3,7 +3,7 @@ using System.Text.Json;
 namespace Haxee.Entities
 {
     /// <summary>
-    /// Konštanty hodnôt často používaných.
+    /// Konštanty často používaných hodnôt.
     /// </summary>
     public static class Constants
     {

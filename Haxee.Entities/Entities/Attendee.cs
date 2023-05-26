@@ -46,7 +46,7 @@ namespace Haxee.Entities.Entities
         public virtual List<StandVisit> StandVisits { get; set; } = new();
 
         /// <summary>
-        /// Funkcia ktorá vracia čas od zaČiatku súťaženia po koniec.
+        /// Funkcia ktorá vracia čas od začiatku súťaženia po koniec.
         /// </summary>
         public TimeSpan? GetTime()
             => StartedAt is null ? null : (EndedAt is null ? DateTime.Now - StartedAt : EndedAt - StartedAt);
