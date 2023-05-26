@@ -1,0 +1,37 @@
+\doxysection{Dokumentácia triedy Haxee.\+Internal.\+Services.\+Mail\+Service}
+\hypertarget{class_haxee_1_1_internal_1_1_services_1_1_mail_service}{}\label{class_haxee_1_1_internal_1_1_services_1_1_mail_service}\index{Haxee.Internal.Services.MailService@{Haxee.Internal.Services.MailService}}
+\doxysubsubsection*{Verejné metódy}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_haxee_1_1_internal_1_1_services_1_1_mail_service_a0dd02a54c444041ea6c1dd06b5cb9386}\label{class_haxee_1_1_internal_1_1_services_1_1_mail_service_a0dd02a54c444041ea6c1dd06b5cb9386} 
+{\bfseries Mail\+Service} (IEmail\+Service email\+Service)
+\item 
+\Hypertarget{class_haxee_1_1_internal_1_1_services_1_1_mail_service_ab1b75adbd39a5f0af4a47cbbf59e3532}\label{class_haxee_1_1_internal_1_1_services_1_1_mail_service_ab1b75adbd39a5f0af4a47cbbf59e3532} 
+async Task {\bfseries Send\+New\+Password\+Async} (string email\+Address, string password)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Privátne metódy}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_haxee_1_1_internal_1_1_services_1_1_mail_service_a870b11e9025f39f487d8fafe3962efc3}\label{class_haxee_1_1_internal_1_1_services_1_1_mail_service_a870b11e9025f39f487d8fafe3962efc3} 
+async Task {\bfseries Send\+Email\+Async} (string email\+Address, string subject, string body\+Path, Dictionary$<$ string, string $>$? data=null)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Privátne atribúty}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_haxee_1_1_internal_1_1_services_1_1_mail_service_aba3e8b3edff6782666a359ab114ad22b}\label{class_haxee_1_1_internal_1_1_services_1_1_mail_service_aba3e8b3edff6782666a359ab114ad22b} 
+readonly IEmail\+Service {\bfseries \+\_\+email\+Service}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Statické privátne atribúty}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_haxee_1_1_internal_1_1_services_1_1_mail_service_a42b3837a177a050ce1df1ffa5609fa8f}\label{class_haxee_1_1_internal_1_1_services_1_1_mail_service_a42b3837a177a050ce1df1ffa5609fa8f} 
+static readonly string {\bfseries BASE\+\_\+\+PATH} = Path.\+Combine(App\+Domain.\+Current\+Domain.\+Base\+Directory, \"{}wwwroot\"{}, \"{}emails\"{})
+\item 
+\Hypertarget{class_haxee_1_1_internal_1_1_services_1_1_mail_service_a3e5f051e2ad1bf0ee8a2e2cb32c78d13}\label{class_haxee_1_1_internal_1_1_services_1_1_mail_service_a3e5f051e2ad1bf0ee8a2e2cb32c78d13} 
+static readonly string {\bfseries NEW\+\_\+\+PASSWORD} = Path.\+Combine(BASE\+\_\+\+PATH, \"{}New\+Password.\+html\"{})
+\end{DoxyCompactItemize}
+
+
+Dokumentácia pre túto triedu bola generovaná z nasledujúceho súboru\+:\begin{DoxyCompactItemize}
+\item 
+Haxee.\+Internal/\+Services/Mail\+Service.\+cs\end{DoxyCompactItemize}

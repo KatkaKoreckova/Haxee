@@ -1,7 +1,10 @@
-﻿namespace Haxee.Internal.Data
+namespace Haxee.Internal.Data
 {
     public class DataSeeder
     {
+        /// <summary>
+        /// Funkcia pre automatické napĺňanie databázy dátami.
+        /// </summary>
         public static async Task Seed(IServiceProvider serviceProvider)
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<User>>();

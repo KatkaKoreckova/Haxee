@@ -1,9 +1,15 @@
-﻿using Haxee.Entities.Entities.Mqtt;
+using Haxee.Entities.Entities.Mqtt;
 
 namespace Haxee.MQTTConsumer.Services
 {
+    /// <summary>
+    /// Trieda, ktorá ma na starosti funkcionality menu.
+    /// </summary>
     public class MenuService
     {
+        /// <summary>
+        /// Hlavné menu.
+        /// </summary>
         public static int MainMenu()
         {
             Console.Clear();
@@ -31,6 +37,9 @@ namespace Haxee.MQTTConsumer.Services
             return option;
         }
 
+        /// <summary>
+        /// Menu pri aktuálnej konfigurácii.
+        /// </summary>
         public static async Task CurrentSetup()
         {
             Console.Clear();
@@ -63,6 +72,9 @@ namespace Haxee.MQTTConsumer.Services
             }
         }
 
+        /// <summary>
+        /// Menu na stránke o chýbajucej konfigurácii.
+        /// </summary>
         public static void MQTTMissingInfoScreen()
         {
             Console.Clear();
@@ -70,6 +82,10 @@ namespace Haxee.MQTTConsumer.Services
             Console.WriteLine("\nPress any key to return");
             Console.ReadLine();
         }
+
+        /// <summary>
+        /// Menu na stránke pri tvorbe konfigurácie.
+        /// </summary>
         public static async void HifiSetUp()
         {
             Console.Clear();

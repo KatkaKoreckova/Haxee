@@ -1,11 +1,20 @@
-﻿using Haxee.Entities.Entities.Mqtt;
+using Haxee.Entities.Entities.Mqtt;
 using Haxee.Entities.Enums;
 using System.Linq;
 
 namespace Haxee.MQTTConsumer.Services
 {
+    /// <summary>
+    /// Trieda obsahujúca pomocné funkcie.
+    /// </summary>
     public class HelperService
     {
+        /// <summary>
+        /// Kontorla, či zadaná možnosť je zo zoznamu možností.
+        /// </summary>
+        /// <param name="validOptions">Zoznam valídnych možností</param>
+        /// <param name="option">zvolená možnosť</param>
+        /// <returns>Či je zvolená možnosť valídna</returns>
         public static bool ValidMenuOption(List<int> validOptions, int option)
         {
             foreach (int o in validOptions)
@@ -15,11 +24,21 @@ namespace Haxee.MQTTConsumer.Services
             return false;
         }
 
+        /// <summary>
+        /// Kontorla, či zadaný rok je valídny
+        /// </summary>
+        /// <param name="year">Zadaný rok</param>
+        /// <returns>Či je zadaný rok valídny</returns>
         public static bool ValidateYear(string year)
         {
             return int.TryParse(year, out int y);
         }
 
+        /// <summary>
+        /// Kontorla, či zadaná IP adresa je valídna.
+        /// </summary>
+        /// <param name="a">Zadaná IP adresa</param>
+        /// <returns>Či je zadaná IP adresa valídna</returns>
         public static bool ValidateIp(string a)
         {
 
@@ -40,6 +59,11 @@ namespace Haxee.MQTTConsumer.Services
             return true;
         }
 
+        /// <summary>
+        /// Kontorla, či zadaný port je valídny.
+        /// </summary>
+        /// <param name="p">Zadaný port</param>
+        /// <returns>Či je zadaný port valídny</returns>
         public static bool ValidatePort(string p)
         {
 
@@ -52,6 +76,11 @@ namespace Haxee.MQTTConsumer.Services
             return true;
         }
 
+        /// <summary>
+        /// Kontorla, či zadaná téma je valídna.
+        /// </summary>
+        /// <param name="topic">Zadaná téma</param>
+        /// <returns>Či je zadaná téma valídna</returns>
         public static bool ValidateTopic(string topic)
         {
             if (topic == String.Empty || topic.Length < 3)
@@ -84,6 +113,14 @@ namespace Haxee.MQTTConsumer.Services
             return true;
         }
 
+        /// <summary>
+        /// Kontorla, či zadaná konfigurácia orčníka je valídna.
+        /// </summary>
+        /// <param name="year">Zadaný rok</param>
+        /// <param name="topic">Zadaná téma</param>
+        /// <param name="port">Zadaný port</param>
+        /// <param name="ip">Zadaná IP adresa</param>
+        /// <returns>Či je zadaná konfigurácia valídna</returns>
         public static bool ValidateCurrentYearSetup(string year, string topic, string port, string ip)
         {
             bool valid = true;
@@ -114,6 +151,11 @@ namespace Haxee.MQTTConsumer.Services
             return valid;
         }
 
+        /// <summary>
+        /// Získanie statusu zo vstupného reťazca.
+        /// </summary>
+        /// <param name="s">text obsahujúci status</param>
+        /// <returns>Enum statusu ročníka</returns>
         public static YearStatus? GetStatusFromString(string s)
         {
             switch(s) {
@@ -128,6 +170,12 @@ namespace Haxee.MQTTConsumer.Services
             }
         }
 
+        /// <summary>
+        /// Rozparsuje správu z MQTT brokera do objektu AttendeeInformation
+        /// </summary>
+        /// <param name="message">prijatá práva</param>
+        /// <param name="topic">téma pod ktorou prišla</param>
+        /// <returns>Objekt AttendeeInformationDTO alebo null ak sa nepodarilo vytvoriť objekt</returns>
         public static AttendeeInformationDTO? ParseMessage(string message, string topic)
         {
             List<string> messageParts = message.Split('|').ToList();

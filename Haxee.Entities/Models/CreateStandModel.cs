@@ -1,5 +1,8 @@
-﻿namespace Haxee.Entities.Models
+namespace Haxee.Entities.Models
 {
+    /// <summary>
+    /// Model do ktorého sa mapujú dáta pri vytváraní stanoviska.
+    /// </summary>
     public class CreateStandModel
     {
         [Required(AllowEmptyStrings = false)]

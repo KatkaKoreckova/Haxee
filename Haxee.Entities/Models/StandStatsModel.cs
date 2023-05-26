@@ -1,5 +1,8 @@
-﻿namespace Haxee.Entities.Models
+namespace Haxee.Entities.Models
 {
+    /// <summary>
+    /// Model pre zobrazenie dát o to kde je najdlhšie a kde najkratšie čakanie na stanovisku.
+    /// </summary>
     public class StandStatsModel
     {
         public Stand? LongestWaitStand { get; set; }

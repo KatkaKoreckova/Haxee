@@ -1,10 +1,16 @@
-﻿using Haxee.Entities.Entities.Mqtt;
+using Haxee.Entities.Entities.Mqtt;
 using System.Text;
 
 namespace Haxee.MQTTConsumer.Services
 {
+    /// <summary>
+    /// Trieda na komunikáciu s MQTT broker-om
+    /// </summary>
     public class MqttService
     {
+        /// <summary>
+        /// Funkcia na pripojenie sa na MQTT broker a následné prijímanie a odoberanie správ.
+        /// </summary>
         public static async Task SetupAndRunMQTT()
         {
 
@@ -91,16 +97,26 @@ namespace Haxee.MQTTConsumer.Services
                 Task.Delay(1000).GetAwaiter().GetResult();
             }
         }
+
+        /// <summary>
+        /// Funkcia, ktorá hovorí čo sa má vykonať po napojení sa na MQTT broker.
+        /// </summary>
         public static void OnConnected(MqttClientConnectedEventArgs obj)
         {
             DrawService.DrawSuccessMessage("Successfully connected.");
         }
 
+        /// <summary>
+        /// Funkcia, ktorá hovorí čo sa má vykonať pri zlyhaní napojenia sa na MQTT broker.
+        /// </summary>
         public static void OnConnectingFailed(ManagedProcessFailedEventArgs obj)
         {
             DrawService.DrawErrorMessage("Couldn't connect to broker.");
         }
 
+        /// <summary>
+        /// Funkcia, ktorá hovorí čo sa má vykonať pri odpojení od MQTT broker-a.
+        /// </summary>
         public static void OnDisconnected(MqttClientDisconnectedEventArgs obj)
         {
             DrawService.DrawInfoMessage("Successfully disconnected.");

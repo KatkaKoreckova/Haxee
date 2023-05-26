@@ -1,5 +1,8 @@
-﻿namespace Haxee.Entities.Models
+namespace Haxee.Entities.Models
 {
+    /// <summary>
+    /// Model pre zobrazenie dát o počte súťažiacich na štarte, na tratoi a v cieli.
+    /// </summary>
     public class AttendeesStatsModel
     {
         public int Waiting { get; set; }

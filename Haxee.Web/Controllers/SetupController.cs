@@ -1,4 +1,4 @@
-﻿using Haxee.Entities.Entities.Mqtt;
+using Haxee.Entities.Entities.Mqtt;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Haxee.Web.Controllers;
 
+/// <summary>
+/// API na ukladanie setup MQTT Consumer-a
+/// </summary>
 [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
 [ApiController]
 public class SetupController : ControllerBase
@@ -17,6 +20,9 @@ public class SetupController : ControllerBase
         _dbContextFactory = dbContextFactory;
     }
 
+    /// <summary>
+    /// API endpoint na uloženie konfigurácie.
+    /// </summary>
     [HttpGet]
     public async Task<IActionResult> GetAsync()
     {
@@ -29,6 +35,9 @@ public class SetupController : ControllerBase
         return Ok(targetYear);
     }
 
+    /// <summary>
+    /// API endpoint na získanie konfigurácie.
+    /// </summary>
     [HttpPost]
     public async Task<IActionResult> PostAsync([FromBody] CurrentYear currentYear)
     {

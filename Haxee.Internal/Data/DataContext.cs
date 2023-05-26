@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace Haxee.Internal.Data
 {
+    /// <summary>
+    /// Určovanie tabuliek v databáze
+    /// </summary>
     public class DataContext : IdentityDbContext<User>
     {
         public DbSet<Stand> Stands { get; set; }

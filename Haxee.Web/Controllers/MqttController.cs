@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Haxee.Web.Controllers;
 
+/// <summary>
+/// API pre komunikáciu MQTT Consumer-a a databázy.
+/// </summary>
 [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
 [ApiController]
 public class MqttController : ControllerBase
@@ -16,6 +19,9 @@ public class MqttController : ControllerBase
         _dbContextFactory = dbContextFactory;
     }
 
+    /// <summary>
+    /// API  endpoint pre ukladanie dát z aplikácie MQTT Consumer do databázy
+    /// </summary>
     [HttpPost]
     public async Task<IActionResult> PostAsync([FromBody] AttendeeInformationDTO attendeeInformation)
     {

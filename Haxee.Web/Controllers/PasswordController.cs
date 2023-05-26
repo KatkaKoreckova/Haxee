@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Haxee.Web.Controllers;
 
+/// <summary>
+/// API pre zasielanie hesiel
+/// </summary>
 [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
 [ApiController]
 public class PasswordController : ControllerBase
@@ -17,6 +20,9 @@ public class PasswordController : ControllerBase
         _mailService = mailService;
     }
 
+    /// <summary>
+    /// API endpoint na resetovanie hesla účtu s daným ID
+    /// </summary>
     [HttpPost]
     public async Task<IActionResult> PostAsync([FromQuery] string id)
     {

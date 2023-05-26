@@ -1,7 +1,10 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 
 namespace Haxee.Entities
 {
+    /// <summary>
+    /// Konštanty hodnôt často používaných.
+    /// </summary>
     public static class Constants
     {
         public const string QA_SEPARATOR = "---";

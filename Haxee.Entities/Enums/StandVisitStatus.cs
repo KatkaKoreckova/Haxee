@@ -1,5 +1,8 @@
-﻿namespace Haxee.Entities.Enums
+namespace Haxee.Entities.Enums
 {
+    /// <summary>
+    /// Zoznam statusov, ktoré može súťažiaci na stanovisku mať.
+    /// </summary>
     public enum StandVisitStatus
     {
         [Display(Name = "čaká")]

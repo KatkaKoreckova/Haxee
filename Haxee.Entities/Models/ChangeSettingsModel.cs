@@ -1,5 +1,8 @@
-﻿namespace Haxee.Entities.Models
+namespace Haxee.Entities.Models
 {
+    /// <summary>
+    /// Model do ktorého sa mapujú dáta pri zmene nastavení používateľského konta.
+    /// </summary>
     public class ChangeSettingsModel
     {
         [Required(AllowEmptyStrings = false)]
