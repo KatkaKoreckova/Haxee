@@ -1,4 +1,5 @@
-﻿global using Haxee.Entities.DTOs;
+global using Haxee.Entities.DTOs;
+global using Haxee.Entities.Entities;
 global using Haxee.MQTTConsumer.Services;
 
 global using MQTTnet.Client.Connecting;

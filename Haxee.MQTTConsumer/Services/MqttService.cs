@@ -62,28 +62,36 @@ namespace Haxee.MQTTConsumer.Services
             {
                 try
                 {
-                    string topic = e.ApplicationMessage.Topic;
-                    string message = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-                    DrawService.DrawReceivedMessage(topic, message);
-                    AttendeeInformationDTO? attendeeInformation = HelperService.ParseMessage(message, topic);
+                    string receivedMessage = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
 
-                    if (attendeeInformation is not null)
+                    var parsedMessage = JsonSerializer.Deserialize<Message>(receivedMessage);
+
+                    if (parsedMessage is not null)
                     {
-                        using var client = new HttpClient();
-                        using StringContent jsonContent = new(JsonSerializer.Serialize(attendeeInformation), Encoding.UTF8, "application/json");
+                        string message = parsedMessage.Payload.Text;
+                        string topic = parsedMessage.From.ToString();
+                        DrawService.DrawReceivedMessage(topic, message);
+                        AttendeeInformationDTO? attendeeInformation = HelperService.ParseMessage(message, topic);
 
-                        var response = await client.PostAsync($"{Constants.Mqtt.API_URL}api/mqtt", jsonContent);
-
-                        Console.WriteLine(JsonSerializer.Serialize(response));
-
-                        if (response.IsSuccessStatusCode)
+                        if (attendeeInformation is not null)
                         {
-                            Console.WriteLine("ok");
-                            await mqttClient.PublishAsync($"{topic}/checkResult", "1");
-                        } else
-                        {
-                            Console.WriteLine("fail");
-                            await mqttClient.PublishAsync($"{topic}/checkResult", "0");
+                            using var client = new HttpClient();
+                            using StringContent jsonContent = new(JsonSerializer.Serialize(attendeeInformation), Encoding.UTF8, "application/json");
+
+                            var response = await client.PostAsync($"{Constants.Mqtt.API_URL}api/mqtt", jsonContent);
+
+                            Console.WriteLine(JsonSerializer.Serialize(response));
+
+                            if (response.IsSuccessStatusCode)
+                            {
+                                Console.WriteLine("ok");
+                                await mqttClient.PublishAsync($"{topic}/checkResult", "1");
+                            }
+                            else
+                            {
+                                Console.WriteLine("fail");
+                                await mqttClient.PublishAsync($"{topic}/checkResult", "0");
+                            }
                         }
                     }
                 }
