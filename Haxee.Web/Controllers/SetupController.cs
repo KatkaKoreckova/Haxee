@@ -55,4 +55,28 @@ public class SetupController : ControllerBase
         await db.SaveChangesAsync();
         return Ok();
     }
+
+    /// <summary>
+    /// API endpoint na zmazanie konfigurácie.
+    /// </summary>
+    [HttpDelete("{currentYear}")]
+    public async Task<IActionResult> DeleteAsync([FromRoute] int currentYear)
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var targetYear = await db.Years.SingleOrDefaultAsync(x => x.YearValue.Equals(currentYear));
+
+        Console.WriteLine("get target year");
+
+        if (targetYear is null)
+            return NotFound();
+
+        Console.WriteLine("target year not null");
+        db.Years.Remove(targetYear);
+        await db.SaveChangesAsync();
+
+        Console.WriteLine("execute delete");
+
+        return Ok();
+    }
 }

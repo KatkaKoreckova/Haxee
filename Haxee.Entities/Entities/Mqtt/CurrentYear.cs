@@ -73,7 +73,7 @@ namespace Haxee.Entities.Entities.Mqtt
 
             using var client = new HttpClient();
 
-            var response = await client.GetAsync("https://localhost:7044/api/setup");
+            var response = await client.GetAsync($"{Constants.Mqtt.API_URL}api/setup");
 
             if (!response.IsSuccessStatusCode)
                 return false;
@@ -94,8 +94,15 @@ namespace Haxee.Entities.Entities.Mqtt
         /// <summary>
         /// Vymazanie aktuálnej konfigurácie.
         /// </summary>
-        public static void Clear()
+        public static async Task ClearAsync()
         {
+            var instance = GetInstance();
+            if (instance.Year == 0)
+                return;
+
+            using var client = new HttpClient();
+            var _ = await client.DeleteAsync($"{Constants.Mqtt.API_URL}api/setup/{instance.Year}");
+
             _instance = null;
         }
     }

@@ -97,8 +97,8 @@ namespace Haxee.MQTTConsumer.Services
             Console.WriteLine("Press any other key to return");
             string input = Console.ReadLine() ?? String.Empty;
 
-            if (input.Equals("D"))
-                CurrentYear.Clear();
+            if (input.Equals("D")) { }
+                await CurrentYear.ClearAsync();
         }
     }
 }

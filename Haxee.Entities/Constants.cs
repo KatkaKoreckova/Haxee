@@ -44,5 +44,10 @@ namespace Haxee.Entities
         {
             WriteIndented = true
         };
+
+        public static class Mqtt
+        {
+            public const string API_URL = "http://localhost:5000/";
+        }
     }
 }

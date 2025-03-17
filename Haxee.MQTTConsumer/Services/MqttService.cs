@@ -1,3 +1,4 @@
+using Haxee.Entities;
 using Haxee.Entities.Entities.Mqtt;
 using System.Text;
 
@@ -71,7 +72,7 @@ namespace Haxee.MQTTConsumer.Services
                         using var client = new HttpClient();
                         using StringContent jsonContent = new(JsonSerializer.Serialize(attendeeInformation), Encoding.UTF8, "application/json");
 
-                        var response = await client.PostAsync("https://localhost:7044/api/mqtt", jsonContent);
+                        var response = await client.PostAsync($"{Constants.Mqtt.API_URL}api/mqtt", jsonContent);
 
                         Console.WriteLine(JsonSerializer.Serialize(response));
 

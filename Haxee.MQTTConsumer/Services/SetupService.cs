@@ -1,3 +1,4 @@
+using Haxee.Entities;
 using Haxee.Entities.Entities.Mqtt;
 
 namespace Haxee.MQTTConsumer.Services
@@ -84,13 +85,13 @@ namespace Haxee.MQTTConsumer.Services
             }
 
             if (option == 2)
-                CurrentYear.Clear();
+                await CurrentYear.ClearAsync();
             else
             {
                 using var client = new HttpClient();
                 using StringContent jsonContent = new(JsonSerializer.Serialize(currentYear), Encoding.UTF8, "application/json");
 
-                var _ = await client.PostAsync("https://localhost:7044/api/setup", jsonContent);
+                var _ = await client.PostAsync($"{Constants.Mqtt.API_URL}api/setup", jsonContent);
             }
 
         }
