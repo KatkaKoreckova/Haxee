@@ -50,6 +50,8 @@ namespace Haxee.Entities.DTOs
         /// </summary>
         public List<string> QuestionsAndAnswers { get; set; } = new();
 
+        public required int Capacity { get; set; }
+
         /// <summary>
         /// Informácie o roku v ktorom je súťaž.
         /// </summary>

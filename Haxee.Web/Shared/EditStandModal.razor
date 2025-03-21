@@ -1,4 +1,4 @@
-﻿@inherits AbstractModal
+@inherits AbstractModal
 @inject IDbContextFactory<DataContext> _dbContextFactory
 
 <Modal @ref="Modal" Title="Upraviť stanovisko" SubmitText="Uložiť" OnSubmitAttempted="OnSubmitAttempted">
@@ -24,11 +24,17 @@
         </div>
 
         <div class="form-group mt-3">
+            <Name For="() => _createStandModel.Capacity" />
+            <InputNumber class="input-field" @bind-Value="_createStandModel.Capacity" />
+            <ValidationMessage For="() => _createStandModel.Capacity" />
+        </div>
+
+        <div class="form-group mt-3">
             <Name For="() => _createStandModel.Supervisor" />
             <BlazoredTypeahead MaximumSuggestions="999"
-                               MinimumLength="0"
-                               SearchMethod="SearchInstructors"
-                               @bind-Value="_createStandModel.Supervisor">
+            MinimumLength="0"
+            SearchMethod="SearchInstructors"
+            @bind-Value="_createStandModel.Supervisor">
                 <SelectedTemplate Context="typeaheadContext">
                     @typeaheadContext?.Name
                 </SelectedTemplate>
@@ -74,7 +80,8 @@
             Name = _stand.Name,
             Location = _stand.Location,
             PenaltyInMinutes = (int) _stand.Penalty.TotalMinutes,
-            Supervisor = _stand.Supervisor
+            Supervisor = _stand.Supervisor,
+            Capacity = _stand.Capacity
         };
         _editContext = new EditContext(_createStandModel);
 
@@ -101,6 +108,7 @@
         targetStand.Location = _createStandModel.Location;
         targetStand.Penalty = TimeSpan.FromMinutes(_createStandModel.PenaltyInMinutes);
         targetStand.SupervisorId = _createStandModel.Supervisor?.Id;
+        targetStand.Capacity = _createStandModel.Capacity;
 
         await db.SaveChangesAsync();
 

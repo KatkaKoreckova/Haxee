@@ -1,4 +1,4 @@
-﻿@inherits AbstractModal
+@inherits AbstractModal
 @inject IDbContextFactory<DataContext> _dbContextFactory
 
 <Modal @ref="Modal" Title="Vytvoriť stanovisko" SubmitText="Vytvoriť" OnSubmitAttempted="OnSubmitAttempted">
@@ -21,6 +21,12 @@
             <Name For="() => _createStandModel.PenaltyInMinutes" />
             <InputNumber class="input-field" @bind-Value="_createStandModel.PenaltyInMinutes" />
             <ValidationMessage For="() => _createStandModel.PenaltyInMinutes" />
+        </div>
+
+        <div class="form-group mt-3">
+            <Name For="() => _createStandModel.Capacity" />
+            <InputNumber class="input-field" @bind-Value="_createStandModel.Capacity" />
+            <ValidationMessage For="() => _createStandModel.Capacity" />
         </div>
 
         <div class="form-group mt-3">
@@ -94,7 +100,8 @@
             Number = highestStand is null ? 1 : highestStand.Number + 1,
             Penalty = TimeSpan.FromMinutes(_createStandModel.PenaltyInMinutes),
             YearId = _yearId,
-            SupervisorId = _createStandModel.Supervisor?.Id
+            SupervisorId = _createStandModel.Supervisor?.Id,
+            Capacity = _createStandModel.Capacity
         };
 
         db.Stands.Add(newStand);

@@ -1,8 +1,6 @@
 using Haxee.Entities.Entities.Mqtt;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Haxee.Web.Controllers;
 

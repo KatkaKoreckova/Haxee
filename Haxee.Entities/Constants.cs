@@ -49,5 +49,10 @@ namespace Haxee.Entities
         {
             public const string API_URL = "http://localhost:5000/";
         }
+
+        public static class Limits
+        {
+            public const int MAX_PEOPLE = 100;
+        }
     }
 }

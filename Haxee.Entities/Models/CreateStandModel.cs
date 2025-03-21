@@ -14,8 +14,13 @@ namespace Haxee.Entities.Models
         public string Location { get; set; } = string.Empty;
 
         [Required]
-        [Display(Name = "Penalty [min]")]
+        [Display(Name = "Penalizácia [min]")]
         public int PenaltyInMinutes { get; set; } = 10;
+
+        [Required]
+        [Display(Name = "Maximálny počet ľudí")]
+        [Range(1, Constants.Limits.MAX_PEOPLE)]
+        public int Capacity { get; set; }
 
         public User? Supervisor { get; set; }
     }

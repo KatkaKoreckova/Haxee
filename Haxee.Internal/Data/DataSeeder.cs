@@ -97,7 +97,8 @@ namespace Haxee.Internal.Data
                 Name = "Test stanovisko",
                 Number = 1,
                 Penalty = TimeSpan.FromSeconds(60*5),
-                YearId = year.Id
+                YearId = year.Id,
+                Capacity = 1
             };
 
             var quizStand = new Stand
@@ -112,7 +113,8 @@ namespace Haxee.Internal.Data
                 {
                     QuizHelper.GetQuestionAnswerPair("Testing question?", "Answer"),
                     QuizHelper.GetQuestionAnswerPair("Testing question2?", "Answer2")
-                }
+                },
+                Capacity = 1
             };
 
             db.Stands.Add(stand);
