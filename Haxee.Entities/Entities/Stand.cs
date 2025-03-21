@@ -50,6 +50,9 @@ namespace Haxee.Entities.DTOs
         /// </summary>
         public List<string> QuestionsAndAnswers { get; set; } = new();
 
+        /// <summary>
+        /// Maximálna kapacita daného stanoviska.
+        /// </summary>
         public required int Capacity { get; set; }
 
         /// <summary>
