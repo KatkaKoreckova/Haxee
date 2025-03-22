@@ -1,4 +1,4 @@
-﻿@inject IDbContextFactory<DataContext> _dbContextFactory
+@inject IDbContextFactory<DataContext> _dbContextFactory
 
 <div>
     @if(_attendeesStatsModel is not null)
@@ -34,7 +34,7 @@
 
 @code {
     [Parameter]
-    public required int Year { get; set; }
+    public required int ActivityId { get; set; }
 
     private AttendeesStatsModel? _attendeesStatsModel;
 
@@ -44,19 +44,19 @@
             return;
             
         using var db = _dbContextFactory.CreateDbContext();
-        var year = await db.Years
+        var activity = await db.Activities
             .Include(x => x.Attendees)
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.YearValue.Equals(Year));
+            .FirstOrDefaultAsync(x => x.Id.Equals(ActivityId));
 
-        if (year is null)
+        if (activity is null)
             return;
 
         _attendeesStatsModel = new()
         {
-            Waiting = year.Attendees.Where(x => x.StartedAt == null).Count(),
-            InProgress = year.Attendees.Where(x => x.StartedAt != null && x.EndedAt == null).Count(),
-            Completed = year.Attendees.Where(x => x.EndedAt != null).Count()
+            Waiting = activity.Attendees.Where(x => x.StartedAt == null).Count(),
+            InProgress = activity.Attendees.Where(x => x.StartedAt != null && x.EndedAt == null).Count(),
+            Completed = activity.Attendees.Where(x => x.EndedAt != null).Count()
         };
 
         StateHasChanged();

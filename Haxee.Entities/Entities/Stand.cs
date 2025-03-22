@@ -36,9 +36,9 @@ namespace Haxee.Entities.DTOs
         public required TimeSpan Penalty { get; set; }
        
         /// <summary>
-        /// ID roku v ktorom je stanovisko.
+        /// ID aktivity, v ktorej je stanovisko.
         /// </summary>
-        public required int YearId { get; set; }
+        public required int ActivityId { get; set; }
       
         /// <summary>
         /// Udáva či je stanovisko kvízom.
@@ -56,9 +56,9 @@ namespace Haxee.Entities.DTOs
         public required int Capacity { get; set; }
 
         /// <summary>
-        /// Informácie o roku v ktorom je súťaž.
+        /// Informácie o aktivite.
         /// </summary>
-        public virtual Year Year { get; set; } = null!;
+        public virtual Activity Activity { get; set; } = null!;
       
         /// <summary>
         /// Zoznam návštev stanoviska.

@@ -1,4 +1,4 @@
-﻿class Program
+class Program
 {
 
     static async Task Main(string[] args)
@@ -12,15 +12,9 @@
             switch (option)
             {
                 case 1:
-                    await SetupService.SetupCurrentYear();
-                    break;
-                case 2:
-                    await MenuService.CurrentSetup();
-                    break;
-                case 3:
                     await MqttService.SetupAndRunMQTT();
                     break;
-                case 4:
+                case 2:
                     quit = true;
                     break;
             }

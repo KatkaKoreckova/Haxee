@@ -1,0 +1,92 @@
+@inherits AbstractModal
+@inject IDbContextFactory<DataContext> _dbContextFactory
+
+<Modal @ref="Modal" Title="Upraviť aktivitu" SubmitText="Upraviť" OnSubmitAttempted="OnSubmitAttempted">
+    <EditForm class="form" EditContext="_editContext" OnSubmit="OnSubmitAttempted">
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <Name For="() => _createActivityModel.Name" />
+            <InputText class="input-field" @bind-Value="_createActivityModel.Name" placeholder="2025 Hi-Fi Ralley" />
+            <ValidationMessage For="() => _createActivityModel.Name" />
+        </div>
+
+        <div class="form-group mt-3">
+            <Name For="() => _createActivityModel.BrokerIp" />
+            <InputText class="input-field" @bind-Value="_createActivityModel.BrokerIp" placeholder="127.0.0.1" />
+            <ValidationMessage For="() => _createActivityModel.BrokerIp" />
+        </div>
+
+        <div class="form-group mt-3">
+            <Name For="() => _createActivityModel.BrokerPort" />
+            <InputNumber class="input-field" @bind-Value="_createActivityModel.BrokerPort" />
+            <ValidationMessage For="() => _createActivityModel.BrokerPort" />
+        </div>
+
+        <div class="form-group mt-3">
+            <Name For="() => _createActivityModel.GlobalTopic" />
+            <InputText class="input-field" @bind-Value="_createActivityModel.GlobalTopic" placeholder="lstme/2/json/LSTME/#" />
+            <ValidationMessage For="() => _createActivityModel.GlobalTopic" />
+        </div>
+
+        <button class="hidden" type="submit">Create</button>
+    </EditForm>
+</Modal>
+
+@code {
+    [Parameter]
+    public EventCallback OnSubmit { get; set; }
+
+    private CreateActivityModel _createActivityModel = new();
+
+    private EditContext? _editContext;
+
+    private Activity? _activity;
+
+    public async Task Open(int activityId)
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+
+        _activity = await db.Activities.FirstOrDefaultAsync(x => x.Id.Equals(activityId));
+
+        if (_activity is null)
+            return;
+
+        _createActivityModel = new()
+        {
+            Name = _activity.Name,
+            BrokerIp = _activity.BrokerIp,
+            BrokerPort = _activity.BrokerPort,
+            GlobalTopic = _activity.GlobalTopic
+        };
+        _editContext = new EditContext(_createActivityModel);
+
+        base.Open();
+    }
+
+    private async Task OnSubmitAttempted()
+    {
+        if (Modal is null || _editContext is null || _createActivityModel is null || _activity is null)
+            return;
+
+        if (!_editContext.Validate())
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var targetActivity = await db.Activities.FirstOrDefaultAsync(x => x.Id.Equals(_activity.Id));
+
+        if (targetActivity is null)
+            return;
+
+        targetActivity.Name = _createActivityModel.Name;
+        targetActivity.BrokerIp = _createActivityModel.BrokerIp;
+        targetActivity.BrokerPort = _createActivityModel.BrokerPort;
+        targetActivity.GlobalTopic = _createActivityModel.GlobalTopic;
+
+        await db.SaveChangesAsync();
+
+        await Modal.Close();
+        await OnSubmit.InvokeAsync();
+    }
+}

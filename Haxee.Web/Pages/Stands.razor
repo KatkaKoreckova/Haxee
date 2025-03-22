@@ -1,4 +1,4 @@
-﻿@page "/stands/{Year:int}"
+@page "/stands/{ActivityId:int}"
 @inject IDbContextFactory<DataContext> _dbContextFactory
 @inject NavigationManager _navigationManager
 
@@ -10,80 +10,86 @@
 <EditStandModal @ref="_editStandModal" OnSubmit="LoadStands" />
 <DeleteStandModal @ref="_deleteStandModal" OnSubmit="LoadStands" />
 
-<div class="flex flex-row justify-between">
-    <h1 class="title">Stanoviska 2023</h1>
+@if (_currentActivity is null)
+{
+    <Spinner/>
+} else {
+    <div class="flex flex-row justify-between">
+        <h1 class="title">Stanoviska @_currentActivity.Name</h1>
     
-    @if(Year.Equals(DateTime.Now.Year) && _currentYear is not null && _currentYear.Status == YearStatus.Pending)
-    {
-        <div>
-            <button class="h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick="() => _createStandModal?.Open(_currentYear.Id)">
-                <span class="inline-block"><i class="fa-solid fa-plus"></i></span>
-                <span class="hidden md:inline-block">Vytvoriť</span>
-            </button>
-            <button class="h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick="() => _createQuizModal?.Open(_currentYear.Id)">
-                <span class="inline-block">Kvíz</span>
-            </button>
-        </div>
-    }
-</div>
-
-@if(_stands.Count() > 0) {
-    int i = 1;
-    <div class="mt-2 grid gap-4 lg:gap-6 md:grid-cols-2 lg:grid-cols-4">
-    @foreach(var stand in _stands.OrderBy(x => x.Number))
-    {
-        <div class="w-full bg-slate-100 rounded-md shadow-md shadow-slate-300 p-4">
-            <h1 class="text-mainPurple text-center font-bold">@i</h1>
-            <h1 class="text-mainPurple text-center font-bold break-before-auto">@stand.Name</h1>
-            <div class="flex flex-row space-x-2 items-center text-darkBlue mt-3">
-                <i class="fa-solid fa-map-location-dot"></i>
-                <h4>@stand.Location</h4>
-            </div>
-            <div class="flex flex-row space-x-2 items-center text-darkBlue mt-3">
-                <i class="fa-solid fa-user-tie"></i>
-                <h4>@(stand.Supervisor?.Name ?? "nepriradený inštruktor")</h4>
-            </div>
-            <button class="w-full mt-3 button-main" @onclick='() => _navigationManager.NavigateTo("/current/stand/" + stand.Number)'>
-                Detail
-            </button>
-            <div class="flex flex-row space-x-1 mt-1">
-                @if(stand.IsQuiz)
-                {
-                    <button class="w-1/2 bg-slate-200" @onclick="() => _editQuizModal?.Open(stand.Id)" @onclick:stopPropagation=true>
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                } else {
-                    <button class="w-1/2 bg-slate-200" @onclick="() => _editStandModal?.Open(stand.Id)" @onclick:stopPropagation=true>
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                }
-                <button disabled="@((_currentYear?.Status == YearStatus.Pending) ? false : true)" class="w-1/2 button-delete" @onclick="() => _deleteStandModal?.Open(stand.Id, stand.Name)" @onclick:stopPropagation=true>
-                    <i class="fa-solid fa-trash"></i>
+        @if(_currentActivity.Status == ActivityStatus.Pending)
+        {
+            <div>
+                <button class="h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick="() => _createStandModal?.Open(_currentActivity.Id)">
+                    <span class="inline-block"><i class="fa-solid fa-plus"></i></span>
+                    <span class="hidden md:inline-block">Vytvoriť</span>
+                </button>
+                <button class="h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick="() => _createQuizModal?.Open(_currentActivity.Id)">
+                    <span class="inline-block">Kvíz</span>
                 </button>
             </div>
+        }
+    </div>
+
+    @if(_stands.Count() > 0) 
+    {
+        int i = 1;
+        <div class="mt-2 grid gap-4 lg:gap-6 md:grid-cols-2 lg:grid-cols-4">
+        @foreach(var stand in _stands.OrderBy(x => x.Number))
+        {
+            <div class="w-full bg-slate-100 rounded-md shadow-md shadow-slate-300 p-4">
+                <h1 class="text-mainPurple text-center font-bold">@i</h1>
+                <h1 class="text-mainPurple text-center font-bold break-before-auto">@stand.Name</h1>
+                <div class="flex flex-row space-x-2 items-center text-darkBlue mt-3">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    <h4>@stand.Location</h4>
+                </div>
+                <div class="flex flex-row space-x-2 items-center text-darkBlue mt-3">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <h4>@(stand.Supervisor?.Name ?? "nepriradený inštruktor")</h4>
+                </div>
+                <button class="w-full mt-3 button-main" @onclick='() => _navigationManager.NavigateTo("/current/stand/" + stand.Number)'>
+                    Detail
+                </button>
+                <div class="flex flex-row space-x-1 mt-1">
+                    @if(stand.IsQuiz)
+                    {
+                        <button class="w-1/2 bg-slate-200" @onclick="() => _editQuizModal?.Open(stand.Id)" @onclick:stopPropagation=true>
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                    } else {
+                        <button class="w-1/2 bg-slate-200" @onclick="() => _editStandModal?.Open(stand.Id)" @onclick:stopPropagation=true>
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                    }
+                    <button disabled="@((_currentActivity?.Status == ActivityStatus.Pending) ? false : true)" class="w-1/2 button-delete" @onclick="() => _deleteStandModal?.Open(stand.Id, stand.Name)" @onclick:stopPropagation=true>
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            i++;
+        }
         </div>
-        i++;
+    } else {
+        <div class="flex flex-col space-y-4 mt-10">
+            <div class="flex flex-row justify-center w-full">
+                <img src="/images/reshot-illustration-architects-and-workers-VYQWJ2CB3L.png" class="w-3/4 md:w-2/3 lg:w-1/2" />
+            </div>
+            <h3 class="text-mainPurple font-semibold text-center">
+                Stanoviska sú v štádiu prípravy. Na urýchlenie príprav môžeš zvolať poradu vedúcich do baru.
+            </h3>
+        </div>
     }
-    </div>
-} else {
-    <div class="flex flex-col space-y-4 mt-10">
-        <div class="flex flex-row justify-center w-full">
-            <img src="/images/reshot-illustration-architects-and-workers-VYQWJ2CB3L.png" class="w-3/4 md:w-2/3 lg:w-1/2" />
-        </div>
-        <h3 class="text-mainPurple font-semibold text-center">
-            Stanoviska sú v štádiu prípravy. Na urýchlenie príprav môžeš zvolať poradu vedúcich do baru.
-        </h3>
-    </div>
 }
 
 
 @code {
     [Parameter]
-    public int Year { get; set; }
+    public int ActivityId { get; set; }
 
     private List<Stand> _stands = new();
 
-    private Year? _currentYear;
+    private Activity? _currentActivity;
 
     private CreateStandModal? _createStandModal;
     private CreateQuizModal? _createQuizModal;
@@ -103,16 +109,16 @@
     {
         using var db = _dbContextFactory.CreateDbContext();
 
-        _currentYear = await db.Years
+        _currentActivity = await db.Activities
             .Include(x => x.Stands)
                 .ThenInclude(x => x.Supervisor)
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.YearValue.Equals(Year));
+            .FirstOrDefaultAsync(x => x.Id.Equals(ActivityId));
 
-        if (_currentYear is null)
+        if (_currentActivity is null)
             return;
 
-        _stands = _currentYear.Stands;
+        _stands = _currentActivity.Stands;
 
         StateHasChanged();
     }

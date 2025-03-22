@@ -28,12 +28,12 @@ namespace Haxee.Entities.Entities
         /// <summary>
         /// ID ročníka súťaže v ktorom súťaží.
         /// </summary>
-        public required int YearId { get; set; }
+        public required int ActivityId { get; set; }
 
         /// <summary>
         /// Informácie o roku v ktorom je súťaž.
         /// </summary>
-        public virtual Year Year { get; set; } = null!;
+        public virtual Activity Activity { get; set; } = null!;
         
         /// <summary>
         /// Informácie o súťažiacom

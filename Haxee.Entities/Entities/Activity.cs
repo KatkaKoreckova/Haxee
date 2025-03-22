@@ -1,14 +1,14 @@
 namespace Haxee.Entities.Entities
 {
     /// <summary>
-    /// Databázový objekt dát o ročníku súťaže.
+    /// Databázový objekt dát o danej aktivite.
     /// </summary>
-    public class Year : AbstractEntity
+    public class Activity : AbstractEntity
     {
         /// <summary>
-        /// Rok v ktorom sa súťaž odohráva.
+        /// Názov aktivity.
         /// </summary>
-        public required int YearValue { get; set; }
+        public required string Name { get; set; }
 
         /// <summary>
         /// IP adresa MQTT broker-a.
@@ -36,8 +36,8 @@ namespace Haxee.Entities.Entities
         public virtual List<Attendee> Attendees { get; set; } = new();
 
         /// <summary>
-        /// Informácia o tom či ročník sa odohral, neodohral alebo sa odohráva.
+        /// Informácia o tom či sa aktivita odohrala, neodohrala alebo sa práve odohráva.
         /// </summary>
-        public YearStatus Status { get; set; } = YearStatus.Pending;
+        public ActivityStatus Status { get; set; } = ActivityStatus.Pending;
     }
 }

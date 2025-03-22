@@ -1,10 +1,10 @@
-﻿@page "/hifileaderboard/{Year:int}"
+@page "/hifileaderboard/{ActivityId:int}"
 @inject IDbContextFactory<DataContext> _dbContextFactory
 
-@if(_year is not null) 
+@if(_activity is not null) 
 {
     int i = 1;
-    foreach (var person in _year.Attendees.OrderByDescending(x => x.StandVisits.Count).ThenByDescending(x => x.GetTime()))
+    foreach (var person in _activity.Attendees.OrderByDescending(x => x.StandVisits.Count).ThenByDescending(x => x.GetTime()))
     {
         <label>@i. @person.User.Name</label>
         <label>@(person.GetTime()?.ToString() ?? "-")</label>
@@ -54,9 +54,9 @@
 
 @code {
     [Parameter]
-    public int Year { get; set; }
+    public int ActivityId { get; set; }
 
-    private Year? _year;
+    private Activity? _activity;
 
     private List<Stand> _stands = new();
 
@@ -67,15 +67,15 @@
 
         using var db = _dbContextFactory.CreateDbContext();
 
-        _year = await db.Years
+        _activity = await db.Activities
             .Include(x => x.Stands)
             .Include(x => x.Attendees)
                 .ThenInclude(x => x.StandVisits)
             .Include(x => x.Attendees)
                 .ThenInclude(x => x.User)
-            .FirstOrDefaultAsync(x => x.YearValue.Equals(Year));
+            .FirstOrDefaultAsync(x => x.Id.Equals(ActivityId));
 
-        if (_year is null)
+        if (_activity is null)
             return;
 
         _stands = await db.Stands

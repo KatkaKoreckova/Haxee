@@ -28,7 +28,7 @@ public class MqttController : ControllerBase
         using var db = _dbContextFactory.CreateDbContext();
 
         var targetAttendee = await db.Attendees
-            .Include(x => x.Year)
+            .Include(x => x.Activity)
                 .ThenInclude(x => x.Stands)
             .Include(x => x.StandVisits)
             .SingleOrDefaultAsync(x => attendeeInformation.CardId.Equals(x.CardId));
@@ -36,7 +36,7 @@ public class MqttController : ControllerBase
         if (targetAttendee is null)
             return NotFound();
 
-        if (targetAttendee.Year.Status != YearStatus.InProgress)
+        if (targetAttendee.Activity.Status != ActivityStatus.InProgress)
             return StatusCode(403);
 
         if (attendeeInformation.Trigger.Contains("start"))
@@ -47,7 +47,7 @@ public class MqttController : ControllerBase
             }
             else if (targetAttendee.EndedAt is null)
             {
-                if (!targetAttendee.Year.Stands.Count.Equals(targetAttendee.StandVisits.Count) || targetAttendee.StandVisits.Any(x => x.LeaveTime == null))
+                if (!targetAttendee.Activity.Stands.Count.Equals(targetAttendee.StandVisits.Count) || targetAttendee.StandVisits.Any(x => x.LeaveTime == null))
                     return StatusCode(403);
 
                 targetAttendee.EndedAt = DateTime.Now;
@@ -62,7 +62,7 @@ public class MqttController : ControllerBase
             if (targetAttendee.StartedAt is null)
                 return StatusCode(403);
 
-            var targetStand = await db.Stands.Where(x => x.YearId.Equals(targetAttendee.YearId)).SingleOrDefaultAsync(x => $"S{x.Number}".Equals(attendeeInformation.Trigger));
+            var targetStand = await db.Stands.Where(x => x.ActivityId.Equals(targetAttendee.ActivityId)).SingleOrDefaultAsync(x => $"S{x.Number}".Equals(attendeeInformation.Trigger));
             
             if (targetStand is null)
                 return NotFound();

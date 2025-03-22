@@ -1,4 +1,4 @@
-﻿@page "/current/stand/{StandNumber:int}"
+@page "/current/stand/{StandNumber:int}"
 @inject IDbContextFactory<DataContext> _dbContextFactory
 @inject IJSRuntime _js
 
@@ -10,7 +10,7 @@
     <div class="flex flex-row justify-between">
         <h1 class="title">Stanovisko @_stand.Number: @_stand.Name</h1>
 
-         @if (_stand.Year.Status == YearStatus.InProgress)
+         @if (_stand.Activity.Status == ActivityStatus.InProgress)
          {
             <button class="max-h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick=StartScanning>
                 Spustiť čítačku
@@ -94,7 +94,7 @@
             .Include(x => x.StandVisits)
                 .ThenInclude(x => x.Attendee)
                     .ThenInclude(x => x.User)
-            .Include(x => x.Year)
+            .Include(x => x.Activity)
             .FirstOrDefaultAsync(x => x.Number.Equals(StandNumber));
 
         if (_stand is null)

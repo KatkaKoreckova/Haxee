@@ -37,59 +37,11 @@ namespace Haxee.MQTTConsumer.Services
         public static void DrawErrorOption(List<int> validOptions)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Not valid option. Valid options:");
+            Console.WriteLine("Not a valid option. Valid options:");
 
             foreach (int option in validOptions)
                 Console.WriteLine($"  {option}");
 
-            Console.ForegroundColor = ConsoleColor.White;
-        }
-
-        /// <summary>
-        /// Funkcia na zozbrazenie aktuálnej konfigurácie
-        /// </summary>
-        public static async Task ShowCurrentSettings()
-        {
-            Console.Clear();
-
-            if (!(await CurrentYear.IsSetUp()))
-            {
-                DrawErrorMessage("Missing current year setup");
-                Console.WriteLine("\nPress any key to return ...");
-                Console.ReadLine();
-                return;
-            }
-
-            CurrentYear currentYear = CurrentYear.GetInstance();
-
-            Console.Write("Year ");
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine(currentYear.Year);
-            Console.ForegroundColor = ConsoleColor.White;
-
-            Console.Write("Client name ");
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine(currentYear.ClientName);
-            Console.ForegroundColor = ConsoleColor.White;
-
-            Console.Write("Broker IP ");
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine(currentYear.BrokerIP);
-            Console.ForegroundColor = ConsoleColor.White;
-
-            Console.Write("Broker port ");
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine(currentYear.BrokerPort);
-            Console.ForegroundColor = ConsoleColor.White;
-
-            Console.Write("Global topic ");
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine(currentYear.GlobalTopic);
-            Console.ForegroundColor = ConsoleColor.White;
-
-            Console.Write("Setup done ");
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("true");
             Console.ForegroundColor = ConsoleColor.White;
         }
 
@@ -100,10 +52,8 @@ namespace Haxee.MQTTConsumer.Services
         {
             DrawLogo();
             Console.WriteLine("MENU");
-            Console.WriteLine($"[1] Setup Hi-Fi {DateTime.Today.Year}");
-            Console.WriteLine($"[2] Show current setup Hi-Fi {DateTime.Today.Year}");
-            Console.WriteLine($"[3] Connect to broker & start consumer");
-            Console.WriteLine($"[4] Quit\n");
+            Console.WriteLine($"[1] Connect to broker & start consumer");
+            Console.WriteLine($"[2] Quit\n");
         }
 
         /// <summary>
@@ -133,9 +83,13 @@ namespace Haxee.MQTTConsumer.Services
         /// <param name="text">Text chybovej správy</param>
         public static void DrawErrorMessage(string text)
         {
+            DrawBonk();
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(text);
             Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("Press any key to return ...");
+            Console.ReadLine();
+            Console.Clear();
         }
 
         /// <summary>

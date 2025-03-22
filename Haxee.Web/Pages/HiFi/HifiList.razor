@@ -1,41 +1,66 @@
-﻿@page "/hifilist"
-@inject DataContext _dataContext
+@page "/hifilist"
+@inject IDbContextFactory<DataContext> _dbContextFactory
 @inject NavigationManager _navigationManager
 
 <PageTitle>Haxee - HiFi Ralley</PageTitle>
 
-<h1 class="title">HiFi Ralley</h1>
+<div class="flex flex-row justify-between">
+    <h1 class="title">Activity</h1>
 
-<div class="mt-2 grid gap-4 lg:gap-6 sm:grid-cols-3 lg:grid-cols-4">
-@foreach(var year in _years.OrderByDescending(x => x.YearValue))
-{
-    var attendees = year.Attendees.Where(x => x.StartedAt != null && x.EndedAt != null);
-    <div class="w-full bg-slate-200 rounded-md shadow-md shadow-slate-300 p-4">
-        <h1 class="text-mainPurple text-center font-bold">@year.YearValue</h1>
-        <div class="flex flex-row space-x-2 items-center text-darkBlue mt-3">
-            <i class="fa-solid fa-map-location-dot"></i>
-            <h4>@year.Stands.Count()</h4>
-        </div>
-        <div class="flex flex-row space-x-2 items-center text-darkBlue mt-3">
-            <i class="fa-solid fa-clock"></i>
-            <h4>@(attendees.Any() ? TimeSpan.FromSeconds(attendees.Average(x => (x.EndedAt! - x.StartedAt!).Value.TotalSeconds)).ToString() : "-")</h4>
-        </div>
-        <button class="w-full mt-3 transition duration-200 bg-blue hover:bg-orange hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick='() => _navigationManager.NavigateTo("/hifiyear/" + year.YearValue)'>
-            Detail
+    <CreateActivityModal @ref="_createActivityModal" OnSubmit="LoadActivities" />
+    <EditActivityModal @ref="_editActivityModal" OnSubmit="LoadActivities" />
+
+    <div>
+        <button class="h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick="() => _createActivityModal?.Open()">
+            <span class="inline-block"><i class="fa-solid fa-plus"></i></span>
+            <span class="hidden md:inline-block">Create</span>
         </button>
     </div>
+</div>
+
+<div class="mt-2 grid gap-4 lg:gap-6 sm:grid-cols-3 lg:grid-cols-4">
+    @foreach(var activity in _activities.OrderByDescending(x => x.Id))
+    {
+        var attendees = activity.Attendees.Where(x => x.StartedAt != null && x.EndedAt != null);
+        <div class="w-full bg-slate-200 rounded-md shadow-md shadow-slate-300 p-4">
+            <h1 class="text-mainPurple text-center font-bold">@activity.Name</h1>
+            <div class="flex flex-row space-x-2 items-center text-darkBlue mt-3">
+                <i class="fa-solid fa-map-location-dot"></i>
+                <h4>@activity.Stands.Count()</h4>
+            </div>
+            <div class="flex flex-row space-x-2 items-center text-darkBlue mt-3">
+                <i class="fa-solid fa-clock"></i>
+                <h4>@(attendees.Any() ? TimeSpan.FromSeconds(attendees.Average(x => (x.EndedAt! - x.StartedAt!).Value.TotalSeconds)).ToString() : "-")</h4>
+            </div>
+            <button class="w-full mt-3 transition duration-200 bg-blue hover:bg-orange hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick='() => _navigationManager.NavigateTo("/hifiactivity/" + activity.Id)'>
+                Detail
+            </button>
+            <button class="w-full mt-3 transition duration-200 bg-slate-200 hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick='async () => await _editActivityModal.Open(activity.Id)'>
+                Edit
+            </button>
+        </div>
 }
 </div>
 
 @code {
-    private List<Year> _years = new();
+    private CreateActivityModal? _createActivityModal;
+    private EditActivityModal? _editActivityModal;
+
+    private List<Activity> _activities = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
             return;
 
-        _years = await _dataContext.Years
+        await LoadActivities();
+    }
+
+    private async Task LoadActivities()
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+
+        _activities = await db.Activities
             .Include(x => x.Stands)
             .ToListAsync();
 

@@ -1,11 +1,10 @@
-﻿@inject IDbContextFactory<DataContext> _dbContextFactory
+@inject IDbContextFactory<DataContext> _dbContextFactory
 
-
-@if(_currentYearStats is not null) 
+@if(_currentActivityStats is not null) 
 {
     int i = 1;
     <div class="flex flex-col mt-2 space-y-4">
-    @foreach(var person in _currentYearStats.OrderByDescending(x => x.VisitedStands).ThenByDescending(x => x.Time))
+    @foreach(var person in _currentActivityStats.OrderByDescending(x => x.VisitedStands).ThenByDescending(x => x.Time))
     {
         string colorBorder = (i == 1) ? "border-goldMain" : (i == 2) ? "border-silverMain" : (i == 3) ? "border-bronzeMain" : "mint"; 
         <div class="bg-slate-200 rounded-md shadow-md shadow-slate-300 flex flex-col border-l-8 @colorBorder p-3">
@@ -31,9 +30,9 @@
 
 @code {
     [Parameter]
-    public int Year { get; set; }
+    public int ActivityId { get; set; }
 
-    private List<AttendeeLeaderboardModel>? _currentYearStats;
+    private List<AttendeeLeaderboardModel>? _currentActivityStats;
 
     private int _numberOfStands;
 
@@ -44,19 +43,19 @@
 
         using var db = _dbContextFactory.CreateDbContext();
 
-        var currentYear = await db.Years
+        var currentActivity = await db.Activities
             .Include(x => x.Stands)
             .Include(x => x.Attendees)
                 .ThenInclude(x => x.StandVisits)
             .Include(x => x.Attendees)
                 .ThenInclude(x => x.User)
-            .FirstOrDefaultAsync(x => x.YearValue.Equals(Year));
+            .FirstOrDefaultAsync(x => x.Id.Equals(ActivityId));
 
-        if (currentYear is null)
+        if (currentActivity is null)
             return;
 
-        _numberOfStands = currentYear.Stands.Count;
-        _currentYearStats = currentYear.Attendees.Select(x => new AttendeeLeaderboardModel
+        _numberOfStands = currentActivity.Stands.Count;
+        _currentActivityStats = currentActivity.Attendees.Select(x => new AttendeeLeaderboardModel
             {
                 FullName = x.User.Name,
                 VisitedStands = x.StandVisits.Count,

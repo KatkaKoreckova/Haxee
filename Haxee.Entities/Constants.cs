@@ -38,6 +38,7 @@ namespace Haxee.Entities
         public static class CascadingParameters
         {
             public const string CurrentAccount = "CurrentAccount";
+            public const string RunningActivity = "RunningActivity";
         }
 
         public static JsonSerializerOptions DEFAULT_OPTIONS = new JsonSerializerOptions
@@ -47,7 +48,7 @@ namespace Haxee.Entities
 
         public static class Mqtt
         {
-            public const string API_URL = "http://localhost:5000/";
+            public const string API_URL = "https://localhost:5000/";
         }
 
         public static class Limits

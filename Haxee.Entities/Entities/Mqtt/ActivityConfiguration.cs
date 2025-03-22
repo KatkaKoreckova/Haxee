@@ -1,19 +1,16 @@
-using System.Runtime.CompilerServices;
-using System.Text.Json;
-using System.Text;
 using System.Net.Http.Json;
 
 namespace Haxee.Entities.Entities.Mqtt
 {
     /// <summary>
-    /// Objekt slúžiaci na prácu s konfiguračnými dátami ročníka súťaže pre aplikáciu MQTT Consumer. Tieto dáta slúžia na pripojenie na MQTT broker, prihlásenie na odoberanie tém a publikovanie tém.
+    /// Objekt slúžiaci na prácu s konfiguračnými dátami aktivity pre aplikáciu MQTT Consumer. Tieto dáta slúžia na pripojenie na MQTT broker, prihlásenie na odoberanie tém a publikovanie tém.
     /// </summary>
-    public class CurrentYear
+    public class ActivityConfiguration
     {
         /// <summary>
         /// IP adresa MQTT broker-a.
         /// </summary>
-        public string BrokerIP { get; set; } = string.Empty;
+        public string BrokerIp { get; set; } = string.Empty;
 
         /// <summary>
         /// Číslo portu, na ktorom je spustený.
@@ -31,62 +28,61 @@ namespace Haxee.Entities.Entities.Mqtt
         public string GlobalTopic { get; set; } = string.Empty;
 
         /// <summary>
-        /// Rok, v ktorom sa súťaž odohráva.
+        /// ID, podľa ktorého napárovať konfiguráciu k aktivite.
         /// </summary>
-        public int Year { get; set; }
+        public int Id { get; set; } = -1;
 
         /// <summary>
         /// Inštancia konfigurácie
         /// </summary>
 
-        private static CurrentYear? _instance = null;
+        private static ActivityConfiguration? _instance = null;
 
 
         /// <summary>
         /// Konštruktor na vytvorenie konfigurácie
         /// </summary>
-        public CurrentYear() { }
+        public ActivityConfiguration() { }
 
         /// <summary>
         /// Funkcia, ktorá vráti aktuálnu konfiguráciu.
         /// </summary>
         /// <returns>Inštanciu triedy</returns>
-        public static CurrentYear GetInstance()
+        public static ActivityConfiguration GetInstance()
         {
             if (_instance == null)
             {
-                _instance = new CurrentYear();
+                _instance = new ActivityConfiguration();
             }
             return _instance;
         }
 
         /// <summary>
-        /// Funkcia, ktorá slúži na overenie toho, či v databáze exstuje konfigurácia pre daný ročník.
+        /// Funkcia, ktorá slúži na overenie toho, či v databáze existuje konfigurácia pre daný ročník.
         /// </summary>
         /// <returns> True / false podľa toho či konfigurácia existuje alebo nie.</returns>
         public static async Task<bool> IsSetUp()
         {
             var instance = GetInstance();
 
-            if (instance.Year != 0)
+            if (instance.Id != -1)
                 return true;
 
             using var client = new HttpClient();
 
-            var response = await client.GetAsync($"{Constants.Mqtt.API_URL}api/setup");
+            var response = await client.GetAsync($"{Constants.Mqtt.API_URL}api/setup/{instance.Id}");
 
             if (!response.IsSuccessStatusCode)
                 return false;
 
-            var currentYear = await response.Content.ReadFromJsonAsync<Year>();
+            var currentActivity = await response.Content.ReadFromJsonAsync<Activity>();
 
-            if (currentYear is null)
+            if (currentActivity is null)
                 return false;
 
-            instance.BrokerIP = currentYear.BrokerIp ?? string.Empty;
-            instance.BrokerPort = currentYear.BrokerPort ?? 0;
-            instance.GlobalTopic = currentYear.GlobalTopic ?? string.Empty;
-            instance.Year = currentYear.YearValue;
+            instance.BrokerIp = currentActivity.BrokerIp ?? string.Empty;
+            instance.BrokerPort = currentActivity.BrokerPort ?? 0;
+            instance.GlobalTopic = currentActivity.GlobalTopic ?? string.Empty;
 
             return true;
         }
@@ -97,11 +93,12 @@ namespace Haxee.Entities.Entities.Mqtt
         public static async Task ClearAsync()
         {
             var instance = GetInstance();
-            if (instance.Year == 0)
+
+            if (instance.Id == -1)
                 return;
 
             using var client = new HttpClient();
-            var _ = await client.DeleteAsync($"{Constants.Mqtt.API_URL}api/setup/{instance.Year}");
+            var _ = await client.DeleteAsync($"{Constants.Mqtt.API_URL}api/setup/{instance.Id}");
 
             _instance = null;
         }

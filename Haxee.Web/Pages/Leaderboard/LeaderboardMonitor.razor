@@ -1,4 +1,4 @@
-﻿@page "/leaderboardMonitor/{Year:int}"
+@page "/leaderboardMonitor/{ActivityId:int}"
 @layout EmptyLayout
 @inject NavigationManager _navigation
 
@@ -18,12 +18,12 @@
             </div>
         </div>
     </div>
-    <Leaderboard Year="Year"></Leaderboard>
+    <Leaderboard ActivityId="ActivityId"></Leaderboard>
 </div>
 
 @code {
     [Parameter]
-    public int Year { get; set; } = DateTime.Now.Year;
+    public int ActivityId { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

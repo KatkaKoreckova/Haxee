@@ -65,18 +65,21 @@ namespace Haxee.Internal.Data
 
             var db = serviceProvider.GetRequiredService<DataContext>()!;
 
-            var year = new Year
+            var activity = new Activity
             { 
-                YearValue = DateTime.Now.Year,
-                Status = Entities.Enums.YearStatus.Pending
+                Name = $"{DateTime.Now.Year} Hi-Fi Rallye",
+                Status = Entities.Enums.ActivityStatus.Pending,
+                BrokerIp = "192.168.0.58",
+                BrokerPort = 1883,
+                GlobalTopic = "lstme/2/json/LSTME/#"
             };
 
-            db.Years.Add(year);
+            db.Activities.Add(activity);
 
             var attendee = new Attendee
             {
                 UserId = participant1.Id,
-                YearId = year.Id,
+                ActivityId = activity.Id,
                 CardId = "e3:2e:98:a1"
             };
 
@@ -85,7 +88,7 @@ namespace Haxee.Internal.Data
             var attendee2 = new Attendee
             {
                 UserId = participant2.Id,
-                YearId = year.Id,
+                ActivityId = activity.Id,
                 CardId = "d3:e0:61:1a"
             };
 
@@ -97,7 +100,7 @@ namespace Haxee.Internal.Data
                 Name = "Test stanovisko",
                 Number = 1,
                 Penalty = TimeSpan.FromSeconds(60*5),
-                YearId = year.Id,
+                ActivityId = activity.Id,
                 Capacity = 1
             };
 
@@ -107,7 +110,7 @@ namespace Haxee.Internal.Data
                 Name = "Test kviz",
                 Number = 2,
                 Penalty = TimeSpan.FromSeconds(60),
-                YearId = year.Id,
+                ActivityId = activity.Id,
                 IsQuiz = true,
                 QuestionsAndAnswers = new()
                 {

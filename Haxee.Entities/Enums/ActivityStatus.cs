@@ -1,9 +1,9 @@
 namespace Haxee.Entities.Enums
 {
     /// <summary>
-    /// Zoznam statusov, ktoré može ročník súťaže mať.
+    /// Zoznam statusov, ktoré može súťažná aktivita mať.
     /// </summary>
-    public enum YearStatus
+    public enum ActivityStatus
     {
         Finished,
         InProgress,

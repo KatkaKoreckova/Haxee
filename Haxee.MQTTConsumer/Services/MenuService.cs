@@ -17,7 +17,7 @@ namespace Haxee.MQTTConsumer.Services
             DrawService.DrawMainMenu();
 
             int option = 0;
-            List<int> validOptions = new List<int> { 1, 2, 3, 4 };
+            List<int> validOptions = new List<int> { 1, 2 };
 
             while (!HelperService.ValidMenuOption(validOptions, option))
             {
@@ -26,79 +26,12 @@ namespace Haxee.MQTTConsumer.Services
                 Console.Clear();
 
                 if (!HelperService.ValidMenuOption(validOptions, option))
-                {
-                    DrawService.DrawBonk();
-                    DrawService.DrawErrorOption(validOptions);
-                }
+                    DrawService.DrawErrorMessage($"Not a valid option. Valid options:\n  {string.Join("\n  ", validOptions)}");
 
                 DrawService.DrawMainMenu();
             }
 
             return option;
-        }
-
-        /// <summary>
-        /// Menu pri aktuálnej konfigurácii.
-        /// </summary>
-        public static async Task CurrentSetup()
-        {
-            Console.Clear();
-
-            if (!(await CurrentYear.IsSetUp()))
-                return;
-
-            await DrawService.ShowCurrentSettings();
-
-            Console.WriteLine("\n[0] Back");
-
-            int option = -1;
-            List<int> validOptions = new List<int> { 0 };
-
-            while (!HelperService.ValidMenuOption(validOptions, option))
-            {
-                int.TryParse(Console.ReadLine(), out option);
-
-                Console.Clear();
-
-                if (!HelperService.ValidMenuOption(validOptions, option))
-                {
-                    DrawService.DrawBonk();
-                    DrawService.DrawErrorOption(validOptions);
-                }
-
-                await DrawService.ShowCurrentSettings();
-
-                Console.WriteLine("\n[0] Back");
-            }
-        }
-
-        /// <summary>
-        /// Menu na stránke o chýbajúcej konfigurácii.
-        /// </summary>
-        public static void MQTTMissingInfoScreen()
-        {
-            Console.Clear();
-            DrawService.DrawErrorMessage("You need to provide Hi-Fi Ralley setup first");
-            Console.WriteLine("\nPress any key to return");
-            Console.ReadLine();
-        }
-
-        /// <summary>
-        /// Menu na stránke pri tvorbe konfigurácie.
-        /// </summary>
-        public static async void HifiSetUp()
-        {
-            Console.Clear();
-            DrawService.DrawErrorMessage("Hi-Fi Ralley already set up\n");
-
-            await DrawService.ShowCurrentSettings();
-
-            Console.WriteLine("\n\n[D] delete configuration");
-            Console.WriteLine("Press any other key to return");
-            string input = Console.ReadLine() ?? String.Empty;
-
-            if (input.Equals("D")) { }
-                await CurrentYear.ClearAsync();
         }
     }
 }

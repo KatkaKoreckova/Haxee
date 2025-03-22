@@ -89,7 +89,7 @@
 
         var highestStand = await db.Stands
             .AsNoTracking()
-            .Where(x => x.YearId.Equals(_yearId))
+            .Where(x => x.ActivityId.Equals(_yearId))
             .OrderByDescending(x => x.Number)
             .FirstOrDefaultAsync();
 
@@ -99,7 +99,7 @@
             Location = _createStandModel.Location,
             Number = highestStand is null ? 1 : highestStand.Number + 1,
             Penalty = TimeSpan.FromMinutes(_createStandModel.PenaltyInMinutes),
-            YearId = _yearId,
+            ActivityId = _yearId,
             SupervisorId = _createStandModel.Supervisor?.Id,
             Capacity = _createStandModel.Capacity
         };

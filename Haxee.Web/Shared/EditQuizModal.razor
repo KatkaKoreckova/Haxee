@@ -52,6 +52,7 @@
     public async void Open(int standId)
     {
         using var db = _dbContextFactory.CreateDbContext();
+
         _stand = await db.Stands
             .Include(x => x.Supervisor)
             .FirstOrDefaultAsync(x => x.Id.Equals(standId));

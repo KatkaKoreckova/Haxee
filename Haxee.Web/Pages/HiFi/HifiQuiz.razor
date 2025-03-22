@@ -1,4 +1,4 @@
-﻿@page "/current/quiz/{StandNumber:int}"
+@page "/current/quiz/{StandNumber:int}"
 @inject IDbContextFactory<DataContext> _dbContextFactory
 
 @if(_isCompleted)
@@ -44,7 +44,7 @@
             Toto stanovisko nie je kvíz.
         </h3>
     </div>    
-} else if (_stand.Year.Status == YearStatus.Pending)
+} else if (_stand.Activity.Status == ActivityStatus.Pending)
 {
     <div class="flex flex-col space-y-4 mt-[5%]">
         <div class="flex flex-row justify-center w-full">
@@ -54,7 +54,7 @@
             Kvíz ešte nie je spustený.
         </h3>
     </div>
-} else if (_stand.Year.Status == YearStatus.Finished)
+} else if (_stand.Activity.Status == ActivityStatus.Finished)
 {
     <div class="flex flex-col space-y-4 mt-[5%]">
         <div class="flex flex-row justify-center w-full">
@@ -107,7 +107,7 @@
     {
         using var db = _dbContextFactory.CreateDbContext();
         var stand = await db.Stands
-            .Include(x => x.Year)
+            .Include(x => x.Activity)
             .FirstOrDefaultAsync(x => x.Number.Equals(StandNumber));
 
         _isLoaded = true;
@@ -118,7 +118,7 @@
 
         _answers = new string[stand.QuestionsAndAnswers.Count];
 
-        var attendee = User.Attendances.FirstOrDefault(x => x.YearId.Equals(stand.YearId));
+        var attendee = User.Attendances.FirstOrDefault(x => x.ActivityId.Equals(stand.ActivityId));
 
         if (attendee is null)
             return;

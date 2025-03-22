@@ -1,4 +1,4 @@
-﻿@page "/home"
+@page "/home"
 @inject IDbContextFactory<DataContext> _dbContextFactory
 
 <PageTitle>Haxee - Home</PageTitle>
@@ -6,7 +6,7 @@
 <h1 class="title">Domov</h1>
 
 <div class="flex flex-col sm:items-stretch sm:flex-row mt-2 space-y-4 sm:space-y-0 sm:space-x-4">
-<AttendeesStats Year="DateTime.Now.Year"/>
+<AttendeesStats ActivityId="DateTime.Now.Year"/>
 
-<StandsStats Year="DateTime.Now.Year"/>
+<StandsStats ActivityId="DateTime.Now.Year"/>
 </div>

@@ -1,5 +1,6 @@
 using Haxee.Entities;
 using Haxee.Entities.Entities.Mqtt;
+using System.Net.Http.Json;
 using System.Text;
 
 namespace Haxee.MQTTConsumer.Services
@@ -14,14 +15,50 @@ namespace Haxee.MQTTConsumer.Services
         /// </summary>
         public static async Task SetupAndRunMQTT()
         {
+            string? input = null;
+            Activity? activity = null;
+            using var client = new HttpClient();
 
-            if (!(await CurrentYear.IsSetUp()))
+            do
             {
-                MenuService.MQTTMissingInfoScreen();
-                return;
-            }
+                Console.Clear();
+                Console.WriteLine("Activity ID:");
+                input = Console.ReadLine();
 
-            CurrentYear currentYear = CurrentYear.GetInstance();
+                if (string.IsNullOrEmpty(input))
+                    continue;
+
+                if (!int.TryParse(input, out int activityId))
+                {
+                    DrawService.DrawErrorMessage("You must input a number.");
+                    continue;
+                }
+
+                var response = await client.GetAsync($"{Constants.Mqtt.API_URL}api/setup/{activityId}");
+
+                if (!response.IsSuccessStatusCode && response.StatusCode != System.Net.HttpStatusCode.NotFound)
+                {
+                    DrawService.DrawErrorMessage($"There was an error with connecting to the web app ({response.StatusCode}).");
+                    continue;
+                }
+
+                try
+                {
+                    activity = await response.Content.ReadFromJsonAsync<Activity>();
+                }
+                catch
+                {
+                    DrawService.DrawErrorMessage($"Activity with the ID {activityId} was not found.");
+                    continue;
+                }
+
+                if (activity is null || string.IsNullOrEmpty(activity.BrokerIp) || !activity.BrokerPort.HasValue || string.IsNullOrEmpty(activity.GlobalTopic))
+                {
+                    activity = null;
+                    DrawService.DrawErrorMessage($"Activity with the ID {activityId} is missing key data, please finish configuring it in the web app.");
+                    continue;
+                }
+            } while (activity is null);
 
             Console.Clear();
 
@@ -29,8 +66,8 @@ namespace Haxee.MQTTConsumer.Services
 
             // Creates a new client
             MqttClientOptionsBuilder builder = new MqttClientOptionsBuilder()
-                                        .WithClientId(currentYear.ClientName)
-                                        .WithTcpServer(currentYear.BrokerIP, currentYear.BrokerPort);
+                                        .WithClientId(activity.Name)
+                                        .WithTcpServer(activity.BrokerIp, activity.BrokerPort);
 
             // Create client options objects
             ManagedMqttClientOptions options = new ManagedMqttClientOptionsBuilder()
@@ -55,7 +92,7 @@ namespace Haxee.MQTTConsumer.Services
             mqttClient.StartAsync(options).GetAwaiter().GetResult();
 
             mqttClient.SubscribeAsync(new MqttTopicFilterBuilder()
-                .WithTopic(currentYear.GlobalTopic)
+                .WithTopic(activity.GlobalTopic)
                 .Build()).GetAwaiter().GetResult();
 
             mqttClient.UseApplicationMessageReceivedHandler(async (e) =>

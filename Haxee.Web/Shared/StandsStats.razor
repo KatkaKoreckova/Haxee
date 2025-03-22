@@ -1,4 +1,4 @@
-﻿@inject IDbContextFactory<DataContext> _dbContextFactory
+@inject IDbContextFactory<DataContext> _dbContextFactory
 
 <div>
     @if (_standStatsModel is not null)
@@ -28,7 +28,7 @@
 
 @code {
     [Parameter]
-    public required int Year { get; set; }
+    public required int ActivityId { get; set; }
 
     private StandStatsModel? _standStatsModel;
 
@@ -38,16 +38,16 @@
             return;
 
         using var db = _dbContextFactory.CreateDbContext();
-        var year = await db.Years
+        var activity = await db.Activities
             .Include(x => x.Stands)
                 .ThenInclude(x => x.StandVisits)
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.YearValue.Equals(Year));
+            .FirstOrDefaultAsync(x => x.Id.Equals(ActivityId));
 
-        if (year is null)
+        if (activity is null)
             return;
 
-        var orderedStandsByWaitTime = year.Stands.OrderBy(x => x.StandVisits.Where(y => y.EndWaitTime != null).Sum(x => (x.EndWaitTime! - x.ArrivalTime).Value.TotalSeconds));
+        var orderedStandsByWaitTime = activity.Stands.OrderBy(x => x.StandVisits.Where(y => y.EndWaitTime != null).Sum(x => (x.EndWaitTime! - x.ArrivalTime).Value.TotalSeconds));
 
         _standStatsModel = new()
             {

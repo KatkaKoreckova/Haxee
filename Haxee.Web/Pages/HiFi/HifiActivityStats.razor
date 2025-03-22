@@ -1,11 +1,11 @@
-﻿@page "/hifiyearstats/{Year:int}"
+@page "/hifiactivitystats/{ActivityId:int}"
 @inject IDbContextFactory<DataContext> _dbContextFactory
 @using System.Globalization
 
-<h1 class="title">Štatistika Hi-Fi @Year</h1>
-
-@if(_year is not null)
+@if(_activity is not null)
 {
+    <h1 class="title">Štatistika Hi-Fi @_activity.Name</h1>
+
     <RadzenChart>
         <RadzenLineSeries Smooth="@_smooth" Data="@_finishedCounts" CategoryProperty="StandId" Title="Zvládli" ValueProperty="Value">
             <RadzenMarkers MarkerType="MarkerType.Circle" />
@@ -19,7 +19,7 @@
             <RadzenMarkers MarkerType="MarkerType.Circle" />
             <RadzenSeriesDataLabels Visible="@_showDataLabels" />
         </RadzenLineSeries>
-        <RadzenCategoryAxis Padding="5" Min="0" Max="@_year.Stands.Count()">
+        <RadzenCategoryAxis Padding="5" Min="0" Max="@_activity.Stands.Count()">
             <RadzenAxisTitle Text="Číslo stanoviska" />
         </RadzenCategoryAxis>
         <RadzenValueAxis Step="5">
@@ -40,9 +40,9 @@
 
 @code {
     [Parameter]
-    public int Year { get; set; }
+    public int ActivityId { get; set; }
 
-    private Year? _year;
+    private Activity? _activity;
 
     bool _smooth = true;
     bool _showDataLabels = true;
@@ -64,28 +64,28 @@
 
         using var db = _dbContextFactory.CreateDbContext();
 
-        _year = await db.Years
+        _activity = await db.Activities
             .Include(x => x.Stands)
                 .ThenInclude(x => x.StandVisits)
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.YearValue.Equals(Year));
+            .FirstOrDefaultAsync(x => x.Id.Equals(ActivityId));
 
-        if (_year is null)
+        if (_activity is null)
             return;
 
-        _finishedCounts = _year.Stands.Select(x => new StatInfo
+        _finishedCounts = _activity.Stands.Select(x => new StatInfo
         {
             StandId = x.Number,
             Value = x.StandVisits.Where(x => x.LeaveTime != null && !x.Skipped).Count()
         }).ToList();
 
-        _notFinishedCounts = _year.Stands.Select(x => new StatInfo
+        _notFinishedCounts = _activity.Stands.Select(x => new StatInfo
         {
             StandId = x.Number,
             Value = x.StandVisits.Where(x => x.LeaveTime == null).Count()
         }).ToList();
 
-        _skippedCounts = _year.Stands.Select(x => new StatInfo
+        _skippedCounts = _activity.Stands.Select(x => new StatInfo
         {
             StandId = x.Number,
             Value = x.StandVisits.Where(x => x.LeaveTime != null && x.Skipped).Count()

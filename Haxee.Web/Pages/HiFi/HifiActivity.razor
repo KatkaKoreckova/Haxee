@@ -1,50 +1,50 @@
-﻿@page "/hifiyear/{Year:int}"
+@page "/hifiactivity/{ActivityId:int}"
 @inject IDbContextFactory<DataContext> _dbContextFactory
 
 @if (!_isLoaded)
 {
     <h3>Loading...</h3>
-} else if (_year is null)
+} else if (_activity is null)
 {
     <div class="flex flex-col space-y-4 mt-[5%]">
         <div class="flex flex-row justify-center w-full">
             <img src="/images/reshot-illustration-construction-workers-DC8L5WUP23.png" class="w-3/4 md:w-2/3 lg:w-1/2" />
         </div>
         <h3 class="text-mainPurple font-semibold text-center">
-            Tento rok neexistuje.
+            Táto aktivita neexistuje.
         </h3>
     </div>
 } else
 {
-    <h1 class="title">Hifi @Year</h1>
+    <h1 class="title">Aktivita @_activity.Name</h1>
 
     <div class="mt-2 grid gap-4 lg:gap-6 md:grid-cols-3 lg:grid-cols-4">
-        <button onclick="location.href='/stands/@Year'" class="button-card">
+        <button onclick="location.href='/stands/@ActivityId'" class="button-card">
             <h1 class="text-mainPurple"><i class="fa-solid fa-map-location-dot"></i></h1>
             <h2 class=" text-darkBlue">Stanoviska</h2>
         </button>
 
-        @if (Year.Equals(DateTime.Now.Year))
+        @if (ActivityId.Equals(DateTime.Now.Year))
         {
-            <button onclick="location.href='/leaderboardMonitor/@Year'" class="button-card">
+            <button onclick="location.href='/leaderboardMonitor/@ActivityId'" class="button-card">
                 <h1 class="text-mainPurple"><i class="fa-solid fa-ranking-star"></i></h1>
                 <h2 class=" text-darkBlue">Leaderboard</h2>
             </button>
         }
         else
         {
-            <button onclick="location.href='/hifileaderboard/@Year'" class="button-card">
+            <button onclick="location.href='/hifileaderboard/@ActivityId'" class="button-card">
                 <h1 class="text-mainPurple"><i class="fa-solid fa-ranking-star"></i></h1>
                 <h2 class=" text-darkBlue">Leaderboard</h2>
             </button>
         }
 
-        <button onclick="location.href='/hifiyearstats/@Year'" class="button-card">
+        <button onclick="location.href='/hifiactivitystats/@ActivityId'" class="button-card">
             <h1 class="text-mainPurple"><i class="fa-solid fa-chart-line"></i></h1>
             <h2 class=" text-darkBlue">Štatistika</h2>
         </button>
 
-        @if (Year.Equals(DateTime.Now.Year))
+        @if (ActivityId.Equals(DateTime.Now.Year))
         {
             <button onclick="location.href='/kids'" class="button-card">
                 <h1 class="text-mainPurple"><i class="fa-solid fa-user-group"></i></h1>
@@ -53,24 +53,24 @@
         }
     </div>
 
-    @if (_year.Status == YearStatus.Pending && User.SuperInstructor)
+    @if (_activity.Status == ActivityStatus.Pending && User.SuperInstructor)
     {
-        <button class="mt-10" @onclick="() => ChangeYearStatus(YearStatus.InProgress)">Spustiť súťaž</button>
+        <button class="mt-10" @onclick="() => ChangeActivityStatus(ActivityStatus.InProgress)">Spustiť súťaž</button>
     }
 
-    @if (_year.Status == YearStatus.InProgress)
+    @if (_activity.Status == ActivityStatus.InProgress)
     {
         if (User.SuperInstructor)
         {
-            <button class="mt-10" @onclick="() => ChangeYearStatus(YearStatus.Finished)">Ukončiť súťaž</button>
+            <button class="mt-10" @onclick="() => ChangeActivityStatus(ActivityStatus.Finished)">Ukončiť súťaž</button>
         }
         <div class="mt-20">
             <h2 class="text-orange font-bold">Aktuálne info</h2>
             <div class="mt-2 grid gap-4 lg:gap-6 md:grid-cols-3 lg:grid-cols-4">
                 <div class="flex flex-col sm:items-stretch sm:flex-row mt-2 space-y-4 sm:space-y-0 sm:space-x-4">
-                    <AttendeesStats Year="Year" />
+                    <AttendeesStats ActivityId="ActivityId" />
 
-                    <StandsStats Year="Year" />
+                    <StandsStats ActivityId="ActivityId" />
                 </div>
             </div>
         </div>
@@ -82,9 +82,9 @@
     private User User { get; set; } = default!;
 
     [Parameter]
-    public int Year { get; set; }
+    public int ActivityId { get; set; }
 
-    private Year? _year;
+    private Activity? _activity;
     private bool _isLoaded;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -92,35 +92,31 @@
         if (!firstRender)
             return;
 
-        await LoadYearAsync();
+        await LoadActivityAsync();
     }
 
-    private async Task LoadYearAsync()
+    private async Task LoadActivityAsync()
     {
         using var db = _dbContextFactory.CreateDbContext();
-        _year = await db.Years.AsNoTracking().FirstOrDefaultAsync(x => x.YearValue.Equals(Year));
+        _activity = await db.Activities.AsNoTracking().FirstOrDefaultAsync(x => x.Id.Equals(ActivityId));
 
         _isLoaded = true;
         StateHasChanged();
     }
 
-    private async void ChangeYearStatus(YearStatus newYearStatus)
+    private async void ChangeActivityStatus(ActivityStatus newActivityStatus)
     {
         using var db = _dbContextFactory.CreateDbContext();
-        var year = await db.Years.FirstOrDefaultAsync(x => x.YearValue.Equals(Year));
+        var activity = await db.Activities.FirstOrDefaultAsync(x => x.Id.Equals(ActivityId));
 
-        if (year is null)
+        if (activity is null)
             return;
         
-        Console.WriteLine("year not null");
+        activity.Status = newActivityStatus;
 
-        year.Status = newYearStatus;
-
-        _year = year;
+        _activity = activity;
 
         await db.SaveChangesAsync();
-
-        Console.WriteLine(newYearStatus);
 
         StateHasChanged();
     }

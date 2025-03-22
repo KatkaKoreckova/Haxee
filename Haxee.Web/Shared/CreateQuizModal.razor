@@ -43,15 +43,15 @@
     [Parameter]
     public EventCallback OnSubmit { get; set; }
 
-    private int _yearId { get; set; }
+    private int _activityId { get; set; }
 
     private CreateQuizModel _createQuizModel = new();
 
     private EditContext? _editContext;
 
-    public void Open(int yearId)
+    public void Open(int activityId)
     {
-        _yearId = yearId;
+        _activityId = activityId;
 
         _createQuizModel = new();
         _editContext = new EditContext(_createQuizModel);
@@ -71,7 +71,7 @@
 
         var highestStand = await db.Stands
             .AsNoTracking()
-            .Where(x => x.YearId.Equals(_yearId))
+            .Where(x => x.ActivityId.Equals(_activityId))
             .OrderByDescending(x => x.Number)
             .FirstOrDefaultAsync();
 
@@ -81,7 +81,7 @@
             Location = _createQuizModel.Location,
             Number = highestStand is null ? 1 : highestStand.Number + 1,
             Penalty = TimeSpan.FromMinutes(_createQuizModel.PenaltyInMinutes),
-            YearId = _yearId,
+            ActivityId = _activityId,
             IsQuiz = true,
             QuestionsAndAnswers = _createQuizModel.QuestionsAndAnswers.Split("\n").ToList(),
             Capacity = _createQuizModel.Capacity

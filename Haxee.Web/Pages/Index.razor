@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 @inject IDbContextFactory<DataContext> _dbContextFactory
 @layout EmptyLayout
 
@@ -11,9 +11,9 @@
             <img src="images/LSTME_logo_white.svg" class="w-xs self-center " />
         </div>
         <div class="flex flex-row space-x-4">
-            @if (_isLoaded && _year is not null && _year.Status != YearStatus.Pending)
+            @if (_isLoaded && _activity is not null)
             {
-                <a href="/leaderboardMonitor/@_year.YearValue" class="button-card">
+                <a href="/leaderboardMonitor/@_activity.Id" class="button-card">
                     <h1 class="text-mainPurple text-center"><i class="fa-solid fa-award"></i></h1>
                     <h2 class=" text-darkBlue text-center">Leaderboard</h2>
                 </a>
@@ -27,7 +27,7 @@
 </div>
 
 @code {
-    private Year? _year;
+    private Activity? _activity;
     private bool _isLoaded;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -35,13 +35,13 @@
         if (!firstRender)
             return;
 
-        await LoadYearAsync();
+        await LoadActivityAsync();
     }
 
-    private async Task LoadYearAsync()
+    private async Task LoadActivityAsync()
     {
         using var db = _dbContextFactory.CreateDbContext();
-        _year = await db.Years.AsNoTracking().FirstOrDefaultAsync(x => x.YearValue.Equals(DateTime.Now.Year));
+        _activity = await db.Activities.AsNoTracking().FirstOrDefaultAsync(x => x.Status.Equals(ActivityStatus.InProgress));
 
         _isLoaded = true;
         StateHasChanged();
