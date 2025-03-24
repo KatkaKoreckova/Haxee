@@ -1,4 +1,4 @@
-﻿@inherits AbstractModal
+@inherits AbstractModal
 @inject IDbContextFactory<DataContext> _dbContextFactory
 
 <Modal @ref="Modal" Title="Zmena stavu">
@@ -20,7 +20,7 @@
             <label>@_attendee!.User.Name</label>
             <button class="w-full button-main" disabled="@(_standVisit.Status != StandVisitStatus.Waiting)" @onclick=EndWait>Ukončiť čakanie a Začať prácu</button>
             <button class="w-full button-main" disabled="@(_standVisit.Status != StandVisitStatus.Working)" @onclick=EndWork>Ukončiť prácu</button>
-            <button class="w-full button-main" @onclick=SkipStand>Preskocit</button>
+            <button class="w-full button-main" @onclick=SkipStand>Preskočiť</button>
         }
     </div>
 </Modal>

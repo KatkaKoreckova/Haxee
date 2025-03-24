@@ -13,11 +13,6 @@ namespace Haxee.Entities.Entities
         public required string Identifier { get; set; }
 
         /// <summary>
-        /// ID priradeného stanoviska.
-        /// </summary>
-        public int? StandId { get; set; }
-
-        /// <summary>
         /// Priradené stanovisko.
         /// </summary>
         public virtual Stand? Stand { get; set; }

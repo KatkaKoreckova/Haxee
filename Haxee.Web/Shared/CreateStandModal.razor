@@ -48,7 +48,26 @@
             <ValidationMessage For="() => _createStandModel.Supervisor" />
         </div>
 
-        <button class="hidden" type="submit">Create</button>
+        <div class="form-group mt-3">
+            <Name For="() => _createStandModel.Device" />
+            <BlazoredTypeahead MaximumSuggestions="999"
+                               MinimumLength="0"
+                               SearchMethod="SearchDevices"
+                               @bind-Value="_createStandModel.Device">
+                <SelectedTemplate Context="typeaheadContext">
+                    @typeaheadContext?.Name
+                </SelectedTemplate>
+                <ResultTemplate Context="typeaheadContext">
+                    @typeaheadContext?.Name
+                </ResultTemplate>
+                <NotFoundTemplate Context="typeaheadContext">
+                    Žiadne výsledky
+                </NotFoundTemplate>
+            </BlazoredTypeahead>
+            <ValidationMessage For="() => _createStandModel.Device" />
+        </div>
+
+        <button class="hidden" type="submit">Vytvoriť</button>
     </EditForm>
 </Modal>
 
@@ -63,6 +82,7 @@
     private EditContext? _editContext;
 
     private List<User> _instructors = new();
+    private List<Device> _devices = new();
 
     public async void Open(int yearId)
     {
@@ -72,7 +92,8 @@
         _editContext = new EditContext(_createStandModel);
 
         using var db = _dbContextFactory.CreateDbContext();
-        _instructors = await db.Users.Where(x => x.UserType == UserType.Instructor).ToListAsync();
+        _instructors = await db.Users.AsNoTracking().Where(x => x.UserType == UserType.Instructor).ToListAsync();
+        _devices = await db.Devices.AsNoTracking().ToListAsync();
 
         base.Open();
     }
@@ -101,6 +122,7 @@
             Penalty = TimeSpan.FromMinutes(_createStandModel.PenaltyInMinutes),
             ActivityId = _yearId,
             SupervisorId = _createStandModel.Supervisor?.Id,
+            DeviceId = _createStandModel.Device?.Id,
             Capacity = _createStandModel.Capacity
         };
 
@@ -114,5 +136,10 @@
     private async Task<IEnumerable<User>> SearchInstructors(string searchText)
     {
         return await Task.FromResult(_instructors!.Where(x => x.Name.Has(searchText)).ToList());
+    }
+
+    private async Task<IEnumerable<Device>> SearchDevices(string searchText)
+    {
+        return await Task.FromResult(_devices!.Where(x => x.Name.Has(searchText)).ToList());
     }
 }

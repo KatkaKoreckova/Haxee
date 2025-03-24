@@ -29,10 +29,10 @@ namespace Haxee.Internal.Data
                 .Property(x => x.QuestionsAndAnswers)
                 .HasConversion(listStringConverter);
 
-            builder.Entity<Device>()
-                .HasOne(x => x.Stand)
-                .WithOne(x => x.Device)
-                .HasForeignKey<Device>(x => x.StandId)
+            builder.Entity<Stand>()
+                .HasOne(x => x.Device)
+                .WithOne(x => x.Stand)
+                .HasForeignKey<Stand>(x => x.DeviceId)
                 .OnDelete(DeleteBehavior.SetNull);
         }
     }

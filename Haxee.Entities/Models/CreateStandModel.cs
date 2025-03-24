@@ -23,5 +23,7 @@ namespace Haxee.Entities.Models
         public int Capacity { get; set; }
 
         public User? Supervisor { get; set; }
+
+        public Device? Device { get; set; }
     }
 }

@@ -32,8 +32,8 @@
         <div class="form-group mt-3">
             <Name For="() => _createStandModel.Supervisor" />
             <BlazoredTypeahead MaximumSuggestions="999"
-            MinimumLength="0"
-            SearchMethod="SearchInstructors"
+                               MinimumLength="0"
+                               SearchMethod="SearchInstructors"
             @bind-Value="_createStandModel.Supervisor">
                 <SelectedTemplate Context="typeaheadContext">
                     @typeaheadContext?.Name
@@ -48,7 +48,26 @@
             <ValidationMessage For="() => _createStandModel.Supervisor" />
         </div>
 
-        <button class="hidden" type="submit">Edit</button>
+        <div class="form-group mt-3">
+            <Name For="() => _createStandModel.Device" />
+            <BlazoredTypeahead MaximumSuggestions="999"
+                               MinimumLength="0"
+                               SearchMethod="SearchDevices"
+                               @bind-Value="_createStandModel.Device">
+                <SelectedTemplate Context="typeaheadContext">
+                    @typeaheadContext?.Name
+                </SelectedTemplate>
+                <ResultTemplate Context="typeaheadContext">
+                    @typeaheadContext?.Name
+                </ResultTemplate>
+                <NotFoundTemplate Context="typeaheadContext">
+                    Žiadne výsledky
+                </NotFoundTemplate>
+            </BlazoredTypeahead>
+            <ValidationMessage For="() => _createStandModel.Device" />
+        </div>
+
+        <button class="hidden" type="submit">Upraviť</button>
     </EditForm>
 </Modal>
 
@@ -61,15 +80,18 @@
     private EditContext? _editContext;
 
     private List<User> _instructors = new();
+    private List<Device> _devices = new();
 
     private Stand? _stand;
 
     public async void Open(int standId)
     {
         using var db = _dbContextFactory.CreateDbContext();
-        _instructors = await db.Users.Where(x => x.UserType == UserType.Instructor).ToListAsync();
+        _instructors = await db.Users.AsNoTracking().Where(x => x.UserType == UserType.Instructor).ToListAsync();
+        _devices = await db.Devices.AsNoTracking().ToListAsync();
         _stand = await db.Stands
             .Include(x => x.Supervisor)
+            .Include(x => x.Device)
             .FirstOrDefaultAsync(x => x.Id.Equals(standId));
 
         if (_stand is null)
@@ -81,7 +103,8 @@
             Location = _stand.Location,
             PenaltyInMinutes = (int) _stand.Penalty.TotalMinutes,
             Supervisor = _stand.Supervisor,
-            Capacity = _stand.Capacity
+            Capacity = _stand.Capacity,
+            Device = _stand.Device
         };
         _editContext = new EditContext(_createStandModel);
 
@@ -109,6 +132,7 @@
         targetStand.Penalty = TimeSpan.FromMinutes(_createStandModel.PenaltyInMinutes);
         targetStand.SupervisorId = _createStandModel.Supervisor?.Id;
         targetStand.Capacity = _createStandModel.Capacity;
+        targetStand.DeviceId = _createStandModel.Device?.Id;
 
         await db.SaveChangesAsync();
 
@@ -119,5 +143,10 @@
     private async Task<IEnumerable<User>> SearchInstructors(string searchText)
     {
         return await Task.FromResult(_instructors!.Where(x => x.Name.Has(searchText)).ToList());
+    }
+
+    private async Task<IEnumerable<Device>> SearchDevices(string searchText)
+    {
+        return await Task.FromResult(_devices!.Where(x => x.Name.Has(searchText)).ToList());
     }
 }

@@ -71,6 +71,11 @@ namespace Haxee.Entities.DTOs
         public virtual List<StandVisit> StandVisits { get; set; } = new();
 
         /// <summary>
+        /// ID priradeného zariadenia.
+        /// </summary>
+        public int? DeviceId { get; set; }
+
+        /// <summary>
         /// Priradené zariadenie.
         /// </summary>
         public virtual Device? Device { get; set; }
