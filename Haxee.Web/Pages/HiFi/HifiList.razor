@@ -7,15 +7,18 @@
 <div class="flex flex-row justify-between">
     <h1 class="title">Activity</h1>
 
-    <CreateActivityModal @ref="_createActivityModal" OnSubmit="LoadActivities" />
-    <EditActivityModal @ref="_editActivityModal" OnSubmit="LoadActivities" />
+    @if (User.SuperInstructor)
+    {
+        <CreateActivityModal @ref="_createActivityModal" OnSubmit="LoadActivities" />
+        <EditActivityModal @ref="_editActivityModal" OnSubmit="LoadActivities" />
 
-    <div>
-        <button class="h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick="() => _createActivityModal?.Open()">
-            <span class="inline-block"><i class="fa-solid fa-plus"></i></span>
-            <span class="hidden md:inline-block">Create</span>
-        </button>
-    </div>
+        <div>
+            <button class="h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick="() => _createActivityModal?.Open()">
+                <span class="inline-block"><i class="fa-solid fa-plus"></i></span>
+                <span class="hidden md:inline-block">Create</span>
+            </button>
+        </div>
+    }
 </div>
 
 <div class="mt-2 grid gap-4 lg:gap-6 sm:grid-cols-3 lg:grid-cols-4">
@@ -35,14 +38,20 @@
             <button class="w-full mt-3 transition duration-200 bg-blue hover:bg-orange hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick='() => _navigationManager.NavigateTo("/hifiactivity/" + activity.Id)'>
                 Detail
             </button>
-            <button class="w-full mt-3 transition duration-200 bg-slate-200 hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick='async () => await _editActivityModal.Open(activity.Id)'>
-                Edit
-            </button>
+            @if (User.SuperInstructor)
+            {
+                <button class="w-full mt-3 transition duration-200 bg-slate-200 px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick='async () => await _editActivityModal.Open(activity.Id)'>
+                    Edit
+                </button>
+            }
         </div>
 }
 </div>
 
 @code {
+    [CascadingParameter(Name = Constants.CascadingParameters.CurrentAccount)]
+    private User User { get; set; } = default!;
+
     private CreateActivityModal? _createActivityModal;
     private EditActivityModal? _editActivityModal;
 
