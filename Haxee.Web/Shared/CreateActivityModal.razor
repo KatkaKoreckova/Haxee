@@ -68,6 +68,9 @@
         };
 
         db.Activities.Add(activity);
+
+        activity.AddDefaultStand();
+
         await db.SaveChangesAsync();
 
         await Modal.Close();

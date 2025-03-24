@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Haxee.Entities.Entities
 {
     /// <summary>
@@ -39,5 +41,19 @@ namespace Haxee.Entities.Entities
         /// Informácia o tom či sa aktivita odohrala, neodohrala alebo sa práve odohráva.
         /// </summary>
         public ActivityStatus Status { get; set; } = ActivityStatus.Pending;
+
+        public void AddDefaultStand()
+        {
+            Stands.Add(new()
+            {
+                Name = "Štart",
+                Location = string.Empty,
+                Number = 0,
+                Penalty = TimeSpan.Zero,
+                ActivityId = Id,
+                Capacity = Constants.Limits.MAX_PEOPLE,
+                IsStartingStand = true,
+            });
+        }
     }
 }

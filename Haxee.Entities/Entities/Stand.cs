@@ -56,6 +56,11 @@ namespace Haxee.Entities.DTOs
         public required int Capacity { get; set; }
 
         /// <summary>
+        /// Určuje, či dané stanovisko je štartovné
+        /// </summary>
+        public bool IsStartingStand { get; set; }
+
+        /// <summary>
         /// Informácie o aktivite.
         /// </summary>
         public virtual Activity Activity { get; set; } = null!;

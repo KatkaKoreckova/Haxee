@@ -76,6 +76,8 @@ namespace Haxee.Internal.Data
 
             db.Activities.Add(activity);
 
+            activity.AddDefaultStand();
+
             var attendee = new Attendee
             {
                 UserId = participant1.Id,
