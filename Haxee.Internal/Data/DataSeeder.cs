@@ -125,6 +125,14 @@ namespace Haxee.Internal.Data
             db.Stands.Add(stand);
             db.Stands.Add(quizStand);
 
+            var device = new Device
+            {
+                Identifier = "3176110040",
+                Name = "LSTME 1"
+            };
+
+            db.Devices.Add(device);
+
             await db.SaveChangesAsync();
         }
     }

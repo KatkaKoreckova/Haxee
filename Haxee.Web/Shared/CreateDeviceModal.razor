@@ -1,0 +1,63 @@
+@inherits AbstractModal
+@inject IDbContextFactory<DataContext> _dbContextFactory
+
+<Modal @ref="Modal" Title="Vytvoriť zariadenie" SubmitText="Vytvoriť" OnSubmitAttempted="OnSubmitAttempted">
+    <EditForm class="form" EditContext="_editContext" OnSubmit="OnSubmitAttempted">
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <Name For="() => _createDeviceModel.Name" />
+            <InputText class="input-field" @bind-Value="_createDeviceModel.Name" placeholder="LSTME 123" />
+            <ValidationMessage For="() => _createDeviceModel.Name" />
+        </div>
+
+        <div class="form-group mt-3">
+            <Name For="() => _createDeviceModel.Identifier" />
+            <InputText class="input-field" @bind-Value="_createDeviceModel.Identifier" placeholder="123456789" />
+            <ValidationMessage For="() => _createDeviceModel.Identifier" />
+        </div>
+
+        <button class="hidden" type="submit">Create</button>
+    </EditForm>
+</Modal>
+
+@code {
+    [Parameter]
+    public EventCallback OnSubmit { get; set; }
+
+    private CreateDeviceModel _createDeviceModel = new();
+
+    private EditContext? _editContext;
+
+    public override void Open()
+    {
+        _createDeviceModel = new();
+        _editContext = new EditContext(_createDeviceModel);
+
+        base.Open();
+    }
+
+    private async Task OnSubmitAttempted()
+    {
+        if (Modal is null || _editContext is null || _createDeviceModel is null)
+            return;
+
+        if (!_editContext.Validate())
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var device = new Device()
+        {
+            Name = _createDeviceModel.Name,
+            Identifier = _createDeviceModel.Identifier
+        };
+
+        db.Devices.Add(device);
+
+        await db.SaveChangesAsync();
+
+        await Modal.Close();
+        await OnSubmit.InvokeAsync();
+    }
+}

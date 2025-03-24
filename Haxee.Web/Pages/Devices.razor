@@ -1,0 +1,73 @@
+@page "/devices"
+@inject IDbContextFactory<DataContext> _dbContextFactory
+@inject NavigationManager _navigationManager
+
+<PageTitle>Haxee - Zariadenia</PageTitle>
+
+<div class="flex flex-row justify-between">
+    <h1 class="title">Zariadenia</h1>
+
+    @if (User.SuperInstructor)
+    {
+        <CreateDeviceModal @ref="_createDeviceModal" OnSubmit="LoadDevices" />
+        <EditDeviceModal @ref="_editDeviceModal" OnSubmit="LoadDevices" />
+        <DeleteDeviceModal @ref="_deleteDeviceModal" OnSubmit="LoadDevices" />
+
+        <div>
+            <button class="h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick="() => _createDeviceModal?.Open()">
+                <span class="inline-block"><i class="fa-solid fa-plus"></i></span>
+                <span class="hidden md:inline-block">Vytvoriť</span>
+            </button>
+        </div>
+    }
+</div>
+
+<div class="mt-2 grid gap-4 lg:gap-6 sm:grid-cols-3 lg:grid-cols-4">
+    @foreach(var device in _devices.OrderByDescending(x => x.Id))
+    {
+        <div class="w-full bg-slate-200 rounded-md shadow-md shadow-slate-300 p-4">
+            <h1 class="text-mainPurple text-center font-bold">@device.Name</h1>
+            <div class="flex flex-row space-x-2 items-center text-darkBlue mt-3">
+                <i class="fa-solid fa-fingerprint"></i>
+                <h4>@device.Identifier</h4>
+            </div>
+            @if (User.SuperInstructor)
+            {
+                <button class="button-main  mt-3 transition duration-200 px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick='async () => await _editDeviceModal.Open(device.Id)'>
+                    Upraviť
+                </button>
+                <button class="button-delete w-full mt-3 transition duration-200 bg-slate-200 px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick='() => _deleteDeviceModal?.Open(device.Id, device.Name)' @onclick:stopPropagation=true>
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            }
+        </div>
+}
+</div>
+
+@code {
+    [CascadingParameter(Name = Constants.CascadingParameters.CurrentAccount)]
+    private User User { get; set; } = default!;
+
+    private CreateDeviceModal? _createDeviceModal;
+    private EditDeviceModal? _editDeviceModal;
+    private DeleteDeviceModal? _deleteDeviceModal;
+
+    private List<Device> _devices = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        await LoadDevices();
+    }
+
+    private async Task LoadDevices()
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+
+        _devices = await db.Devices.ToListAsync();
+
+        StateHasChanged();
+    }
+}

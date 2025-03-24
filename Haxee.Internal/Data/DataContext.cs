@@ -13,6 +13,7 @@ namespace Haxee.Internal.Data
         public DbSet<Activity> Activities { get; set; }
         public DbSet<Attendee> Attendees { get; set; }
         public DbSet<StandVisit> StandVisits { get; set; }
+        public DbSet<Device> Devices { get; set; }
         public DataContext(DbContextOptions dbContextOptions) : base(dbContextOptions) { }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -27,6 +28,12 @@ namespace Haxee.Internal.Data
             builder.Entity<Stand>()
                 .Property(x => x.QuestionsAndAnswers)
                 .HasConversion(listStringConverter);
+
+            builder.Entity<Device>()
+                .HasOne(x => x.Stand)
+                .WithOne(x => x.Device)
+                .HasForeignKey<Device>(x => x.StandId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

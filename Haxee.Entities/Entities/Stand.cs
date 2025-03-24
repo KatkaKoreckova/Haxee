@@ -69,5 +69,10 @@ namespace Haxee.Entities.DTOs
         /// Zoznam návštev stanoviska.
         /// </summary>
         public virtual List<StandVisit> StandVisits { get; set; } = new();
+
+        /// <summary>
+        /// Priradené zariadenie.
+        /// </summary>
+        public virtual Device? Device { get; set; }
     }
 }
