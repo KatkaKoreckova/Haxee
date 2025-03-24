@@ -39,7 +39,19 @@ public class MqttController : ControllerBase
         if (targetAttendee.Activity.Status != ActivityStatus.InProgress)
             return StatusCode(403);
 
-        if (attendeeInformation.Trigger.Contains("start"))
+        var targetStand = await db.Stands
+            .Where(x => x.ActivityId.Equals(targetAttendee.ActivityId))
+            .Include(x => x.Device)
+            .Where(x => x.Device != null && x.Device.Identifier.Equals(attendeeInformation.Trigger))
+            .FirstOrDefaultAsync();
+
+        if (targetStand is null)
+            return NotFound();
+
+        if (targetStand.IsQuiz)
+            return Conflict();
+
+        if(targetStand.IsStartingStand)
         {
             if (targetAttendee.StartedAt is null)
             {
@@ -47,7 +59,12 @@ public class MqttController : ControllerBase
             }
             else if (targetAttendee.EndedAt is null)
             {
-                if (!targetAttendee.Activity.Stands.Count.Equals(targetAttendee.StandVisits.Count) || targetAttendee.StandVisits.Any(x => x.LeaveTime == null))
+                if (!targetAttendee.Activity.Stands
+                    .Where(x => !x.IsStartingStand)
+                    .Count()
+                    .Equals(targetAttendee.StandVisits.Count) 
+                    || 
+                    targetAttendee.StandVisits.Any(x => x.LeaveTime == null))
                     return StatusCode(403);
 
                 targetAttendee.EndedAt = DateTime.Now;
@@ -56,20 +73,6 @@ public class MqttController : ControllerBase
                 return BadRequest();
         } else
         {
-            if (!attendeeInformation.Trigger.Contains('S'))
-                return BadRequest();
-
-            if (targetAttendee.StartedAt is null)
-                return StatusCode(403);
-
-            var targetStand = await db.Stands.Where(x => x.ActivityId.Equals(targetAttendee.ActivityId)).SingleOrDefaultAsync(x => $"S{x.Number}".Equals(attendeeInformation.Trigger));
-            
-            if (targetStand is null)
-                return NotFound();
-
-            if (targetStand.IsQuiz)
-                return Conflict();
-
             var existingStandVisit = targetAttendee.StandVisits.SingleOrDefault(x => x.StandId.Equals(targetStand.Id));
 
             if(existingStandVisit is not null)
