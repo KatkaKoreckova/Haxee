@@ -5,7 +5,7 @@
 <PageTitle>Haxee - HiFi Ralley</PageTitle>
 
 <div class="flex flex-row justify-between">
-    <h1 class="title">Activity</h1>
+    <h1 class="title">Aktivity</h1>
 
     @if (User.SuperInstructor)
     {
@@ -15,7 +15,7 @@
         <div>
             <button class="h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick="() => _createActivityModal?.Open()">
                 <span class="inline-block"><i class="fa-solid fa-plus"></i></span>
-                <span class="hidden md:inline-block">Create</span>
+                <span class="hidden md:inline-block">Vytvoriť</span>
             </button>
         </div>
     }
@@ -41,7 +41,7 @@
             @if (User.SuperInstructor)
             {
                 <button class="w-full mt-3 transition duration-200 bg-slate-200 px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick='async () => await _editActivityModal.Open(activity.Id)'>
-                    Edit
+                    Upraviť
                 </button>
             }
         </div>
