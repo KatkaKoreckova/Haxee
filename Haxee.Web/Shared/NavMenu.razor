@@ -24,7 +24,7 @@
             @if (User.UserType == UserType.Instructor)
             {
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="hifilist">
+                    <NavLink class="nav-link" href="activities">
                         <div class="w-full flex flex-row justify-start items-stretch p-2">
                             <h3 class="self-center font-extralight"><i class="fa-solid fa-person-running"></i></h3>
                             <h3 class="ml-3 self-center">Aktivity</h3>
@@ -102,7 +102,7 @@
             <h4 class="self-center font-extralight"><i class="fa-solid fa-house"></i></h4>
             <h4 class="ml-3 self-center">Domov</h4>
         </div>
-        <div class="p-4 border-b-2 border-gray-200 w-full float-right flex flex-row justify-end items-stretch" @onclick='() => NavToPage("/hifilist")'>
+        <div class="p-4 border-b-2 border-gray-200 w-full float-right flex flex-row justify-end items-stretch" @onclick='() => NavToPage("/activities")'>
             <h4 class="self-center font-extralight"><i class="fa-solid fa-person-running"></i></h4>
             <h4 class="ml-3 self-center">Hi-Fi Ralley</h4>
         </div>

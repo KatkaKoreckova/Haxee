@@ -1,4 +1,4 @@
-@page "/hifiactivity/{ActivityId:int}"
+@page "/activity/{ActivityId:int}"
 @inject IDbContextFactory<DataContext> _dbContextFactory
 
 @if (!_isLoaded)
@@ -26,20 +26,20 @@
 
         @if (ActivityId.Equals(DateTime.Now.Year))
         {
-            <button onclick="location.href='/leaderboardMonitor/@ActivityId'" class="button-card">
+            <button onclick="location.href='/monitor-leaderboard/@ActivityId'" class="button-card">
                 <h1 class="text-mainPurple"><i class="fa-solid fa-ranking-star"></i></h1>
                 <h2 class=" text-darkBlue">Leaderboard</h2>
             </button>
         }
         else
         {
-            <button onclick="location.href='/hifileaderboard/@ActivityId'" class="button-card">
+            <button onclick="location.href='/activity-leaderboard/@ActivityId'" class="button-card">
                 <h1 class="text-mainPurple"><i class="fa-solid fa-ranking-star"></i></h1>
                 <h2 class=" text-darkBlue">Leaderboard</h2>
             </button>
         }
 
-        <button onclick="location.href='/hifiactivitystats/@ActivityId'" class="button-card">
+        <button onclick="location.href='/activity-stats/@ActivityId'" class="button-card">
             <h1 class="text-mainPurple"><i class="fa-solid fa-chart-line"></i></h1>
             <h2 class=" text-darkBlue">Štatistika</h2>
         </button>

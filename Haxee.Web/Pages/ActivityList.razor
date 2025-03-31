@@ -1,8 +1,8 @@
-@page "/hifilist"
+@page "/activities"
 @inject IDbContextFactory<DataContext> _dbContextFactory
 @inject NavigationManager _navigationManager
 
-<PageTitle>Haxee - HiFi Ralley</PageTitle>
+<PageTitle>Haxee - Aktivity</PageTitle>
 
 <div class="flex flex-row justify-between">
     <h1 class="title">Aktivity</h1>
@@ -35,7 +35,7 @@
                 <i class="fa-solid fa-clock"></i>
                 <h4>@(attendees.Any() ? TimeSpan.FromSeconds(attendees.Average(x => (x.EndedAt! - x.StartedAt!).Value.TotalSeconds)).ToString() : "-")</h4>
             </div>
-            <button class="w-full mt-3 transition duration-200 bg-blue hover:bg-orange hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick='() => _navigationManager.NavigateTo("/hifiactivity/" + activity.Id)'>
+            <button class="w-full mt-3 transition duration-200 bg-blue hover:bg-orange hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick='() => _navigationManager.NavigateTo("/activity/" + activity.Id)'>
                 Detail
             </button>
             @if (User.SuperInstructor)
