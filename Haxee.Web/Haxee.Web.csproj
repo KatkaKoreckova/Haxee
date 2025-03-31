@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.2" />
     <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
-    <PackageReference Include="Radzen.Blazor" Version="4.10.1" />
+    <PackageReference Include="Radzen.Blazor" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>

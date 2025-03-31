@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NETCore.MailKit.Extensions;
 using NETCore.MailKit.Infrastructure.Internal;
+using Radzen;
 using System.Security.Claims;
-using System.Security.Principal;
 
 namespace Haxee.Web
 {
@@ -67,6 +67,8 @@ namespace Haxee.Web
             builder.Services.AddMailKit(config => config.UseMailKit(mailKitOptions));
 
             builder.Services.AddScoped<MailService>();
+
+            builder.Services.AddRadzenComponents();
 
             var app = builder.Build();
 

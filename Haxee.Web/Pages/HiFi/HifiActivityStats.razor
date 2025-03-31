@@ -7,18 +7,27 @@
     <h1 class="title">Štatistika Hi-Fi @_activity.Name</h1>
 
     <RadzenChart>
-        <RadzenLineSeries Smooth="@_smooth" Data="@_finishedCounts" CategoryProperty="StandId" Title="Zvládli" ValueProperty="Value">
-            <RadzenMarkers MarkerType="MarkerType.Circle" />
-            <RadzenSeriesDataLabels Visible="@_showDataLabels" />
-        </RadzenLineSeries>
-        <RadzenLineSeries Smooth="@_smooth" Data="@_notFinishedCounts" CategoryProperty="StandId" Title="Nedokončili" ValueProperty="Value">
-            <RadzenMarkers MarkerType="MarkerType.Circle" />
-            <RadzenSeriesDataLabels Visible="@_showDataLabels" />
-        </RadzenLineSeries>
-        <RadzenLineSeries Smooth="@_smooth" Data="@_skippedCounts" CategoryProperty="StandId" Title="Preskočili" ValueProperty="Value">
-            <RadzenMarkers MarkerType="MarkerType.Circle" />
-            <RadzenSeriesDataLabels Visible="@_showDataLabels" />
-        </RadzenLineSeries>
+        @if (_finishedCounts.Any())
+        {
+            <RadzenLineSeries Smooth="@_smooth" Data="@_finishedCounts" CategoryProperty="StandId" Title="Zvládli" ValueProperty="Value">
+                <RadzenMarkers MarkerType="MarkerType.Circle" />
+                <RadzenSeriesDataLabels Visible="@_showDataLabels" />
+            </RadzenLineSeries>
+        }
+        @if (_notFinishedCounts.Any())
+        {
+            <RadzenLineSeries Smooth="@_smooth" Data="@_notFinishedCounts" CategoryProperty="StandId" Title="Nedokončili" ValueProperty="Value">
+                <RadzenMarkers MarkerType="MarkerType.Circle" />
+                <RadzenSeriesDataLabels Visible="@_showDataLabels" />
+            </RadzenLineSeries>
+        }
+        @if (_skippedCounts.Any())
+        {
+            <RadzenLineSeries Smooth="@_smooth" Data="@_skippedCounts" CategoryProperty="StandId" Title="Preskočili" ValueProperty="Value">
+                <RadzenMarkers MarkerType="MarkerType.Circle" />
+                <RadzenSeriesDataLabels Visible="@_showDataLabels" />
+            </RadzenLineSeries>
+        }
         <RadzenCategoryAxis Padding="5" Min="0" Max="@_activity.Stands.Count()">
             <RadzenAxisTitle Text="Číslo stanoviska" />
         </RadzenCategoryAxis>
