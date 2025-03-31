@@ -54,6 +54,9 @@ namespace Haxee.Entities
         public static class Limits
         {
             public const int MAX_PEOPLE = 100;
+            public const int MAX_CSV_SIZE = 15360 * 1024;
+            public const int MAX_STANDS = 100;
+            public const int MIN_SCANNED_STANDS = 12;
         }
     }
 }

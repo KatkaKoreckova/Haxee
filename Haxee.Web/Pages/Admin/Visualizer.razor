@@ -1,0 +1,153 @@
+@page "/admin/visualizer"
+@using System.IO.Compression
+@using CsvHelper
+@using System.Globalization
+@using CsvHelper.Configuration
+@using System.Text
+@inject ILogger<Visualizer> _logger
+@inject IWebHostEnvironment Environment
+
+<h1 class="title">Vizualizácia</h1>
+
+@if (!_isDone)
+{
+    <div class="form-group">
+        <div>Nahrajte .csv súbor pre zobrazenie vizualizácie</div>
+
+        <div class="w-full h-full ">
+            <label for="imageUpload" class="file-input">
+                @if (_isLoading)
+                {
+                    <Spinner/>
+                }
+                else if (_fileUploadError is not null)
+                {
+                    <div class="validation-message">@_fileUploadError</div>
+                    <div>Vyberte súbor</div>
+                }
+                else if (_uploadedFile is not null)
+                {
+                    <div class="w-full text-center font-normal">@_uploadedFile.Name (@_uploadedFile.Size B)</div> <br />
+                    <div class="w-full text-center mt-4">Zmeniť súbor</div>
+                }
+                else
+                {
+                    <div>Vyberte súbor</div>
+                }
+            </label>
+            <InputFile OnChange="OnFileChanged" id="imageUpload" style="display: none" />
+        </div>
+    </div>
+} else
+{
+    <p>Žalmy boli úspešne nahrané.</p>
+}
+
+@code {
+    private string? _fileUploadError;
+
+    private IBrowserFile? _uploadedFile;
+
+    private bool _isLoading;
+
+    private bool _isDone;
+
+    private void ShowUploadError(string message)
+    {
+        _fileUploadError = message;
+        _isLoading = false;
+        StateHasChanged();
+    }
+
+    public async Task OnFileChanged(InputFileChangeEventArgs e)
+    {
+        _isLoading = true;
+        _fileUploadError = null;
+        StateHasChanged();
+
+        if (!e.File.ContentType.Contains("csv") && !e.File.ContentType.Equals("application/vnd.ms-excel"))
+        {
+            ShowUploadError("Súbor musí byť typu .csv.");
+            return;
+        }
+
+        try
+        {
+            _uploadedFile = e.File;
+            var folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot","unsafe_uploads");
+
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+
+            var extension = _uploadedFile.Name[(_uploadedFile.Name.LastIndexOf('.') + 1)..];
+
+            string path;
+            string trustedFileName;
+            do
+            {
+                trustedFileName = Path.GetRandomFileName();
+                trustedFileName = trustedFileName[..trustedFileName.LastIndexOf('.')] + $".{extension}";
+
+                path = Path.Combine(folderPath, trustedFileName);
+            } while (File.Exists(path));
+
+            await using FileStream fs = new(path, FileMode.Create);
+            await e.File.OpenReadStream(Constants.Limits.MAX_CSV_SIZE).CopyToAsync(fs);
+            fs.Dispose();
+
+            ReadFile(path);
+
+            File.Delete(path);
+
+            _isDone = true;
+            _isLoading = false;
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"File upload failed, file name {e.File.Name}, error: {ex}");
+            ShowUploadError("Vyskytla sa chyba pri nahrávaní csv súboru.");
+        }
+        StateHasChanged();
+    }
+
+    private void ReadFile(string path)
+    {
+        using var reader = new StreamReader(path, Encoding.UTF8);
+        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+        };
+        using var csv = new CsvReader(reader, config);
+        var results = new List<AttendeeResultDTO>();
+
+        csv.Read();
+        csv.ReadHeader();
+
+        if (csv.HeaderRecord is null)
+            throw new Exception("Failed to read header record");
+
+        while(csv.Read())
+        {
+            var row = csv.GetRecord<AttendeeResultDTO>();
+
+            for(int i=1; i<Constants.Limits.MAX_STANDS; i++)
+            {
+                var waitingHeader = $"{i} C";
+                var penaltyHeader = $"{i}P";
+
+                if (!csv.HeaderRecord.Contains(waitingHeader) && !csv.HeaderRecord.Contains(penaltyHeader))
+                    if (i > Constants.Limits.MIN_SCANNED_STANDS)
+                        break;
+                    else
+                        continue;
+
+                row.WaitingPeriods.Add(i, csv.GetField<int?>(waitingHeader).GetValueOrDefault());
+                row.PenaltyPeriods.Add(i, csv.GetField<int?>(penaltyHeader).GetValueOrDefault());
+            }
+
+            results.Add(row);
+        }
+
+        Console.WriteLine("Done");
+    }
+}

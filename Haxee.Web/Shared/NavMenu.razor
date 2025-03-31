@@ -70,6 +70,14 @@
             @if (User.SuperInstructor)
             {
                 <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/admin/visualizer">
+                        <div class="w-full flex flex-row justify-start items-stretch p-2">
+                            <h3 class="self-center font-extralight"><i class="fa-solid fa-chart-simple"></i></h3>
+                            <h3 class="ml-3 self-center">Vizualizácia</h3>
+                        </div>
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
                     <NavLink class="nav-link" href="/admin/menu">
                         <div class="w-full flex flex-row justify-start items-stretch p-2">
                             <h3 class="self-center font-extralight"><i class="fa-solid fa-screwdriver-wrench"></i></h3>
@@ -120,6 +128,10 @@
         </div>
         @if (User.SuperInstructor)
         {
+            <div class="p-4 border-b-2 border-gray-200 w-full float-right flex flex-row justify-end items-stretch" @onclick='() => NavToPage("/admin/visualizer")'>
+                <h4 class="self-center font-extralight"><i class="fa-solid fa-chart-simple"></i></h4>
+                <h4 class="ml-3 self-center">Vizualizácia</h4>
+            </div>
             <div class="p-4 border-b-2 border-gray-200 w-full float-right flex flex-row justify-end items-stretch"  @onclick='() => NavToPage("/admin/menu")' >
                 <h4 class="self-center font-extralight"><i class="fa-solid fa-screwdriver-wrench"></i></h4>
                 <h4 class="ml-3 self-center">Admin panel</h4>
@@ -163,7 +175,8 @@
         }
     }
 
-    private void NavToPage(string add) {
+    private void NavToPage(string add) 
+    {
         ToggleNavMenu();
         NavigationManager.NavigateTo(add, true);
     }
