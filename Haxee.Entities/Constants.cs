@@ -57,6 +57,8 @@ namespace Haxee.Entities
             public const int MAX_CSV_SIZE = 15360 * 1024;
             public const int MAX_STANDS = 100;
             public const int MIN_SCANNED_STANDS = 12;
+            public const int MIN_POINTS = 5;
+            public const int MAX_POINTS = 50;
         }
     }
 }

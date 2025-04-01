@@ -5,7 +5,7 @@ namespace Haxee.Entities.DTOs;
 public class AttendeeResultDTO
 {
     [Name("Poradie")]
-    public int Standing { get; set; }
+    public int ImportedStanding { get; set; }
 
     [Name("Krstné meno")]
     public string? Firstname { get; set; }
@@ -30,4 +30,36 @@ public class AttendeeResultDTO
 
     [Ignore]
     public Dictionary<int, int> PenaltyPeriods { get; set; } = new();
+
+    [Ignore]
+    private TimeSpan? _calculatedTotalTime;
+
+    [Ignore]
+    public int? FinalStanding { get; set; }
+
+    [Ignore]
+    public double? FinalPoints { get; set; }
+
+    [Ignore]
+    public double? FinalPercentile { get; set; }
+
+    public TimeSpan GetCalculatedTotalTime()
+    {
+        if (_calculatedTotalTime == null)
+        {
+            _calculatedTotalTime = Duration;
+
+            foreach (var waitingPeriod in WaitingPeriods)
+            {
+                _calculatedTotalTime -= TimeSpan.FromMinutes(waitingPeriod.Value);
+            }
+
+            foreach (var penaltyPeriod in PenaltyPeriods)
+            {
+                _calculatedTotalTime += TimeSpan.FromMinutes(penaltyPeriod.Value);
+            }
+        }
+
+        return _calculatedTotalTime.Value;
+    }
 }

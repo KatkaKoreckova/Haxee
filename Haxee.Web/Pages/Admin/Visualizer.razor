@@ -9,7 +9,7 @@
 
 <h1 class="title">Vizualizácia</h1>
 
-@if (!_isDone)
+@if (_averageWaitTimes is null || _averagePenaltyTimes is null || _standings is null)
 {
     <div class="form-group">
         <div>Nahrajte .csv súbor pre zobrazenie vizualizácie</div>
@@ -57,6 +57,39 @@
         </RadzenValueAxis>
         <RadzenColumnOptions Radius="5" Width="20" />
     </RadzenChart>
+
+    <div>
+        @{
+            var totalTimes = _standings.Select(x => x.GetCalculatedTotalTime());
+        }
+        <b>Minimálny čas na splnenie:</b> @totalTimes.Min()<br/>
+        <b>Priemerny čas na splnenie:</b> @(new TimeSpan(Convert.ToInt64(totalTimes.Average(x => x.Ticks))))<br/>
+        <b>Maximálny čas na splnenie:</b> @totalTimes.Max()
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Poradie</th>
+                <th>Meno a priezvisko</th>
+                <th>Celkový čas</th>
+                <th>Body</th>
+                <th>Percentil</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var standing in _standings) 
+            {
+                <tr>
+                    <td>@standing.FinalStanding</td>
+                    <td>@standing.Firstname @standing.Surname</td>
+                    <td>@standing.GetCalculatedTotalTime()</td>
+                    <td>@(standing.FinalPoints.HasValue ? Math.Round(standing.FinalPoints.Value) : "-")</td>
+                    <td>@(standing.FinalPercentile.HasValue ? (Math.Round((1-standing.FinalPercentile.Value)*100, 1)) : "-")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 @code {
@@ -66,10 +99,9 @@
 
     private bool _isLoading;
 
-    private bool _isDone;
-
     private List<StringDoubleDataItem>? _averageWaitTimes;
     private List<StringDoubleDataItem>? _averagePenaltyTimes;
+    private List<AttendeeResultDTO>? _standings;
 
     private void ShowUploadError(string message)
     {
@@ -118,7 +150,6 @@
 
             File.Delete(path);
 
-            _isDone = true;
             _isLoading = false;
             StateHasChanged();
         }
@@ -169,6 +200,30 @@
 
         _averageWaitTimes = results.SelectMany(x => x.WaitingPeriods).GroupBy(x => x.Key).Select(x => new StringDoubleDataItem { Stand = $"{x.Key}", Value = Math.Round(x.Average(y => y.Value), 2) }).ToList();
         _averagePenaltyTimes = results.SelectMany(x => x.PenaltyPeriods).GroupBy(x => x.Key).Select(x => new StringDoubleDataItem { Stand = $"{x.Key}", Value = Math.Round(x.Average(y => y.Value), 2) }).ToList();
+
+        int standing = 1;
+        foreach(var result in results.OrderBy(x => x.GetCalculatedTotalTime()))
+        {
+            result.FinalStanding = standing;
+            standing++;
+        }
+
+        results = results.OrderBy(x => x.FinalStanding).ToList();
+
+        var minTime = results.First().GetCalculatedTotalTime().TotalMilliseconds;
+        var maxTime = results.Last().GetCalculatedTotalTime().TotalMilliseconds;
+
+        foreach (var result in results)
+        {
+            var time = result.GetCalculatedTotalTime().TotalMilliseconds;
+            double percentile = (time - minTime) / (maxTime - minTime);
+            result.FinalPercentile = percentile;
+
+            double points = (Constants.Limits.MAX_POINTS - (percentile * (Constants.Limits.MAX_POINTS - Constants.Limits.MIN_POINTS)));
+            result.FinalPoints = points;
+        }
+
+        _standings = results;
     }
 
     private record StringDoubleDataItem
