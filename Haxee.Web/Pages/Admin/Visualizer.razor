@@ -14,7 +14,7 @@
     <div class="form-group">
         <div>Nahrajte .csv súbor pre zobrazenie vizualizácie</div>
 
-        <div class="w-full h-full ">
+        <div class="h-full w-full">
             <label for="imageUpload" class="file-input">
                 @if (_isLoading)
                 {
@@ -28,7 +28,7 @@
                 else if (_uploadedFile is not null)
                 {
                     <div class="w-full text-center font-normal">@_uploadedFile.Name (@_uploadedFile.Size B)</div> <br />
-                    <div class="w-full text-center mt-4">Zmeniť súbor</div>
+                    <div class="mt-4 w-full text-center">Zmeniť súbor</div>
                 }
                 else
                 {
@@ -40,7 +40,19 @@
     </div>
 } else
 {
-    <p>Žalmy boli úspešne nahrané.</p>
+    <RadzenChart>
+        <RadzenColumnSeries Data="@_averageWaitTimes" CategoryProperty=@nameof(AverageWaitTime.Stanovisko) ValueProperty=@nameof(AverageWaitTime.Priemer)>
+            <RadzenSeriesDataLabels />
+            <RadzenMarkers MarkerType="MarkerType.Circle" />
+        </RadzenColumnSeries>
+        <RadzenCategoryAxis>
+            <RadzenAxisTitle Text="Stanovisko" />
+        </RadzenCategoryAxis>
+        <RadzenValueAxis>
+            <RadzenAxisTitle Text="Priemerné čakanie v minútach" />
+        </RadzenValueAxis>
+        <RadzenLegend Visible=false/>
+    </RadzenChart>
 }
 
 @code {
@@ -51,6 +63,8 @@
     private bool _isLoading;
 
     private bool _isDone;
+
+    private List<AverageWaitTime>? _averageWaitTimes;
 
     private void ShowUploadError(string message)
     {
@@ -148,6 +162,12 @@
             results.Add(row);
         }
 
-        Console.WriteLine("Done");
+        _averageWaitTimes = results.SelectMany(x => x.WaitingPeriods).GroupBy(x => x.Key).Select(x => new AverageWaitTime { Stanovisko = $"{x.Key}", Priemer = Math.Round(x.Average(y => y.Value),2) }).ToList();
+    }
+
+    private record AverageWaitTime
+    {
+        public required string Stanovisko { get; set; }
+        public required double Priemer { get; set; }
     }
 }
