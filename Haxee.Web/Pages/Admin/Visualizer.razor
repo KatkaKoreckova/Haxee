@@ -41,7 +41,11 @@
 } else
 {
     <RadzenChart>
-        <RadzenColumnSeries Data="@_averageWaitTimes" CategoryProperty=@nameof(AverageWaitTime.Stanovisko) ValueProperty=@nameof(AverageWaitTime.Priemer)>
+        <RadzenColumnSeries Data="@_averageWaitTimes" Title="Priemerné čakanie" CategoryProperty=@nameof(StringDoubleDataItem.Stand) ValueProperty=@nameof(StringDoubleDataItem.Value)>
+            <RadzenSeriesDataLabels />
+            <RadzenMarkers MarkerType="MarkerType.Circle" />
+        </RadzenColumnSeries>
+        <RadzenColumnSeries Data="@_averagePenaltyTimes" Title="Priemerná penalta" CategoryProperty=@nameof(StringDoubleDataItem.Stand) ValueProperty=@nameof(StringDoubleDataItem.Value)>
             <RadzenSeriesDataLabels />
             <RadzenMarkers MarkerType="MarkerType.Circle" />
         </RadzenColumnSeries>
@@ -49,9 +53,9 @@
             <RadzenAxisTitle Text="Stanovisko" />
         </RadzenCategoryAxis>
         <RadzenValueAxis>
-            <RadzenAxisTitle Text="Priemerné čakanie v minútach" />
+            <RadzenAxisTitle Text="Minúty" />
         </RadzenValueAxis>
-        <RadzenLegend Visible=false/>
+        <RadzenColumnOptions Radius="5" Width="20" />
     </RadzenChart>
 }
 
@@ -64,7 +68,8 @@
 
     private bool _isDone;
 
-    private List<AverageWaitTime>? _averageWaitTimes;
+    private List<StringDoubleDataItem>? _averageWaitTimes;
+    private List<StringDoubleDataItem>? _averagePenaltyTimes;
 
     private void ShowUploadError(string message)
     {
@@ -162,12 +167,13 @@
             results.Add(row);
         }
 
-        _averageWaitTimes = results.SelectMany(x => x.WaitingPeriods).GroupBy(x => x.Key).Select(x => new AverageWaitTime { Stanovisko = $"{x.Key}", Priemer = Math.Round(x.Average(y => y.Value),2) }).ToList();
+        _averageWaitTimes = results.SelectMany(x => x.WaitingPeriods).GroupBy(x => x.Key).Select(x => new StringDoubleDataItem { Stand = $"{x.Key}", Value = Math.Round(x.Average(y => y.Value), 2) }).ToList();
+        _averagePenaltyTimes = results.SelectMany(x => x.PenaltyPeriods).GroupBy(x => x.Key).Select(x => new StringDoubleDataItem { Stand = $"{x.Key}", Value = Math.Round(x.Average(y => y.Value), 2) }).ToList();
     }
 
-    private record AverageWaitTime
+    private record StringDoubleDataItem
     {
-        public required string Stanovisko { get; set; }
-        public required double Priemer { get; set; }
+        public required string Stand { get; set; }
+        public required double Value { get; set; }
     }
 }
