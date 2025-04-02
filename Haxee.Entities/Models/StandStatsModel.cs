@@ -5,7 +5,7 @@ namespace Haxee.Entities.Models
     /// </summary>
     public class StandStatsModel
     {
-        public Stand? LongestWaitStand { get; set; }
-        public Stand? ShortestWaitStand { get; set; }
+        public Stand? LongestStand { get; set; }
+        public Stand? ShortestStand { get; set; }
     }
 }

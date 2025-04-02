@@ -59,6 +59,7 @@ namespace Haxee.Entities
             public const int MIN_SCANNED_STANDS = 12;
             public const int MIN_POINTS = 5;
             public const int MAX_POINTS = 50;
+            public const int MAX_STAND_TIME = 120;
         }
     }
 }

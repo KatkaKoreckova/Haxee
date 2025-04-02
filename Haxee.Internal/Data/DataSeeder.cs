@@ -26,10 +26,14 @@ namespace Haxee.Internal.Data
 
             if (creationResult.Succeeded)
             {
-                await userManager.AddClaimsAsync(adminUser, new List<Claim> {
-                    new Claim(ClaimTypes.Role, Constants.Roles.Admin),
-                    new Claim(ClaimTypes.Role, Constants.Roles.User)
-                });
+                await userManager.AddClaimsAsync(
+                    adminUser,
+                    new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Role, Constants.Roles.Admin),
+                        new Claim(ClaimTypes.Role, Constants.Roles.User)
+                    }
+                );
             }
 
             var participant1 = new User
@@ -50,14 +54,17 @@ namespace Haxee.Internal.Data
                 UserName = Constants.Emails.KID2
             };
 
-            await userManager.CreateAsync(new User
-            {
-                Name = "Jozef Instruktor",
-                UserType = Entities.Enums.UserType.Instructor,
-                Email = Constants.Emails.INSTRUCTOR,
-                EmailConfirmed = true,
-                UserName = Constants.Emails.INSTRUCTOR
-            }, "jozef123");
+            await userManager.CreateAsync(
+                new User
+                {
+                    Name = "Jozef Instruktor",
+                    UserType = Entities.Enums.UserType.Instructor,
+                    Email = Constants.Emails.INSTRUCTOR,
+                    EmailConfirmed = true,
+                    UserName = Constants.Emails.INSTRUCTOR
+                },
+                "jozef123"
+            );
 
             await userManager.CreateAsync(participant1, "jozef123");
 
@@ -66,7 +73,7 @@ namespace Haxee.Internal.Data
             var db = serviceProvider.GetRequiredService<DataContext>()!;
 
             var activity = new Activity
-            { 
+            {
                 Name = $"{DateTime.Now.Year} Hi-Fi Rallye",
                 Status = Entities.Enums.ActivityStatus.Pending,
                 BrokerIp = "192.168.0.58",
@@ -76,15 +83,12 @@ namespace Haxee.Internal.Data
 
             db.Activities.Add(activity);
 
-            var device = new Device
-            {
-                Identifier = "3176110040",
-                Name = "LSTME 1"
-            };
-
-            db.Devices.Add(device);
+            var device = new Device { Identifier = "3176110040", Name = "LSTME 1" };
+            var device2 = new Device { Identifier = "4176110040", Name = "LSTME 2" };
 
             activity.AddDefaultStand();
+
+            activity.Stands.First().Device = device2;
 
             var attendee = new Attendee
             {
@@ -104,14 +108,16 @@ namespace Haxee.Internal.Data
 
             db.Attendees.Add(attendee2);
 
-            var stand = new Stand 
-            { 
-                Location = "Test lokacia ", 
+            var stand = new Stand
+            {
+                Location = "Test lokacia ",
                 Name = "Test stanovisko",
                 Number = 1,
-                Penalty = TimeSpan.FromSeconds(60*5),
+                Penalty = TimeSpan.FromSeconds(60 * 5),
                 ActivityId = activity.Id,
-                Capacity = 1
+                Capacity = 1,
+                TimeLimitInMinutes = 5,
+                Device = device
             };
 
             var quizStand = new Stand
@@ -122,6 +128,7 @@ namespace Haxee.Internal.Data
                 Penalty = TimeSpan.FromSeconds(60),
                 ActivityId = activity.Id,
                 IsQuiz = true,
+                TimeLimitInMinutes = 30,
                 QuestionsAndAnswers = new()
                 {
                     QuizHelper.GetQuestionAnswerPair("Testing question?", "Answer"),

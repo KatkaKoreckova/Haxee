@@ -34,7 +34,7 @@ namespace Haxee.Entities.Entities
         /// Informácie o roku v ktorom je súťaž.
         /// </summary>
         public virtual Activity Activity { get; set; } = null!;
-        
+
         /// <summary>
         /// Informácie o súťažiacom
         /// </summary>
@@ -46,9 +46,16 @@ namespace Haxee.Entities.Entities
         public virtual List<StandVisit> StandVisits { get; set; } = new();
 
         /// <summary>
+        /// Stanovisko, ktoré má účastník navštíviť ako nasledujúce
+        /// </summary>
+        public virtual ScheduledVisit? ScheduledVisit { get; set; }
+
+        /// <summary>
         /// Funkcia ktorá vracia čas od začiatku súťaženia po koniec.
         /// </summary>
-        public TimeSpan? GetTime()
-            => StartedAt is null ? null : (EndedAt is null ? DateTime.Now - StartedAt : EndedAt - StartedAt);
+        public TimeSpan? GetTime() =>
+            StartedAt is null
+                ? null
+                : (EndedAt is null ? DateTime.Now - StartedAt : EndedAt - StartedAt);
     }
 }

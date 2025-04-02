@@ -44,16 +44,19 @@ namespace Haxee.Entities.Entities
 
         public void AddDefaultStand()
         {
-            Stands.Add(new()
-            {
-                Name = "Štart",
-                Location = string.Empty,
-                Number = 0,
-                Penalty = TimeSpan.Zero,
-                ActivityId = Id,
-                Capacity = Constants.Limits.MAX_PEOPLE,
-                IsStartingStand = true,
-            });
+            Stands.Add(
+                new()
+                {
+                    Name = "Štart",
+                    Location = string.Empty,
+                    Number = 0,
+                    Penalty = TimeSpan.Zero,
+                    ActivityId = Id,
+                    Capacity = Constants.Limits.MAX_PEOPLE,
+                    IsStartingStand = true,
+                    TimeLimitInMinutes = int.MaxValue
+                }
+            );
         }
     }
 }

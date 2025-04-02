@@ -18,6 +18,11 @@ namespace Haxee.Entities.Models
         public int PenaltyInMinutes { get; set; } = 10;
 
         [Required]
+        [Display(Name = "Časový limit [min]")]
+        [Range(1, Constants.Limits.MAX_STAND_TIME)]
+        public int TimeLimitInMinutes { get; set; } = 10;
+
+        [Required]
         [Display(Name = "Maximálny počet ľudí")]
         [Range(1, Constants.Limits.MAX_PEOPLE)]
         public int Capacity { get; set; }

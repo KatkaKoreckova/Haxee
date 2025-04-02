@@ -23,6 +23,11 @@ namespace Haxee.Entities.Models
         public int Capacity { get; set; } = Constants.Limits.MAX_PEOPLE;
 
         [Required]
+        [Display(Name = "Časový limit [min]")]
+        [Range(1, Constants.Limits.MAX_STAND_TIME)]
+        public int TimeLimitInMinutes { get; set; } = 10;
+
+        [Required]
         [Display(Name = $"Otázky a odpovede (formát: otázka {Constants.QA_SEPARATOR} odpoveď)")]
         public string QuestionsAndAnswers { get; set; } = string.Empty;
     }

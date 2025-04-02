@@ -24,6 +24,12 @@
         </div>
 
         <div class="form-group mt-3">
+            <Name For="() => _createQuizModel.TimeLimitInMinutes" />
+            <InputNumber class="input-field" @bind-Value="_createQuizModel.TimeLimitInMinutes" />
+            <ValidationMessage For="() => _createQuizModel.TimeLimitInMinutes" />
+        </div>
+
+        <div class="form-group mt-3">
             <Name For="() => _createQuizModel.Capacity" />
             <InputNumber class="input-field" @bind-Value="_createQuizModel.Capacity" />
             <ValidationMessage For="() => _createQuizModel.Capacity" />
@@ -66,7 +72,8 @@
             Location = _stand.Location,
             PenaltyInMinutes = (int) _stand.Penalty.TotalMinutes,
             QuestionsAndAnswers = string.Join('\n', _stand.QuestionsAndAnswers),
-            Capacity = _stand.Capacity
+            Capacity = _stand.Capacity,
+            TimeLimitInMinutes = _stand.TimeLimitInMinutes
         };
         _editContext = new EditContext(_createQuizModel);
 
@@ -94,6 +101,7 @@
         targetStand.Penalty = TimeSpan.FromMinutes(_createQuizModel.PenaltyInMinutes);
         targetStand.QuestionsAndAnswers = _createQuizModel.QuestionsAndAnswers.Split("\n").ToList();
         targetStand.Capacity = _createQuizModel.Capacity;
+        targetStand.TimeLimitInMinutes = _createQuizModel.TimeLimitInMinutes;
 
         await db.SaveChangesAsync();
 

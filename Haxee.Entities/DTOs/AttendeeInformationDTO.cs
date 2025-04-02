@@ -9,10 +9,6 @@ namespace Haxee.Entities.DTOs
         /// Identifikačné číslo karty.
         /// </summary>
         public required string CardId { get; set; }
-        /// <summary>
-        /// Čas, kedy bola priložená.
-        /// </summary>
-        public required DateTime DateTime { get; set; }
 
         /// <summary>
         /// Stanovisko, ktoré správu odoslalo.

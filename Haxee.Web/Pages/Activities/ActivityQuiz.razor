@@ -3,11 +3,11 @@
 
 @if(_isCompleted)
 {
-    <div class="flex flex-col space-y-4 mt-[5%]">
-        <div class="flex flex-row justify-center w-full">
+    <div class="mt-[5%] flex flex-col space-y-4">
+        <div class="flex w-full flex-row justify-center">
             <img src="/images/reshot-illustration-construction-workers-DC8L5WUP23.png" class="w-3/4 md:w-2/3 lg:w-1/2" />
         </div>
-        <h3 class="text-mainPurple font-semibold text-center">
+        <h3 class="text-center font-semibold text-mainPurple">
             Jéééj. Kvíz bol odoslaný. Môžeš ísť na ďalšie stanovisko.
         </h3>
     </div>
@@ -16,51 +16,51 @@
     <h3>Loading...</h3>
 } else if (_stand is null)
 {
-    <div class="flex flex-col space-y-4 mt-[5%]">
-        <div class="flex flex-row justify-center w-full">
+    <div class="mt-[5%] flex flex-col space-y-4">
+        <div class="flex w-full flex-row justify-center">
             <img src="/images/reshot-illustration-construction-workers-DC8L5WUP23.png" class="w-3/4 md:w-2/3 lg:w-1/2" />
         </div>
-        <h3 class="text-mainPurple font-semibold text-center">
+        <h3 class="text-center font-semibold text-mainPurple">
             Toto stanovisko neexistuje.
         </h3>
     </div>
 } else if (_answers is null)
 {
-    <div class="flex flex-col space-y-4 mt-[5%]">
-        <div class="flex flex-row justify-center w-full">
+    <div class="mt-[5%] flex flex-col space-y-4">
+        <div class="flex w-full flex-row justify-center">
             <img src="/images/reshot-illustration-construction-workers-DC8L5WUP23.png" class="w-3/4 md:w-2/3 lg:w-1/2" />
         </div>
-        <h3 class="text-mainPurple font-semibold text-center">
+        <h3 class="text-center font-semibold text-mainPurple">
             Kvíz nemá otázky.
         </h3>
     </div>
 } else if (!_stand.IsQuiz)
 {
-    <div class="flex flex-col space-y-4 mt-[5%]">
-        <div class="flex flex-row justify-center w-full">
+    <div class="mt-[5%] flex flex-col space-y-4">
+        <div class="flex w-full flex-row justify-center">
             <img src="/images/reshot-illustration-construction-workers-DC8L5WUP23.png" class="w-3/4 md:w-2/3 lg:w-1/2" />
         </div>
-        <h3 class="text-mainPurple font-semibold text-center">
+        <h3 class="text-center font-semibold text-mainPurple">
             Toto stanovisko nie je kvíz.
         </h3>
     </div>    
 } else if (_stand.Activity.Status == ActivityStatus.Pending)
 {
-    <div class="flex flex-col space-y-4 mt-[5%]">
-        <div class="flex flex-row justify-center w-full">
+    <div class="mt-[5%] flex flex-col space-y-4">
+        <div class="flex w-full flex-row justify-center">
             <img src="/images/reshot-illustration-construction-workers-DC8L5WUP23.png" class="w-3/4 md:w-2/3 lg:w-1/2" />
         </div>
-        <h3 class="text-mainPurple font-semibold text-center">
+        <h3 class="text-center font-semibold text-mainPurple">
             Kvíz ešte nie je spustený.
         </h3>
     </div>
 } else if (_stand.Activity.Status == ActivityStatus.Finished)
 {
-    <div class="flex flex-col space-y-4 mt-[5%]">
-        <div class="flex flex-row justify-center w-full">
+    <div class="mt-[5%] flex flex-col space-y-4">
+        <div class="flex w-full flex-row justify-center">
             <img src="/images/reshot-illustration-construction-workers-DC8L5WUP23.png" class="w-3/4 md:w-2/3 lg:w-1/2" />
         </div>
-        <h3 class="text-mainPurple font-semibold text-center">
+        <h3 class="text-center font-semibold text-mainPurple">
             Kvíz je už zatvorený.
         </h3>
     </div>
@@ -129,8 +129,7 @@
         {
             _standVisit = new StandVisit
                 {
-                    ArrivalTime = DateTime.Now,
-                    Status = StandVisitStatus.Working,
+                    StartTime = DateTime.Now,
                     AttendeeId = attendee.Id,
                     StandId = stand.Id
                 };
@@ -174,7 +173,6 @@
         if (targetVisit is null)
             return;
 
-        targetVisit.Status = StandVisitStatus.Done;
         targetVisit.LeaveTime = DateTime.Now;
         targetVisit.Penalty = penaltyMinutes;
 

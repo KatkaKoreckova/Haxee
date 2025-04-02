@@ -5,22 +5,23 @@
     <div class="flex flex-col space-y-3">
         @if(_attendee is null && _lastReceivedCardId is not null)
         {
-            <label>Tento uzivatel nema priradenu karticku</label>
+            <label>Tento užívateľ nemá priradenú kartičku.</label>
         } else if(_attendee is not null && _attendee.StartedAt is null)
         {
-            <label>Uzivatel nezacal sutaz</label>
+            <label>Tento užívateľ nezačal súťaž.</label>
         } else if(_standVisit is null)
         {
             <label>@_attendee!.User.Name</label>
-            <button class="w-full button-main" @onclick="() => ArrivalStart(StandVisitStatus.Waiting)">Začať čakanie</button>
-            <button class="w-full button-main" @onclick="() => ArrivalStart(StandVisitStatus.Working)">Začať prácu</button>
-            <button class="w-full button-main" @onclick="ArrivedAndSkip">Preskočiť</button>
+            <button class="button-main w-full" @onclick="ArrivalStart">Začať prácu</button>
+            <button class="button-main w-full" @onclick="ArrivedAndSkip">Preskočiť</button>
+        } else if(_standVisit.LeaveTime != null)
+        {
+            <label>Tento užívateľ už dokončil súťaž.</label>
         } else
         {
             <label>@_attendee!.User.Name</label>
-            <button class="w-full button-main" disabled="@(_standVisit.Status != StandVisitStatus.Waiting)" @onclick=EndWait>Ukončiť čakanie a Začať prácu</button>
-            <button class="w-full button-main" disabled="@(_standVisit.Status != StandVisitStatus.Working)" @onclick=EndWork>Ukončiť prácu</button>
-            <button class="w-full button-main" @onclick=SkipStand>Preskočiť</button>
+            <button class="button-main w-full" @onclick=EndWork>Ukončiť prácu</button>
+            <button class="button-main w-full" @onclick=SkipStand>Preskočiť</button>
         }
     </div>
 </Modal>
@@ -65,26 +66,6 @@
         base.Open();
     }
 
-    private async Task EndWait()
-    {
-        if (Modal is null || _standVisitId is null)
-            return;
-
-        using var db = _dbContextFactory.CreateDbContext();
-        var targetVisit = await db.StandVisits.FirstOrDefaultAsync(x => x.Id.Equals(_standVisitId));
-
-        if (targetVisit is null)
-            return;
-
-        targetVisit.Status = StandVisitStatus.Working;
-        targetVisit.EndWaitTime = DateTime.Now;
-
-        await db.SaveChangesAsync();
-
-        await Modal.Close();
-        await OnSubmit.InvokeAsync();
-    }
-
     private async Task EndWork()
     {
         if (Modal is null || _standVisitId is null)
@@ -96,7 +77,6 @@
         if (targetVisit is null)
             return;
 
-        targetVisit.Status = StandVisitStatus.Done;
         targetVisit.LeaveTime = DateTime.Now;
 
         await db.SaveChangesAsync();
@@ -118,7 +98,6 @@
         if (targetVisit is null)
             return;
 
-        targetVisit.Status = StandVisitStatus.Done;
         targetVisit.LeaveTime = DateTime.Now;
         targetVisit.Skipped = true;
         targetVisit.Penalty.Add(targetVisit.Stand.Penalty);
@@ -129,14 +108,14 @@
         await OnSubmit.InvokeAsync();
     }
 
-    private async Task ArrivalStart(StandVisitStatus desiredStatus)
+    private async Task ArrivalStart()
     {
-        if (desiredStatus == StandVisitStatus.Done || Modal is null || _standId is null || _lastReceivedCardId is null)
+        if (Modal is null || _standId is null || _lastReceivedCardId is null)
             return;
 
         using var db = _dbContextFactory.CreateDbContext();
 
-        var targetAttendee = await db.Attendees.FirstOrDefaultAsync(x => _lastReceivedCardId.Equals(x.CardId));
+        var targetAttendee = await db.Attendees.Include(x => x.ScheduledVisit).FirstOrDefaultAsync(x => _lastReceivedCardId.Equals(x.CardId));
 
         if (targetAttendee is null)
             return;
@@ -144,10 +123,12 @@
         db.StandVisits.Add(new StandVisit
         {
             StandId = (int) _standId,
-            ArrivalTime = _arrivalTime ?? DateTime.Now,
-            Status = desiredStatus,
+            StartTime = _arrivalTime ?? DateTime.Now,
             AttendeeId = targetAttendee.Id
         });
+
+        if (targetAttendee.ScheduledVisit != null)
+            db.ScheduledVisits.Remove(targetAttendee.ScheduledVisit);
 
         await db.SaveChangesAsync();
 
@@ -162,7 +143,7 @@
 
         using var db = _dbContextFactory.CreateDbContext();
 
-        var targetAttendee = await db.Attendees.FirstOrDefaultAsync(x => _lastReceivedCardId.Equals(x.CardId));
+        var targetAttendee = await db.Attendees.Include(x => x.ScheduledVisit).FirstOrDefaultAsync(x => _lastReceivedCardId.Equals(x.CardId));
 
         if (targetAttendee is null)
             return;
@@ -170,12 +151,14 @@
         db.StandVisits.Add(new StandVisit
             {
                 StandId = (int)_standId,
-                ArrivalTime = DateTime.Now,
+                StartTime = DateTime.Now,
                 LeaveTime = DateTime.Now,
                 Skipped = true,
-                Status = StandVisitStatus.Done,
                 AttendeeId = targetAttendee.Id
             });
+
+        if (targetAttendee.ScheduledVisit != null)
+            db.ScheduledVisits.Remove(targetAttendee.ScheduledVisit);
 
         await db.SaveChangesAsync();
 

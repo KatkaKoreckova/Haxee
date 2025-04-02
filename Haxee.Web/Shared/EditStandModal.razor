@@ -23,6 +23,15 @@
             <ValidationMessage For="() => _createStandModel.PenaltyInMinutes" />
         </div>
 
+        @if (_stand?.IsStartingStand == false)
+        {
+            <div class="form-group mt-3">
+                <Name For="() => _createStandModel.TimeLimitInMinutes" />
+                <InputNumber class="input-field" @bind-Value="_createStandModel.TimeLimitInMinutes" />
+                <ValidationMessage For="() => _createStandModel.TimeLimitInMinutes" />
+            </div>
+        }
+
         <div class="form-group mt-3">
             <Name For="() => _createStandModel.Capacity" />
             <InputNumber class="input-field" @bind-Value="_createStandModel.Capacity" />
@@ -32,8 +41,8 @@
         <div class="form-group mt-3">
             <Name For="() => _createStandModel.Supervisor" />
             <BlazoredTypeahead MaximumSuggestions="999"
-                               MinimumLength="0"
-                               SearchMethod="SearchInstructors"
+            MinimumLength="0"
+            SearchMethod="SearchInstructors"
             @bind-Value="_createStandModel.Supervisor">
                 <SelectedTemplate Context="typeaheadContext">
                     @typeaheadContext?.Name
@@ -51,9 +60,9 @@
         <div class="form-group mt-3">
             <Name For="() => _createStandModel.Device" />
             <BlazoredTypeahead MaximumSuggestions="999"
-                               MinimumLength="0"
-                               SearchMethod="SearchDevices"
-                               @bind-Value="_createStandModel.Device">
+            MinimumLength="0"
+            SearchMethod="SearchDevices"
+            @bind-Value="_createStandModel.Device">
                 <SelectedTemplate Context="typeaheadContext">
                     @typeaheadContext?.Name
                 </SelectedTemplate>
@@ -104,7 +113,8 @@
             PenaltyInMinutes = (int) _stand.Penalty.TotalMinutes,
             Supervisor = _stand.Supervisor,
             Capacity = _stand.Capacity,
-            Device = _stand.Device
+            Device = _stand.Device,
+            TimeLimitInMinutes = _stand.TimeLimitInMinutes
         };
         _editContext = new EditContext(_createStandModel);
 
@@ -133,6 +143,7 @@
         targetStand.SupervisorId = _createStandModel.Supervisor?.Id;
         targetStand.Capacity = _createStandModel.Capacity;
         targetStand.DeviceId = _createStandModel.Device?.Id;
+        targetStand.TimeLimitInMinutes = _createStandModel.TimeLimitInMinutes;
 
         await db.SaveChangesAsync();
 

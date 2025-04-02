@@ -1,7 +1,7 @@
-using Haxee.Entities;
-using Haxee.Entities.Entities.Mqtt;
 using System.Net.Http.Json;
 using System.Text;
+using Haxee.Entities;
+using Haxee.Entities.Entities.Mqtt;
 
 namespace Haxee.MQTTConsumer.Services
 {
@@ -34,11 +34,18 @@ namespace Haxee.MQTTConsumer.Services
                     continue;
                 }
 
-                var response = await client.GetAsync($"{Constants.Mqtt.API_URL}api/setup/{activityId}");
+                var response = await client.GetAsync(
+                    $"{Constants.Mqtt.API_URL}api/setup/{activityId}"
+                );
 
-                if (!response.IsSuccessStatusCode && response.StatusCode != System.Net.HttpStatusCode.NotFound)
+                if (
+                    !response.IsSuccessStatusCode
+                    && response.StatusCode != System.Net.HttpStatusCode.NotFound
+                )
                 {
-                    DrawService.DrawErrorMessage($"There was an error with connecting to the web app ({response.StatusCode}).");
+                    DrawService.DrawErrorMessage(
+                        $"There was an error with connecting to the web app ({response.StatusCode})."
+                    );
                     continue;
                 }
 
@@ -48,14 +55,23 @@ namespace Haxee.MQTTConsumer.Services
                 }
                 catch
                 {
-                    DrawService.DrawErrorMessage($"Activity with the ID {activityId} was not found.");
+                    DrawService.DrawErrorMessage(
+                        $"Activity with the ID {activityId} was not found."
+                    );
                     continue;
                 }
 
-                if (activity is null || string.IsNullOrEmpty(activity.BrokerIp) || !activity.BrokerPort.HasValue || string.IsNullOrEmpty(activity.GlobalTopic))
+                if (
+                    activity is null
+                    || string.IsNullOrEmpty(activity.BrokerIp)
+                    || !activity.BrokerPort.HasValue
+                    || string.IsNullOrEmpty(activity.GlobalTopic)
+                )
                 {
                     activity = null;
-                    DrawService.DrawErrorMessage($"Activity with the ID {activityId} is missing key data, please finish configuring it in the web app.");
+                    DrawService.DrawErrorMessage(
+                        $"Activity with the ID {activityId} is missing key data, please finish configuring it in the web app."
+                    );
                     continue;
                 }
             } while (activity is null);
@@ -66,77 +82,98 @@ namespace Haxee.MQTTConsumer.Services
 
             // Creates a new client
             MqttClientOptionsBuilder builder = new MqttClientOptionsBuilder()
-                                        .WithClientId(activity.Name)
-                                        .WithTcpServer(activity.BrokerIp, activity.BrokerPort);
+                .WithClientId(activity.Name)
+                .WithTcpServer(activity.BrokerIp, activity.BrokerPort);
 
             // Create client options objects
             ManagedMqttClientOptions options = new ManagedMqttClientOptionsBuilder()
-                                    .WithAutoReconnectDelay(TimeSpan.FromSeconds(60))
-                                    .WithClientOptions(builder.Build())
-                                    .Build();
+                .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
+                .WithClientOptions(builder.Build())
+                .Build();
 
             // client object
             IManagedMqttClient mqttClient = new MqttFactory().CreateManagedMqttClient();
 
-
             // Set up handlers
             mqttClient.ConnectedHandler = new MqttClientConnectedHandlerDelegate(OnConnected);
-            mqttClient.DisconnectedHandler = new MqttClientDisconnectedHandlerDelegate(OnDisconnected);
-            mqttClient.ConnectingFailedHandler = new ConnectingFailedHandlerDelegate(OnConnectingFailed);
+            mqttClient.DisconnectedHandler = new MqttClientDisconnectedHandlerDelegate(
+                OnDisconnected
+            );
+            mqttClient.ConnectingFailedHandler = new ConnectingFailedHandlerDelegate(
+                OnConnectingFailed
+            );
 
-            mqttClient.ApplicationMessageReceivedHandler = new MqttApplicationMessageReceivedHandlerDelegate(a => {
-                DrawService.DrawInfoMessage($"Message recieved: {a.ApplicationMessage}");
-            });
+            mqttClient.ApplicationMessageReceivedHandler =
+                new MqttApplicationMessageReceivedHandlerDelegate(a =>
+                {
+                    DrawService.DrawInfoMessage($"Message recieved: {a.ApplicationMessage}");
+                });
 
             // Starts a connection with the Broker
             mqttClient.StartAsync(options).GetAwaiter().GetResult();
 
-            mqttClient.SubscribeAsync(new MqttTopicFilterBuilder()
-                .WithTopic(activity.GlobalTopic)
-                .Build()).GetAwaiter().GetResult();
+            mqttClient
+                .SubscribeAsync(
+                    new MqttTopicFilterBuilder().WithTopic(activity.GlobalTopic).Build()
+                )
+                .GetAwaiter()
+                .GetResult();
 
-            mqttClient.UseApplicationMessageReceivedHandler(async (e) =>
-            {
-                try
+            mqttClient.UseApplicationMessageReceivedHandler(
+                async (e) =>
                 {
-                    string receivedMessage = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-
-                    var parsedMessage = JsonSerializer.Deserialize<Message>(receivedMessage);
-
-                    if (parsedMessage is not null)
+                    try
                     {
-                        string message = parsedMessage.Payload.Text;
-                        string topic = parsedMessage.From.ToString();
-                        DrawService.DrawReceivedMessage(topic, message);
-                        AttendeeInformationDTO? attendeeInformation = HelperService.ParseMessage(message, topic);
+                        string receivedMessage = Encoding.UTF8.GetString(
+                            e.ApplicationMessage.Payload
+                        );
 
-                        if (attendeeInformation is not null)
+                        var parsedMessage = JsonSerializer.Deserialize<Message>(receivedMessage);
+
+                        if (parsedMessage is not null)
                         {
-                            using var client = new HttpClient();
-                            using StringContent jsonContent = new(JsonSerializer.Serialize(attendeeInformation), Encoding.UTF8, "application/json");
+                            string message = parsedMessage.Payload.Text.Trim();
+                            string topic = parsedMessage.From.ToString();
+                            DrawService.DrawReceivedMessage(topic, message);
+                            AttendeeInformationDTO? attendeeInformation =
+                                HelperService.ParseMessage(message, topic);
 
-                            var response = await client.PostAsync($"{Constants.Mqtt.API_URL}api/mqtt", jsonContent);
-
-                            Console.WriteLine(JsonSerializer.Serialize(response));
-
-                            if (response.IsSuccessStatusCode)
+                            if (attendeeInformation is not null)
                             {
-                                Console.WriteLine("ok");
-                                await mqttClient.PublishAsync($"{topic}/checkResult", "1");
-                            }
-                            else
-                            {
-                                Console.WriteLine("fail");
-                                await mqttClient.PublishAsync($"{topic}/checkResult", "0");
+                                using var client = new HttpClient();
+                                using StringContent jsonContent =
+                                    new(
+                                        JsonSerializer.Serialize(attendeeInformation),
+                                        Encoding.UTF8,
+                                        "application/json"
+                                    );
+
+                                var response = await client.PostAsync(
+                                    $"{Constants.Mqtt.API_URL}api/mqtt",
+                                    jsonContent
+                                );
+
+                                Console.WriteLine(JsonSerializer.Serialize(response));
+
+                                if (response.IsSuccessStatusCode)
+                                {
+                                    Console.WriteLine("ok");
+                                    await mqttClient.PublishAsync($"{topic}/checkResult", "1");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("fail");
+                                    await mqttClient.PublishAsync($"{topic}/checkResult", "0");
+                                }
                             }
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message, ex);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message, ex);
-                }
-            });
+            );
 
             while (true)
             {

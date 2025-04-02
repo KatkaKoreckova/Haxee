@@ -22,11 +22,8 @@
                         if(targetVisit.Skipped)
                         {
                             <label> Preskočené</label>
-                        } else if(targetVisit.Status == StandVisitStatus.Waiting)
-                        {
-                            <label> Aktuálne čaká</label>
                         }
-                        else if (targetVisit.Status == StandVisitStatus.Working)
+                        else if (targetVisit.LeaveTime == null)
                         {
                             <label> Aktuálne tu</label>
                         } else
@@ -35,11 +32,7 @@
                         }
 
                         <label>
-                            , príchod @targetVisit.ArrivalTime
-                            @if(targetVisit.EndWaitTime is not null)
-                            {
-                                <label>, koniec čakania @targetVisit.EndWaitTime</label>
-                            }
+                            , príchod @targetVisit.StartTime
                             , odchod @targetVisit.LeaveTime, penalta @targetVisit.Penalty.ToString()
                         </label>
                     }
@@ -79,6 +72,7 @@
             return;
 
         _stands = await db.Stands
+            .Where(x => !x.IsStartingStand)
             .ToListAsync();
 
         StateHasChanged();

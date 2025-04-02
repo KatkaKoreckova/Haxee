@@ -24,6 +24,12 @@
         </div>
 
         <div class="form-group mt-3">
+            <Name For="() => _createQuizModel.TimeLimitInMinutes" />
+            <InputNumber class="input-field" @bind-Value="_createQuizModel.TimeLimitInMinutes" />
+            <ValidationMessage For="() => _createQuizModel.TimeLimitInMinutes" />
+        </div>
+
+        <div class="form-group mt-3">
             <Name For="() => _createQuizModel.Capacity" />
             <InputNumber class="input-field" @bind-Value="_createQuizModel.Capacity" />
             <ValidationMessage For="() => _createQuizModel.Capacity" />
@@ -84,7 +90,8 @@
             ActivityId = _activityId,
             IsQuiz = true,
             QuestionsAndAnswers = _createQuizModel.QuestionsAndAnswers.Split("\n").ToList(),
-            Capacity = _createQuizModel.Capacity
+            Capacity = _createQuizModel.Capacity,
+            TimeLimitInMinutes = _createQuizModel.TimeLimitInMinutes
         };
 
         db.Stands.Add(newStand);

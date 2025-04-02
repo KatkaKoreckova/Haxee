@@ -1,6 +1,6 @@
+using System.Linq;
 using Haxee.Entities.Entities.Mqtt;
 using Haxee.Entities.Enums;
-using System.Linq;
 
 namespace Haxee.MQTTConsumer.Services
 {
@@ -32,25 +32,10 @@ namespace Haxee.MQTTConsumer.Services
         /// <returns>Objekt AttendeeInformationDTO alebo null ak sa nepodarilo vytvoriť objekt</returns>
         public static AttendeeInformationDTO? ParseMessage(string message, string topic)
         {
-            List<string> messageParts = message.Split('|').ToList();
-
-            if (messageParts.Count != 2)
-                return null;
-
-            DateTime dateTime;
-            if (!DateTime.TryParse(messageParts[1], out dateTime))
-                return null;
-
-            //YearStatus? s = GetStatusFromString(m[2]);
-
-            //if (s is null)
-              //  return null;
-
             AttendeeInformationDTO attendeeInformation = new AttendeeInformationDTO
             {
-                CardId = messageParts[0].Trim().Replace(" ", ":"),
-                DateTime = dateTime,
-                Trigger = topic[(topic.IndexOf('/')+1)..]
+                CardId = message.Replace(" ", ":").ToLower(),
+                Trigger = topic[(topic.IndexOf('/') + 1)..]
             };
 
             return attendeeInformation;

@@ -24,6 +24,12 @@
         </div>
 
         <div class="form-group mt-3">
+            <Name For="() => _createStandModel.TimeLimitInMinutes" />
+            <InputNumber class="input-field" @bind-Value="_createStandModel.TimeLimitInMinutes" />
+            <ValidationMessage For="() => _createStandModel.TimeLimitInMinutes" />
+        </div>
+
+        <div class="form-group mt-3">
             <Name For="() => _createStandModel.Capacity" />
             <InputNumber class="input-field" @bind-Value="_createStandModel.Capacity" />
             <ValidationMessage For="() => _createStandModel.Capacity" />
@@ -123,7 +129,8 @@
             ActivityId = _yearId,
             SupervisorId = _createStandModel.Supervisor?.Id,
             DeviceId = _createStandModel.Device?.Id,
-            Capacity = _createStandModel.Capacity
+            Capacity = _createStandModel.Capacity,
+            TimeLimitInMinutes = _createStandModel.TimeLimitInMinutes
         };
 
         db.Stands.Add(newStand);

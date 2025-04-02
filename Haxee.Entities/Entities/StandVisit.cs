@@ -5,7 +5,6 @@ namespace Haxee.Entities.Entities
     /// </summary>
     public class StandVisit : AbstractEntity
     {
-
         /// <summary>
         /// ID stanoviska.
         /// </summary>
@@ -27,11 +26,6 @@ namespace Haxee.Entities.Entities
         public virtual Attendee Attendee { get; set; } = null!;
 
         /// <summary>
-        /// Štádium návštevy stanoviska.
-        /// </summary>
-        public required StandVisitStatus Status { get; set; }
-
-        /// <summary>
         /// Počet penalizačných minút za stanovisko.
         /// </summary>
         public TimeSpan Penalty { get; set; }
@@ -44,12 +38,7 @@ namespace Haxee.Entities.Entities
         /// <summary>
         /// Čas kedy na stanovisko prišiel.
         /// </summary>
-        public required DateTime ArrivalTime { get; set; }
-
-        /// <summary>
-        /// Čas kedy ukončil čakanie na stanovisku.
-        /// </summary>
-        public DateTime? EndWaitTime { get; set; }
+        public required DateTime StartTime { get; set; }
 
         /// <summary>
         /// Čas kedy opustil stanovisko.

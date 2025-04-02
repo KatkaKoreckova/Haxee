@@ -1,24 +1,24 @@
-@page "/kids/{ActivityId:int}"
+﻿@page "/kids/{ActivityId:int}"
 @inject IDbContextFactory<DataContext> _dbContextFactory
 
 <PageTitle>Haxee - Kids</PageTitle>
 
 <h1 class="title">Účastníci</h1>
 
-<div class="flex flex-col mt-2 space-y-4">
+<div class="mt-2 flex flex-col space-y-4">
     @foreach(var attendee in _attendees)
     {
-        <div class="bg-slate-200 rounded-md shadow-md shadow-slate-300 flex flex-col border-l-8 border-mint p-3">
-            <div class="flex flex-col md:flex-row justify-between items-center text-darkBlue w-full">
-                <div class="font-bold m-0 w-full md:w-1/2">
+        <div class="flex flex-col rounded-md border-l-8 border-mint bg-slate-200 p-3 shadow-md shadow-slate-300">
+            <div class="flex w-full flex-col items-center justify-between text-darkBlue md:flex-row">
+                <div class="m-0 w-full font-bold md:w-1/2">
                     @attendee.User.Name
                 </div>
-                <div class="flex flex-row items-center w-full md:w-1/2">
+                <div class="flex w-full flex-row items-center md:w-1/2">
                     <div class="w-2/6 text-center">
                         @attendee.User.DateOfBirth
                     </div>
                     <div class="w-2/6 text-center">
-                        @attendee.StandVisits.Where(x => x.Status == StandVisitStatus.Done).Count()/@attendee.Activity.Stands.Count
+                        @attendee.StandVisits.Where(x => x.LeaveTime != null).Count()/@attendee.Activity.Stands.Count
                     </div>
                     <div class="w-2/6">
                         @if(attendee.EndedAt is not null)
@@ -26,12 +26,12 @@
                             <div class="text-center">ukoncene</div>
                         } else if(attendee.StartedAt is null)
                         {
-                            <button disabled="@((attendee.Activity.Status == ActivityStatus.InProgress) ? false : true)" class="w-full transition duration-200 bg-blue hover:bg-orange hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick="() => StartAttendee(attendee)">
+                            <button disabled="@((attendee.Activity.Status == ActivityStatus.InProgress) ? false : true)" class="w-full rounded-lg bg-blue px-3.5 py-1.5 text-center text-sm font-semibold text-white shadow-sm transition duration-200 hover:bg-orange hover:text-darkBlue hover:shadow-md" @onclick="() => StartAttendee(attendee)">
                                 Štart
                             </button>
                         } else
                         {
-                            <button disabled=@(!User.SuperInstructor && attendee.StandVisits.Count != _numberOfStands) class="w-full transition duration-200 bg-yellow hover:bg-orange text-darkBlue px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick="() => EndAttendee(attendee)">
+                            <button disabled=@(!User.SuperInstructor && attendee.StandVisits.Count != _numberOfStands) class="w-full rounded-lg bg-yellow px-3.5 py-1.5 text-center text-sm font-semibold text-darkBlue shadow-sm transition duration-200 hover:bg-orange hover:shadow-md" @onclick="() => EndAttendee(attendee)">
                                 Koniec
                             </button>
                         }

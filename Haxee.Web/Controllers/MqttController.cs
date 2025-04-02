@@ -1,7 +1,5 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Haxee.Web.Controllers;
 
@@ -23,14 +21,21 @@ public class MqttController : ControllerBase
     /// API endpoint pre ukladanie dát z aplikácie MQTT Consumer do databázy
     /// </summary>
     [HttpPost]
-    public async Task<IActionResult> PostAsync([FromBody] AttendeeInformationDTO attendeeInformation)
+    public async Task<IActionResult> PostAsync(
+        [FromBody] AttendeeInformationDTO attendeeInformation
+    )
     {
         using var db = _dbContextFactory.CreateDbContext();
 
-        var targetAttendee = await db.Attendees
+        var targetAttendee = await db
+            .Attendees.Include(x => x.Activity)
+            .ThenInclude(x => x.Stands)
+            .ThenInclude(x => x.StandVisits)
             .Include(x => x.Activity)
-                .ThenInclude(x => x.Stands)
+            .ThenInclude(x => x.Stands)
+            .ThenInclude(x => x.ScheduledVisits)
             .Include(x => x.StandVisits)
+            .Include(x => x.ScheduledVisit)
             .SingleOrDefaultAsync(x => attendeeInformation.CardId.Equals(x.CardId));
 
         if (targetAttendee is null)
@@ -39,65 +44,105 @@ public class MqttController : ControllerBase
         if (targetAttendee.Activity.Status != ActivityStatus.InProgress)
             return StatusCode(403);
 
-        var targetStand = await db.Stands
-            .Where(x => x.ActivityId.Equals(targetAttendee.ActivityId))
+        var currentStand = await db
+            .Stands.Where(x => x.ActivityId.Equals(targetAttendee.ActivityId))
             .Include(x => x.Device)
             .Where(x => x.Device != null && x.Device.Identifier.Equals(attendeeInformation.Trigger))
             .FirstOrDefaultAsync();
 
-        if (targetStand is null)
+        if (currentStand is null)
             return NotFound();
 
-        if (targetStand.IsQuiz)
+        if (currentStand.IsQuiz)
             return Conflict();
 
-        if(targetStand.IsStartingStand)
+        if (currentStand.IsStartingStand)
         {
             if (targetAttendee.StartedAt is null)
             {
                 targetAttendee.StartedAt = DateTime.Now;
             }
-            else if (targetAttendee.EndedAt is null)
-            {
-                if (!targetAttendee.Activity.Stands
-                    .Where(x => !x.IsStartingStand)
-                    .Count()
-                    .Equals(targetAttendee.StandVisits.Count) 
-                    || 
-                    targetAttendee.StandVisits.Any(x => x.LeaveTime == null))
-                    return StatusCode(403);
 
-                targetAttendee.EndedAt = DateTime.Now;
+            if (
+                targetAttendee.EndedAt is not null
+                || targetAttendee.StandVisits.Any(x => x.LeaveTime == null)
+            )
+                return StatusCode(403);
+
+            var remainingStands = targetAttendee
+                .Activity.Stands.Where(x => !x.IsStartingStand)
+                .Where(x => !targetAttendee.StandVisits.Any(y => y.StandId.Equals(x.Id)));
+
+            if (remainingStands.Any())
+            {
+                Stand? targetStand = remainingStands
+                    .Where(x => x.RemainingCapacity > 0 && !x.IsQuiz)
+                    .OrderByDescending(x => x.RemainingCapacity)
+                    .FirstOrDefault();
+
+                if (targetStand is null)
+                    targetStand = remainingStands
+                        .Where(x => x.AlmostEndingVisits > 0 && !x.IsQuiz)
+                        .OrderByDescending(x => x.AlmostEndingVisits)
+                        .FirstOrDefault();
+
+                if (targetStand is null)
+                    targetStand = remainingStands
+                        .Where(x => x.IsQuiz && x.RemainingCapacity > 0)
+                        .OrderByDescending(x => x.RemainingCapacity)
+                        .FirstOrDefault();
+
+                if (targetStand is null)
+                    targetStand = remainingStands
+                        .Where(x => x.IsQuiz && x.AlmostEndingVisits > 0)
+                        .OrderByDescending(x => x.AlmostEndingVisits)
+                        .FirstOrDefault();
+
+                if (targetStand is null)
+                    targetStand = remainingStands
+                        .OrderByDescending(x => x.RemainingCapacity)
+                        .ThenByDescending(x => x.AlmostEndingVisits)
+                        .First();
+
+                targetStand.ScheduledVisits.Add(
+                    new ScheduledVisit()
+                    {
+                        AttendeeId = targetAttendee.Id,
+                        StandId = targetStand.Id
+                    }
+                );
             }
             else
-                return BadRequest();
-        } else
+                targetAttendee.EndedAt = DateTime.Now;
+        }
+        else if (targetAttendee.StartedAt == null)
+            return StatusCode(403);
+        else
         {
-            var existingStandVisit = targetAttendee.StandVisits.SingleOrDefault(x => x.StandId.Equals(targetStand.Id));
+            var existingStandVisit = targetAttendee.StandVisits.SingleOrDefault(x =>
+                x.StandId.Equals(currentStand.Id)
+            );
 
-            if(existingStandVisit is not null)
+            if (existingStandVisit is not null)
+                existingStandVisit.LeaveTime = DateTime.Now;
+            else
             {
-                if (existingStandVisit.Status == StandVisitStatus.Waiting)
+                if (targetAttendee.ScheduledVisit is not null)
                 {
-                    existingStandVisit.Status = StandVisitStatus.Working;
-                    existingStandVisit.EndWaitTime = DateTime.Now;
+                    if (currentStand.Id != targetAttendee.ScheduledVisit.StandId)
+                        return StatusCode(403);
+
+                    db.Remove(targetAttendee.ScheduledVisit);
                 }
-                else if (existingStandVisit.Status == StandVisitStatus.Working)
-                {
-                    existingStandVisit.Status = StandVisitStatus.Done;
-                    existingStandVisit.LeaveTime = DateTime.Now;
-                }
-                else
-                    return StatusCode(403);
-            } else
-            {
-                targetAttendee.StandVisits.Add(new StandVisit 
-                {
-                    ArrivalTime = DateTime.Now,
-                    Status = StandVisitStatus.Waiting,
-                    StandId = targetStand.Id,
-                    AttendeeId = targetAttendee.Id
-                });
+
+                targetAttendee.StandVisits.Add(
+                    new StandVisit
+                    {
+                        StartTime = DateTime.Now,
+                        StandId = currentStand.Id,
+                        AttendeeId = targetAttendee.Id
+                    }
+                );
             }
         }
 

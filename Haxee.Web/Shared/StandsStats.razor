@@ -3,23 +3,23 @@
 <div>
     @if (_standStatsModel is not null)
     {
-        <div class="bg-slate-200 rounded-md shadow-md shadow-slate-300 flex flex-col border-l-8 border-orange p-3 h-full">
-            <div class="flex flex-row items-center text-darkBlue mr-14">
+        <div class="flex h-full flex-col rounded-md border-l-8 border-orange bg-slate-200 p-3 shadow-md shadow-slate-300">
+            <div class="mr-14 flex flex-row items-center text-darkBlue">
                 <h3 class="self-center font-extralight"><i class="fa-solid fa-map-location-dot"></i></h3>
                 <h3 class="ml-3 self-center">Stanoviská</h3>
             </div>
-            <div class="grid grid-cols-3 grid-rows-2 gap-2 mt-3">
-                <div class="col-start-1 row-start-1 col-span-2">
-                    Najdlhšie čakanie:
+            <div class="mt-3 grid grid-cols-3 grid-rows-2 gap-2">
+                <div class="col-span-2 col-start-1 row-start-1">
+                    Najpomalšie:
                 </div>
-                <div class="col-start-3 text-orange text-center font-bold row-start-1 col-span-2">
-                    @(_standStatsModel.LongestWaitStand?.Number.ToString() ?? "-")
+                <div class="col-span-2 col-start-3 row-start-1 text-center font-bold text-orange">
+                    @(_standStatsModel.LongestStand?.Number.ToString() ?? "-")
                 </div>
-                <div class="col-start-1 row-start-2 col-span-2">
-                    Najkratšie čakanie
+                <div class="col-span-2 col-start-1 row-start-2">
+                    Najkratšie:
                 </div>
-                <div class="col-start-3 text-orange text-center font-bold row-start-2 col-span-2">
-                   @(_standStatsModel.ShortestWaitStand?.Number.ToString() ?? "-")
+                <div class="col-span-2 col-start-3 row-start-2 text-center font-bold text-orange">
+                   @(_standStatsModel.ShortestStand?.Number.ToString() ?? "-")
                 </div>
             </div>
         </div>
@@ -47,12 +47,12 @@
         if (activity is null)
             return;
 
-        var orderedStandsByWaitTime = activity.Stands.OrderBy(x => x.StandVisits.Where(y => y.EndWaitTime != null).Sum(x => (x.EndWaitTime! - x.ArrivalTime).Value.TotalSeconds));
+        var orderedStandsByCompletionTime = activity.Stands.OrderBy(x => x.StandVisits.Where(y => y.LeaveTime != null).Sum(x => (x.LeaveTime! - x.StartTime).Value.TotalSeconds));
 
         _standStatsModel = new()
             {
-                LongestWaitStand = orderedStandsByWaitTime.FirstOrDefault(),
-                ShortestWaitStand = orderedStandsByWaitTime.LastOrDefault()
+                LongestStand = orderedStandsByCompletionTime.FirstOrDefault(),
+                ShortestStand = orderedStandsByCompletionTime.LastOrDefault()
             };
 
         StateHasChanged();
