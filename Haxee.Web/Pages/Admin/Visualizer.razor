@@ -12,9 +12,9 @@
 @if (_averageWaitTimes is null || _averagePenaltyTimes is null || _standings is null)
 {
     <div class="form-group">
-        <div>Nahrajte .csv súbor pre zobrazenie vizualizácie</div>
+        <div>Nahrajte </div>
 
-        <div class="h-full w-full">
+        <div class="h-full w-full mt-4">
             <label for="imageUpload" class="file-input">
                 @if (_isLoading)
                 {
@@ -23,7 +23,7 @@
                 else if (_fileUploadError is not null)
                 {
                     <div class="validation-message">@_fileUploadError</div>
-                    <div>Vyberte súbor</div>
+                    <div>Vyberte .csv súbor pre zobrazenie vizualizácie</div>
                 }
                 else if (_uploadedFile is not null)
                 {
@@ -32,7 +32,7 @@
                 }
                 else
                 {
-                    <div>Vyberte súbor</div>
+                    <div>Vyberte .csv súbor pre zobrazenie vizualizácie</div>
                 }
             </label>
             <InputFile OnChange="OnFileChanged" id="imageUpload" style="display: none" />
@@ -40,8 +40,6 @@
     </div>
 } else
 {
-    <button class="button-submit">Send to OpenCamp</button>
-
     <RadzenChart>
         <RadzenColumnSeries Data="@_averageWaitTimes" Title="Priemerné čakanie" CategoryProperty=@nameof(StringDoubleDataItem.Stand) ValueProperty=@nameof(StringDoubleDataItem.Value)>
             <RadzenSeriesDataLabels />
@@ -60,38 +58,76 @@
         <RadzenColumnOptions Radius="5" Width="20" />
     </RadzenChart>
 
-    <div>
+    <div class="flex flex-row space-x-4 mt-4">
         @{
             var totalTimes = _standings.Select(x => x.GetCalculatedTotalTime());
         }
-        <b>Minimálny čas na splnenie:</b> @totalTimes.Min()<br/>
-        <b>Priemerny čas na splnenie:</b> @(new TimeSpan(Convert.ToInt64(totalTimes.Average(x => x.Ticks))))<br/>
-        <b>Maximálny čas na splnenie:</b> @totalTimes.Max()
+        <div class="my-card flex flex-col space-y-4 justify-center items-center">
+            <h2 class="text-center">@totalTimes.Min()</h2>
+            <span>Minimálny čas na splnenie</span>
+        </div>
+        <div class="my-card flex flex-col space-y-4 justify-center items-center">
+            <h2 class="text-center">@totalTimes.Max()</h2>
+            <span>Maximálny čas na splnenie</span>
+        </div>
+        <div class="my-card flex flex-col space-y-4 justify-center items-center">
+            <h2 class="text-center">@(new TimeSpan(Convert.ToInt64(totalTimes.Average(x => x.Ticks))).ToString(@"hh\:mm\:ss"))</h2>
+            <span>Priemerny čas na splnenie</span>
+        </div>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Poradie</th>
-                <th>Meno a priezvisko</th>
-                <th>Celkový čas</th>
-                <th>Body</th>
-                <th>Percentil</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach(var standing in _standings) 
-            {
-                <tr>
-                    <td>@standing.FinalStanding</td>
-                    <td>@standing.Firstname @standing.Surname</td>
-                    <td>@standing.GetCalculatedTotalTime()</td>
-                    <td>@(standing.FinalPoints.HasValue ? Math.Round(standing.FinalPoints.Value) : "-")</td>
-                    <td>@(standing.FinalPercentile.HasValue ? (Math.Round((1-standing.FinalPercentile.Value)*100, 1)) : "-")</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="flex flex-row justify-between items-stretch mt-4">
+        <h2 class="text-blue font-bold self-center">Celkové poradie</h2>
+        <button class="button-submit self-center">Send to OpenCamp</button>
+    </div>
+
+    <div class="border-b-2 border-slate-200 mt-4">
+        <div class="flex flex-col md:flex-row justify-between items-center text-darkBlue w-full">
+            <div class="m-0 ml-8 w-full md:w-1/2">
+                Meno
+            </div>
+            <div class="flex flex-row items-center w-full md:w-1/2">
+                <div class="w-1/3 text-center">
+                    Celkový čas
+                </div>
+                <div class="w-1/3 text-center">
+                    Body
+                </div>
+                <div class="w-1/3 text-center">
+                    Percentil
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {
+        int i = 1;
+        <div class="flex flex-col mt-2 space-y-4">
+        @foreach(var person in _standings)
+        {
+            string colorBorder = (i == 1) ? "border-goldMain" : (i == 2) ? "border-silverMain" : (i == 3) ? "border-bronzeMain" : "mint"; 
+            <div class="bg-slate-200 rounded-2xl shadow-md shadow-slate-300 flex flex-col border-l-[16px] @colorBorder p-3">
+                <div class="flex flex-col md:flex-row justify-between items-center text-darkBlue w-full">
+                    <div class="font-bold m-0 w-full md:w-1/2">
+                        @i. @person.Firstname @person.Surname
+                    </div>
+                    <div class="flex flex-row items-center w-full md:w-1/2">
+                        <div class="w-1/3 text-center">
+                            @person.GetCalculatedTotalTime()
+                        </div>
+                        <div class="w-1/3 text-center">
+                            @(person.FinalPoints.HasValue ? Math.Round(person.FinalPoints.Value) : "-")
+                        </div>
+                        <div class="w-1/3 text-center">
+                            @(person.FinalPercentile.HasValue ? (Math.Round((1-person.FinalPercentile.Value)*100, 1)) : "-")
+                        </div>
+                    </div>
+                </div>
+            </div>
+            i++;
+        }
+        </div>
+    }
 }
 
 @code {

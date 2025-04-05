@@ -41,7 +41,7 @@
     {
         <div class="flex flex-col mt-2 space-y-4">
               
-            <div class="bg-slate-200 rounded-md shadow-md shadow-slate-300 flex flex-col border-l-8 border-mint p-3">
+            <div class="bg-white rounded-2xl my-shadow flex flex-col border-l-[16px] border-mint p-3">
                 <div class="flex flex-col md:flex-row justify-between items-center text-darkBlue w-full">
                     <div class="font-bold m-0 w-full md:w-1/2">
                         @user.Name
@@ -53,12 +53,12 @@
                         <div class="w-2/6 text-center">
                             @user.Email
                         </div>
-                        <div class="w-2/6 flex flex-row justify-around">
-                            <button class="w-1/3 transition duration-200 bg-blue hover:bg-yellow hover:text-darkBlue text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center"
+                        <div class="w-2/6 grid grid-cols-2 gap-4">
+                            <button class="button-main"
                                 @onclick='async () => await SendPasswordToUser(user)'>
                                 Heslo
                             </button>
-                            <button disabled=@user.Id.Equals(User.Id) class="w-1/3 transition duration-200 bg-orange hover:bg-red-800 text-white px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center"
+                            <button disabled=@user.Id.Equals(User.Id) class="button-delete"
                                 @onclick="() => _deleteUserModal?.Open(user.Id, user.Name)">
                                 Delete
                             </button>

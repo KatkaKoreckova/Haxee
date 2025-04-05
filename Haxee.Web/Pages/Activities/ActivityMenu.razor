@@ -19,36 +19,36 @@
     <h1 class="title">Aktivita @_activity.Name</h1>
 
     <div class="mt-2 grid gap-4 lg:gap-6 md:grid-cols-3 lg:grid-cols-4">
-        <button onclick="location.href='/stands/@ActivityId'" class="button-card">
-            <h1 class="text-mainPurple"><i class="fa-solid fa-map-location-dot"></i></h1>
-            <h2 class=" text-darkBlue">Stanoviska</h2>
+        <button onclick="location.href='/stands/@ActivityId'" class="button-card-small flex items-stretch">
+            <h1 class="text-mainPurple self-center w-max"><i class="fa-solid fa-map-location-dot"></i></h1>
+            <h2 class=" text-darkBlue self-center w-max">Stanoviska</h2>
         </button>
 
         @if (ActivityId.Equals(DateTime.Now.Year))
         {
-            <button onclick="location.href='/monitor-leaderboard/@ActivityId'" class="button-card">
-                <h1 class="text-mainPurple"><i class="fa-solid fa-ranking-star"></i></h1>
-                <h2 class=" text-darkBlue">Leaderboard</h2>
+            <button onclick="location.href='/monitor-leaderboard/@ActivityId'" class="button-card-small flex items-stretch">
+                <h1 class="text-mainPurple self-center w-max"><i class="fa-solid fa-ranking-star"></i></h1>
+                <h2 class=" text-darkBlue self-center w-max">Leaderboard</h2>
             </button>
         }
         else
         {
-            <button onclick="location.href='/activity-leaderboard/@ActivityId'" class="button-card">
-                <h1 class="text-mainPurple"><i class="fa-solid fa-ranking-star"></i></h1>
-                <h2 class=" text-darkBlue">Leaderboard</h2>
+            <button onclick="location.href='/activity-leaderboard/@ActivityId'" class="button-card-small flex items-stretch">
+                <h1 class="text-mainPurple self-center w-max"><i class="fa-solid fa-ranking-star"></i></h1>
+                <h2 class=" text-darkBlue self-center w-max">Leaderboard</h2>
             </button>
         }
 
-        <button onclick="location.href='/activity-stats/@ActivityId'" class="button-card">
-            <h1 class="text-mainPurple"><i class="fa-solid fa-chart-line"></i></h1>
-            <h2 class=" text-darkBlue">Štatistika</h2>
+        <button onclick="location.href='/activity-stats/@ActivityId'" class="button-card-small flex items-stretch">
+            <h1 class="text-mainPurple self-center w-max"><i class="fa-solid fa-chart-line"></i></h1>
+            <h2 class=" text-darkBlue self-center w-max">Štatistika</h2>
         </button>
 
         @if (ActivityId.Equals(DateTime.Now.Year))
         {
-            <button onclick="location.href='/kids'" class="button-card">
-                <h1 class="text-mainPurple"><i class="fa-solid fa-user-group"></i></h1>
-                <h2 class=" text-darkBlue">Účastníci</h2>
+            <button onclick="location.href='/kids'" class="button-card-small flex items-stretch">
+                <h1 class="text-mainPurple self-center w-max"><i class="fa-solid fa-user-group"></i></h1>
+                <h2 class=" text-darkBlue self-center w-max">Účastníci</h2>
             </button>
         }
     </div>

@@ -14,7 +14,7 @@
         <DeleteDeviceModal @ref="_deleteDeviceModal" OnSubmit="LoadDevices" />
 
         <div>
-            <button class="h-10 transition duration-200 px-4 py-0 font-semibold rounded-md text-darkBlue bg-yellow hover:text-white hover:bg-orange" @onclick="() => _createDeviceModal?.Open()">
+            <button class="button-yellow" @onclick="() => _createDeviceModal?.Open()">
                 <span class="inline-block"><i class="fa-solid fa-plus"></i></span>
                 <span class="hidden md:inline-block">Vytvoriť</span>
             </button>
@@ -25,7 +25,7 @@
 <div class="mt-2 grid gap-4 lg:gap-6 sm:grid-cols-3 lg:grid-cols-4">
     @foreach(var device in _devices.OrderByDescending(x => x.Id))
     {
-        <div class="w-full bg-slate-200 rounded-md shadow-md shadow-slate-300 p-4">
+        <div class="my-card flex flex-col space-y-4">
             <h1 class="text-mainPurple text-center font-bold">@device.Name</h1>
             <div class="flex flex-row space-x-2 items-center text-darkBlue mt-3">
                 <i class="fa-solid fa-fingerprint"></i>
@@ -33,12 +33,14 @@
             </div>
             @if (User.SuperInstructor)
             {
-                <button class="button-main  mt-3 transition duration-200 px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick='async () => await _editDeviceModal.Open(device.Id)'>
-                    Upraviť
-                </button>
-                <button class="button-delete w-full mt-3 transition duration-200 bg-slate-200 px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center" @onclick='() => _deleteDeviceModal?.Open(device.Id, device.Name)' @onclick:stopPropagation=true>
-                    <i class="fa-solid fa-trash"></i>
-                </button>
+                <div class="flex flex-col space-y-2">
+                    <button class="button-main" @onclick='async () => await _editDeviceModal.Open(device.Id)'>
+                        Upraviť
+                    </button>
+                    <button class="button-delete w-full" @onclick='() => _deleteDeviceModal?.Open(device.Id, device.Name)' @onclick:stopPropagation=true>
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
             }
         </div>
 }

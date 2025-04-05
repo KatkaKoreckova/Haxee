@@ -189,7 +189,7 @@ h6 {
 }
 
 .input-field {
-    @apply w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white border border-solid border-gray-300 rounded mb-1 focus:text-gray-700 focus:bg-white focus:border-blue focus:outline-none;
+    @apply w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white border border-solid border-gray-300 rounded-full mb-1 focus:text-gray-700 focus:bg-white focus:border-blue focus:outline-none;
 }
 
 .field-validation-error, .red-star {
@@ -197,11 +197,11 @@ h6 {
 }
 
 button {
-    @apply transition duration-200 bg-slate-200 hover:bg-slate-300 text-darkBlue px-3.5 py-1.5 rounded-lg text-sm shadow-sm hover:shadow-md text-center font-semibold tracking-wide;
+    @apply bg-slate-200 hover:bg-slate-300 text-darkBlue px-3.5 py-1.5 rounded-full text-sm shadow-sm hover:shadow-md text-center font-semibold tracking-wide;
 }
 
 .button-main {
-    @apply transition duration-200 bg-blue hover:bg-orange text-white w-full rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block;
+    @apply bg-blue hover:bg-orange text-white w-full rounded-full text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block;
 }
 
 .button-submit {
@@ -212,12 +212,20 @@ button {
     @apply bg-red-200 hover:bg-red-800 text-red-800 hover:text-white hover:font-normal;
 }
 
-.button-card {
-    @apply w-full bg-slate-200 rounded-md shadow-md shadow-slate-300 px-4 py-4 md:space-x-0 hover:bg-yellow;
+.button-gray {
+    @apply w-full text-center font-light text-sm text-gray-500 mt-2 hover:text-gray-800;
+}
+
+.button-yellow {
+    @apply rounded-full text-darkBlue bg-yellow hover:text-white hover:bg-orange;
 }
 
 .button-card {
-    @apply w-full bg-slate-200 rounded-md shadow-md shadow-slate-300 px-4 py-6 space-x-2 hover:bg-yellow;
+    @apply w-full bg-slate-100 rounded-full shadow-md shadow-slate-300 px-4 py-4 md:space-x-0 hover:bg-yellow;
+}
+
+.button-card-small {
+    @apply w-full flex flex-row justify-center space-x-4 items-stretch bg-slate-200 rounded-full shadow-md shadow-slate-300 px-2 py-4 hover:bg-yellow;
 }
 
 .form-group label {
@@ -230,4 +238,38 @@ button {
 
 button:disabled {
     @apply opacity-50 cursor-not-allowed;
+}
+
+
+button,
+a,
+.smooth-show {
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.my-shadow {
+    /* box-shadow: rgba(14, 25, 78, 0.2) 0px 12px 28px 0px, rgba(14, 25, 78, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
+  box-shadow: rgba(14, 25, 78, 0.15) 0px 15px 25px, rgba(14, 25, 78, 0.05) 0px 5px 10px;*/
+    box-shadow: rgba(14, 25, 78, 0.1) 0px 4px 16px,
+        rgba(14, 25, 78, 0.1) 0px 8px 24px;
+}
+
+.my-card {
+    @apply w-full bg-white rounded-3xl my-shadow px-4 py-4;
+}
+
+
+.file-input {
+    @apply flex flex-col justify-stretch w-full h-full border-4 rounded-3xl border-dashed border-mainPurple p-12 text-center hover:bg-lightPurple smooth-show;
+   /* display: flex;
+    flex-direction: column;
+    justify-items: stretch;
+    height: 100%;
+    width: 100%;
+    border: 4px dashed var(--primaryColor);
+    border-radius: 20px;
+    padding: 12px;
+    text-align: center;
+    transition: all 0.2s ease-in; */
 }
